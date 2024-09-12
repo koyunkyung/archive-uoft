@@ -1,0 +1,5 @@
+---
+title: "Welcome to my website"
+---
+
+Hi, my names is Yunkyung Ko. I'm a student majoring in statistics.
