@@ -1,4 +1,4 @@
-# Outbreaks in Toronto Healthcare Institutions After Covid-19: Analysis of the Frequency and Causative Agent Trends
+# Outbreaks in Toronto Healthcare Institutions After Covid-19: Analysis of the Frequency Trends and the Causative Agent
 
 ## Overview
 
