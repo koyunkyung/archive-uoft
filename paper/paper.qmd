@@ -1,6 +1,6 @@
 ---
 title: "Outbreaks in Toronto Healthcare Institutions After COVID-19"
-subtitle: "Analysis of the Causative Agents and Trend of Fluctuations"
+subtitle: "Analysis of the Frequency Trends and the Causative Agent"
 author: 
   - Yunkyung Ko
 thanks: "Code and data are available at: https://github.com/koyunkyung/paper1_draft.git."
