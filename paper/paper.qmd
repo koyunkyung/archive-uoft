@@ -1,0 +1,143 @@
+---
+title: "Outbreaks in Toronto Healthcare Institutions After COVID-19"
+subtitle: "Analysis of the Causative Agents and Trend of Fluctuations"
+author: 
+  - Yunkyung Ko
+thanks: "Code and data are available at: https://github.com/koyunkyung/paper1_draft.git."
+date: today
+date-format: long
+abstract: "In Canada, outbreak incidence has been slowly increasing from June 2024 up to the beginning of the accumulating data period on August 10, 2024. (ADD CITATION https://health-infobase.canada.ca/covid-19/) Using the 'Outbreaks in Toronto Healthcare Institutions' dataset, we show how the trends of outbreak occurrence has been over the 5 years after COVID-19. (specify headline result). (implications)."
+format: pdf
+number-sections: true
+bibliography: references.bib
+---
+
+```{r}
+#| include: false
+#| warning: false
+#| message: false
+
+library(tidyverse)
+library(opendatatoronto)
+library(ggplot2)
+library(dplyr)
+library(readr)
+library(lubridate)
+
+data <- read_csv(here::here("data/analysis_data/analysis_data.csv"))
+```
+
+
+# Introduction
+
+You can and should cross-reference sections and sub-sections. We use @citeR, @opendatatoronto and @rohan.
+
+The remainder of this paper is structured as follows. @sec-data....
+
+
+
+# Data {#sec-data}
+
+@fig-outbreak shows the total number of outbreaks reported in Toronto healthcare institutions over the time period of 2020 to 2024. We can see that the numbers seem to decrease by the end of 2021, but exponentially increase from the start of 2022. A trend of relatively high outbreak occurrence rate continues till 2024.
+
+```{r}
+#| label: fig-outbreak
+#| fig-cap: Total Outbreaks Count per 6-month
+#| echo: false
+
+data |>
+  ggplot(mapping = aes(x = date_of_outbreak)) +
+  geom_bar() +
+  theme_minimal()+
+  labs(x = "Date Period", y = "Number of Outbreaks Reported")
+
+```
+
+Contrary to the expectation that the number of outbreaks would have increased the most rapidly immediately after COVID-19, the analysis with actual data shows that the number of outbreaks is on the rise as we approach 2022. Since there are various variables that can affect the result above, we would like to consider this one by one and proceed with an accurate analysis of the outbreak occurrence situation.
+### NEED TO MODIFY
+# check for factors such as comparing the number of outbreaks as a whole vs. only in healthcare institutions
+# would the _begin, _end sorting of timeline affect the shape of the graph above?
+# search for background information of healthcare environments in Canada that could relate to the data above
+
+
+
+To dive deeper into the causations of this trend in outbreak reports, we show the frequency trend of top-3 causative agents respectively over the same time period (@fig-causations).
+```{r}
+# Process the data to get the top 3 causative agents, excluding 'NA' and 'Unable to identify'
+top_causative_agents <- cleaned_data |>
+  janitor::clean_names() |>
+  
+  # Filter out rows where causative_agent is NA or 'Unable to identify'
+  filter(!is.na(causative_agent) & causative_agent != "Unable to identify") |>
+  
+  # Group by causative agent and count occurrences
+  group_by(causative_agent) |>
+  summarise(total_cases = n()) |>
+  
+  # Arrange in descending order of total cases
+  arrange(desc(total_cases)) |>
+  
+  # Select the top 3 causative agents
+  slice_max(order_by = total_cases, n = 3)
+
+# View the top 3 causative agents
+top_causative_agents
+```
+
+```{r}
+#| label: fig-causations
+#| fig-cap: Outbreaks Count per 6-month, by Top 3 Causative Agent
+#| echo: false
+#| warning: false
+#| message: false
+
+### NEED A LINE PLOT WITH THREE LINES, EACH INDICATING THE TOP 3 CAUSATIVE AGENTS.
+
+```
+
+Talk way more about it. 
+
+
+# Discussion
+
+## First discussion point {#sec-first-point}
+
+analyze the total outbreak frequency trend over the time period given.
+(in relation to the social/political background in healthcare)
+
+## Second discussion point
+
+figure out what might be the main causative agent for the rapid increase in outbreak reports starting from 2022.
+acknowledging the causative agent that we should be aware of might help us prevent further outbreak increase from happening
+-> know what is causing this rise in outbreak reports and research about that specific disease settings
+
+## Third discussion point
+
+from the results of the data analysis above, discuss a way we could prevent further increase of outbreak occurrence.
+in largely three dimensions: personal/ society/ government
+
+## Weaknesses and next steps
+
+Dividing a year into just two could influence the analysis result. (ex. weather affecting the outbreak occurrence)
+Many 'N/A', 'Unable to identify' data in Causative Agent.
+
+For further inspection, taking the place information in consideration might also have been meaningful.
+
+
+\newpage
+
+\appendix
+
+# Appendix {-}
+INFO OF RAW DATA, CONDITIONS OF DATA COLLECTION, ETC
+
+# Additional data details
+NEED TO MODIFY
+
+
+\newpage
+
+
+# References
+NEED TO ADD REFERENCES
+

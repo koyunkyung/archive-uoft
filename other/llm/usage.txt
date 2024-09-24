@@ -1,0 +1,127 @@
+LLM: ChatGPT-4.
+Date: 22 September 2024
+
+
+User
+I want to make a simulating data of dates that range from 2020-01 to 2024-06, on a monthly basis.  The simulated data's 'Date' should be in a form of 2020-01, not including the days number. Please generate the codes in R that could generate random numbers that follow the Possion distribution of lambda=10.
+
+ChatGPT
+```r
+# Set seed for reproducibility
+set.seed(123)
+
+# Define the start and end months
+start_date <- as.Date("2020-01-01")
+end_date <- as.Date("2024-06-01")
+
+# Generate a sequence of monthly dates between start_date and end_date
+monthly_dates <- seq(from = start_date, to = end_date, by = "month")
+
+# Format dates to "YYYY-MM" without including the day
+formatted_dates <- format(monthly_dates, "%Y-%m")
+
+# Generate random Poisson distributed numbers with lambda = 10 for each month
+lambda <- 10
+poisson_values <- rpois(length(formatted_dates), lambda)
+
+# Create a data frame to hold the results
+simulated_data <- data.frame(Date = formatted_dates, Poisson_Value = poisson_values)
+
+# View the first few rows of the data
+head(simulated_data)
+
+# Save the data to a CSV file if needed
+# write.csv(simulated_data, "monthly_simulated_data.csv", row.names = FALSE)
+```
+
+
+User
+cleaned_data <-
+  raw_data |>
+  janitor::clean_names() |>
+  select(causative_agent_1, date_outbreak_began)
+
+From the dataset above, I want to make the dates to be in a format of "YYYY-MM". After that, I would like to sort those dates into "YYYY_first_half" if the months are from 01 to 06 and "YYYY_second_half" if the months are from 07 to 12. 
+
+ChatGPT
+```r
+# Load necessary libraries
+library(dplyr)
+library(lubridate)
+
+# Clean and process the data
+cleaned_data <- raw_data |>
+  janitor::clean_names() |>
+  select(causative_agent_1, date_outbreak_began) |>
+  mutate(
+    # Convert the date to "YYYY-MM" format
+    date_outbreak_began = format(as.Date(date_outbreak_began), "%Y-%m"),
+    
+    # Extract year and month
+    year = substr(date_outbreak_began, 1, 4),
+    month = as.numeric(substr(date_outbreak_began, 6, 7)),
+    
+    # Classify into "YYYY_first_half" or "YYYY_second_half"
+    date_period = case_when(
+      month %in% 1:6 ~ paste0(year, "_first_half"),
+      month %in% 7:12 ~ paste0(year, "_second_half")
+    )
+  ) |>
+  select(causative_agent_1, date_outbreak_began, date_period)
+
+# View the first few rows of the cleaned and processed data
+head(cleaned_data)
+```
+
+User
+I also want to rename 'causative_agent_1' to 'causative_agent'.
+
+ChatGPT
+```r
+# Rename the column causative_agent_1 to causative_agent
+  rename(causative_agent = causative_agent_1) |>
+```
+
+
+
+User
+I want to figure out what the top 3 causative agents are from the total dataset. What are the ways I can figure this out? Please write the relevant R codes for solving this problem.
+
+ChatGPT
+```r
+# Load necessary libraries
+library(dplyr)
+library(readr)
+
+# Read the data
+cleaned_data <- read_csv("data/analysis_data/analysis_data.csv")
+
+# Process the data to get the top 3 causative agents
+top_causative_agents <- cleaned_data |>
+  janitor::clean_names() |>
+  
+  # Group by causative agent and count occurrences
+  group_by(causative_agent) |>
+  summarise(total_cases = n()) |>
+  
+  # Arrange in descending order of total cases
+  arrange(desc(total_cases)) |>
+  
+  # Select the top 3 causative agents
+  slice_max(order_by = total_cases, n = 3)
+
+# View the top 3 causative agents
+top_causative_agents
+```
+
+
+
+User
+I want to get rid of the 'NA' and 'Unable to identify'  datasets from the causative_agent variable
+
+ChatGPT
+  # Filter out rows where causative_agent is NA or 'Unable to identify'
+  filter(!is.na(causative_agent) & causative_agent != "Unable to identify") |>
+
+
+
