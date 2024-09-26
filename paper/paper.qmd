@@ -3,7 +3,7 @@ title: "Outbreaks in Toronto Healthcare Institutions After COVID-19"
 subtitle: "Analysis of the Frequency Trends and the Causative Agent"
 author: 
   - Yunkyung Ko
-thanks: "Code and data are available at: https://github.com/koyunkyung/paper1_draft.git."
+thanks: "Code and data are available at: https://github.com/koyunkyung/toronto_outbreaks"
 date: today
 date-format: long
 abstract: "In Canada, outbreak incidence has been slowly increasing from June 2024 up to the beginning of the accumulating data period on August 10, 2024. (ADD CITATION https://health-infobase.canada.ca/covid-19/) Using the 'Outbreaks in Toronto Healthcare Institutions' dataset, we show how the trends of outbreak occurrence has been over the 5 years after COVID-19. (specify headline result). (implications)."
@@ -40,18 +40,57 @@ The remainder of this paper is structured as follows. @sec-data....
 
 @fig-outbreak shows the total number of outbreaks reported in Toronto healthcare institutions over the time period of 2020 to 2024. We can see that the numbers seem to decrease by the end of 2021, but exponentially increase from the start of 2022. A trend of relatively high outbreak occurrence rate continues till 2024.
 
+
+```{r}
+
+```
+
+
 ```{r}
 #| label: fig-outbreak
-#| fig-cap: Total Outbreaks Count per 6-month
+#| fig-cap: Total Outbreaks Count in Toronto Healthcare Institutions
 #| echo: false
 
 data |>
-  ggplot(mapping = aes(x = date_of_outbreak)) +
+  ggplot(mapping = aes(x = year)) +
   geom_bar() +
-  theme_minimal()+
-  labs(x = "Date Period", y = "Number of Outbreaks Reported")
+  theme_minimal() +
+  labs(x = "Date Period", y = "Number of Outbreaks Reported",
+       title = "Total Number of Outbreaks Reported in Toronto Healthcare Institutions") +
+  scale_x_continuous(breaks = seq(min(data$year), max(data$year), by = 1))
 
 ```
+
+```{r}
+#| label: fig-setting
+#| fig-cap: Outbreaks Count by Outbreak Settings
+#| echo: false
+
+library(dplyr)
+library(ggplot2)
+
+outbreak_counts <- data %>%
+  count(outbreak_setting)
+
+ggplot(outbreak_counts, aes(x = "", y = n, fill = outbreak_setting)) +
+  geom_bar(stat = "identity", width = 1) +
+  coord_polar("y", start = 0) + 
+  theme_minimal() +
+  scale_fill_manual(values = c("LTCH" = "#B4E1FF", 
+                               "Retirement Home" = "#B3FFC6", 
+                               "Hospital-Chronic Care" = "#BA55D3", 
+                               "Hospital-Acute Care" = "#DDA0DD",
+                               "Hospital-Psychiatric" = "grey",
+                               "Shelter" = "brown",
+                               "Transitional Care" = "black")) +
+  labs(x = NULL, y = NULL, fill = "Outbreak Setting", 
+       title = "Number of Outbreaks Reported by Setting") +
+  theme(axis.text.x = element_blank(),  
+        axis.ticks = element_blank(),  
+        panel.grid = element_blank())  
+```
+
+
 
 Contrary to the expectation that the number of outbreaks would have increased the most rapidly immediately after COVID-19, the analysis with actual data shows that the number of outbreaks is on the rise as we approach 2022. Since there are various variables that can affect the result above, we would like to consider this one by one and proceed with an accurate analysis of the outbreak occurrence situation.
 ### NEED TO MODIFY
@@ -60,41 +99,115 @@ Contrary to the expectation that the number of outbreaks would have increased th
 # search for background information of healthcare environments in Canada that could relate to the data above
 
 
+# Result 
 
 To dive deeper into the causations of this trend in outbreak reports, we show the frequency trend of top-3 causative agents respectively over the same time period (@fig-causations).
 ```{r}
-# Process the data to get the top 3 causative agents, excluding 'NA' and 'Unable to identify'
-top_causative_agents <- cleaned_data |>
-  janitor::clean_names() |>
-  
-  # Filter out rows where causative_agent is NA or 'Unable to identify'
-  filter(!is.na(causative_agent) & causative_agent != "Unable to identify") |>
-  
-  # Group by causative agent and count occurrences
-  group_by(causative_agent) |>
-  summarise(total_cases = n()) |>
-  
-  # Arrange in descending order of total cases
-  arrange(desc(total_cases)) |>
-  
-  # Select the top 3 causative agents
-  slice_max(order_by = total_cases, n = 3)
 
-# View the top 3 causative agents
-top_causative_agents
 ```
 
 ```{r}
-#| label: fig-causations
-#| fig-cap: Outbreaks Count per 6-month, by Top 3 Causative Agent
+#| label: fig-outbreaks count by types
+#| fig-cap: Outbreaks Count in Toronto Healthcare Institutions, by Types of Outbreak
 #| echo: false
 #| warning: false
 #| message: false
 
-### NEED A LINE PLOT WITH THREE LINES, EACH INDICATING THE TOP 3 CAUSATIVE AGENTS.
+# Summarizing the data to get the number of outbreaks per month and type of outbreak
+annual_data <- data %>%
+  group_by(year, type_of_outbreak) %>%
+  summarise(outbreak_count = n()) %>%
+  ungroup()
+
+# Convert the year column to a factor with levels in chronological order
+annual_data$year <- factor(annual_data$year, levels = unique(annual_data$year))
+
+# Create the line plot
+ggplot(annual_data, aes(x = year, y = outbreak_count, group = type_of_outbreak, color = type_of_outbreak)) +
+  geom_line(size = 1) +
+  geom_point(size = 2) +
+  scale_color_manual(values = c("Respiratory" = "red", "Enteric" = "blue", "Other" = "black")) +
+  labs(title = "Trend of Outbreak Counts by Type (2016-2024)",
+       x = "Year", y = "Outbreak Count", color = "Type of Outbreak") +
+  theme_minimal() +
+  scale_x_discrete(drop = FALSE) # Ensure all years are shown on the x-axis
 
 ```
 
+```{r}
+#| label: fig-respiratory outbreaks count by outbreak settings
+#| fig-cap: Respiratory Outbreaks Count, by Outbreak Settings
+#| echo: false
+#| warning: false
+#| message: false
+
+library(dplyr)
+library(ggplot2)
+
+# Filter for 'Respiratory' outbreaks
+respiratory_data <- data %>%
+  filter(type_of_outbreak == "Respiratory")
+
+# Aggregate data by year and outbreak setting
+annual_counts <- respiratory_data %>%
+  group_by(year, outbreak_setting) %>%
+  summarise(outbreak_count = n(), .groups = 'drop')
+
+# Create a stacked bar plot
+ggplot(annual_counts, aes(x = year, y = outbreak_count, fill = outbreak_setting)) +
+  geom_col(position = "stack") +  # Stack bars based on outbreak settings
+  scale_fill_manual(values = c("LTCH" = "#B4E1FF", 
+                               "Retirement Home" = "#B3FFC6", 
+                               "Hospital-Chronic Care" = "#BA55D3", 
+                               "Hospital-Acute Care" = "#DDA0DD",
+                               "Hospital-Psychiatric" = "grey",
+                               "Shelter" = "brown",
+                               "Transitional Care" = "black")) +
+  labs(title = "Annual Respiratory Outbreak Counts by Setting",
+       x = "Year",
+       y = "Outbreak Count",
+       fill = "Outbreak Setting") +
+  theme_minimal() +
+  scale_x_continuous(breaks = seq(min(data$year), max(data$year), by = 1))
+```
+
+
+```{r}
+#| label: fig-enteric outbreaks count by outbreak settings
+#| fig-cap: Enteric Outbreaks Count, by Outbreak Settings
+#| echo: false
+#| warning: false
+#| message: false
+
+library(dplyr)
+library(ggplot2)
+
+# Filter for 'Enteric' outbreaks
+enteric_data <- data %>%
+  filter(type_of_outbreak == "Enteric")
+
+# Aggregate data by year and outbreak setting
+annual_counts <- enteric_data %>%
+  group_by(year, outbreak_setting) %>%
+  summarise(outbreak_count = n(), .groups = 'drop')
+
+# Create a stacked bar plot
+ggplot(annual_counts, aes(x = year, y = outbreak_count, fill = outbreak_setting)) +
+  geom_col(position = "stack") +  # Stack bars based on outbreak settings
+  scale_fill_manual(values = c("LTCH" = "#B4E1FF", 
+                               "Retirement Home" = "#B3FFC6", 
+                               "Hospital-Chronic Care" = "#BA55D3", 
+                               "Hospital-Acute Care" = "#DDA0DD",
+                               "Hospital-Psychiatric" = "grey",
+                               "Shelter" = "brown",
+                               "Transitional Care" = "black")) +
+  labs(title = "Annual Enteric Outbreak Counts by Setting",
+       x = "Year",
+       y = "Outbreak Count",
+       fill = "Outbreak Setting") +
+  theme_minimal() +
+  scale_x_continuous(breaks = seq(min(data$year), max(data$year), by = 1))
+```
 Talk way more about it. 
 
 
