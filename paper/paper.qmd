@@ -1,6 +1,6 @@
 ---
-title: "Disease Outbreaks in Toronto Healthcare Institutions"
-subtitle: "Analysis of Outbreak Patterns Based on Its Type and Settings"
+title: "How Toronto Should Manage the Crisis in the Air"
+subtitle: "Analysis of Disease Outbreak Patterns Based on Its Type and Settings"
 author: 
   - Yunkyung Ko
 thanks: "Code and data are available at: https://github.com/koyunkyung/toronto_outbreaks"
@@ -44,14 +44,10 @@ data <- read_csv(here::here("data/analysis_data/analysis_data.csv"))
 As of September 9 2024, 1,016 infections of pertussis, a contagious respiratory disease also known as whopping cough, were reported in Ontario [@nowtoronto_whooping_cough]. In all of Toronto, the figure is more than triple the five-year, pre-pandemic average of 31 cases for the same period [@publichealth_ontario].
 
 
-Unexpected disease outbreaks significantly disrupt society by inducing widespread fear, anxiety, and economic losses [@frontiers_outbreaks]. Especially in Canada, where people continue to face some of the longest medical wait times for treatment in the developed world [@torontosun_wait_times], costs are likely to increase exponentially in an instant. Before Toronto overspends the cost of medical care, this paper is intending to analyze the trends of outbreaks reported in Toronto healthcare institutions. 
+Unexpected disease outbreaks significantly disrupt society by inducing widespread fear, anxiety, and economic losses [@frontiers_outbreaks]. Especially in Canada, where people continue to face some of the longest medical wait times for treatment in the developed world [@torontosun_wait_times], costs are likely to increase exponentially in an instant. Before Toronto overspends the cost of medical care, this paper is intending to analyze the trends of outbreaks reported in Toronto healthcare institutions. The analysis focuses on figuring out how the frequency trends of outbreak differ by its type and occurrence settings.
 
 
-(high-level results, focuesd on the one key result that is the main part of the story)
-(broadly discuss next steps in a sentence or two)
-
-
-The paper starts with analyzing the overall pattern of outbreak occurrence frequency over the time period of 2016 to 2024. Then, it sorts the outbreaks into two different types, respiratory and enteric, to reiterate the analysis of outbreak frequency patterns. Diving deeper into the analysis, outbreak settings would also come into consideration. Finally, discussions about how specific healthcare institutions should reallocate their resources for particular outbreak types would proceed.
+The paper starts with showing the overall pattern of outbreak occurrence frequency over the time period of 2016 to 2024. Then, it sorts the outbreaks into two different types, respiratory and enteric, to reiterate the analysis of outbreak frequency patterns. Diving deeper into the analysis, outbreak settings would also come into consideration. Finally, discussions about how specific healthcare institutions should reallocate their resources for particular outbreak types would proceed.
 
 
 
@@ -82,10 +78,13 @@ data |>
 
 ```
 
+\
+
 ```{r}
 #| label: tbl-summary_stats
 #| tbl-cap: Descriptive statistics for toronto healthcare dataset
 #| echo: false
+#| tbl.pos: 'H'
 
 datasummary_balance(
   formula = ~type_of_outbreak,
@@ -94,8 +93,11 @@ datasummary_balance(
   dinm = FALSE,
   notes = "Data Source: Toronto Public Health"
 ) |>
-  kable_styling(latex_options = c("scale_down", "H"))
+  kable_styling(latex_options = c("scale_down", "H")) 
 ```
+
+
+
 
 \newpage
 
@@ -178,14 +180,17 @@ ggplot(outbreak_counts, aes(x = "", y = n, fill = outbreak_setting)) +
                                "Hospital-Psychiatric" = "grey",
                                "Shelter" = "brown",
                                "Transitional Care" = "black")) +
-  geom_text(aes(label = paste0(round(percentage, 1), "%")),
+  geom_text(aes(label = ifelse(percentage > 2, paste0(round(percentage, 1), "%"), "")),
             position = position_stack(vjust = 0.5),
-            size = 3) +  # Add percentage labels
+            size = 3) +  # Adjust the size of the label text
   labs(x = NULL, y = NULL, fill = "Outbreak Setting", 
        title = "Outbreaks Count by Setting") +
   theme(axis.text.x = element_blank(),  
         axis.ticks = element_blank(),  
-        panel.grid = element_blank())  
+        panel.grid = element_blank(),
+        legend.text = element_text(size = 8),  # Make legend text smaller
+        legend.title = element_text(size = 10) # Optionally make the legend title smaller
+  )  
 ```
 
 

@@ -1,8 +1,8 @@
-# Disease Outbreaks in Toronto Healthcare Institutions: Analysis of Outbreak Patterns Based on Its Type and Settings
+# How Toronto Should Manage the Crisis in the Air: Analysis of Disease Outbreak Patterns Based on Its Type and Settings
 
 ## Overview
 
-This repo contains an analysis of outbreaks that occurred in Toronto healthcare institutions from 2020 to the first half of 2024. It mainly focuses on figuring out the trend of fluctuations for each causative agents of outbreaks, which includes COVID-19, Parainfluenza, and so on. By analyzing this in relation to changes in social policies or atmospheres related to the healthcare sector, we would like to further discuss how to prevent more outbreaks from occurring.
+This repo contains an analysis of disease outbreak trends in Toronto healthcare institutions from year 2016 to 2024. It mainly focuses on figuring out how the frequency trends of outbreak differ by its type and occurrence settings. By analyzing this in relation to changes in social policies or atmospheres related to the healthcare sector, we would like to further discuss how to deal with oncoming outbreaks.
 
 
 ## File Structure
@@ -20,5 +20,5 @@ The repo is structured as:
 
 ## Statement on LLM usage
 
-Aspects of the code in R scripts were written with the help of ChatGPT. The entire chat history is available in other/llm/usage.txt.
+This project utilized the assistance of ChatGPT 4.0 to enhance the efficiency and accuracy of the data analysis and visualization process. Specifically, it provided guidance in aspects of the codes in R scripts, as well as in generating insights through creation of graphical visualizations. The entire chat history is available in other/llm/usage.txt.
 
