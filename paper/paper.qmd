@@ -1,16 +1,21 @@
 ---
-title: "Outbreaks in Toronto Healthcare Institutions After COVID-19"
-subtitle: "Analysis of the Frequency Trends and the Causative Agent"
+title: "Disease Outbreaks in Toronto Healthcare Institutions"
+subtitle: "Analysis of Outbreak Patterns Based on Its Type and Settings"
 author: 
   - Yunkyung Ko
 thanks: "Code and data are available at: https://github.com/koyunkyung/toronto_outbreaks"
 date: today
 date-format: long
-abstract: "In Canada, outbreak incidence has been slowly increasing from June 2024 up to the beginning of the accumulating data period on August 10, 2024. (ADD CITATION https://health-infobase.canada.ca/covid-19/) Using the 'Outbreaks in Toronto Healthcare Institutions' dataset, we show how the trends of outbreak occurrence has been over the 5 years after COVID-19. (specify headline result). (implications)."
+abstract: "(specify the general area of the paper and encourage the reader) (specify the dataset and methods at a general level) (specify headline result). (implications)."
 format: pdf
 number-sections: true
 bibliography: references.bib
+toc: true
+toc-title: "Table of Contents"
+toc-depth: 2
+toc-location: left
 ---
+
 
 ```{r}
 #| include: false
@@ -24,27 +29,37 @@ library(dplyr)
 library(readr)
 library(lubridate)
 
+raw_data <- read_csv(here::here("data/raw_data/raw_data.csv"))
 data <- read_csv(here::here("data/analysis_data/analysis_data.csv"))
+
 ```
 
 
 # Introduction
 
-You can and should cross-reference sections and sub-sections. We use @citeR, @opendatatoronto and @rohan.
+As of September 9 2024, 1,016 infections of pertussis, a contagious respiratory disease also known as whopping cough, were reported in Ontario [@nowtoronto_whooping_cough]. In all of Toronto, the figure is more than triple the five-year, pre-pandemic average of 31 cases for the same period [@publichealth_ontario].
 
-The remainder of this paper is structured as follows. @sec-data....
+Unexpected disease outbreaks significantly disrupt society by inducing widespread fear, anxiety, and economic losses [@frontiers_outbreaks]. Especially in Canada, where people continue to face some of the longest medical wait times for treatment in the developed world [@torontosun_wait_times], costs are likely to increase exponentially in an instant. Before Toronto overspends the cost of medical care, this paper is intending to analyze the trends of outbreaks reported in Toronto healthcare institutions. 
+
+(high-level results, focuesd on the one key result that is the main part of the story)
+(broadly discuss next steps in a sentence or two)
+
+The paper starts with analyzing the overall pattern of outbreak occurrence frequency over the time period of 2016 to 2024. Then, it sorts the outbreaks into two different types, respiratory and enteric, to reiterate the analysis of outbreak frequency patterns. Diving deeper into the analysis, outbreak settings would also come into consideration. Finally, discussions about how specific healthcare institutions should reallocate their resources for particular outbreak types would proceed.
 
 
+# Data
 
-# Data {#sec-data}
+## Data Overview
 
-@fig-outbreak shows the total number of outbreaks reported in Toronto healthcare institutions over the time period of 2020 to 2024. We can see that the numbers seem to decrease by the end of 2021, but exponentially increase from the start of 2022. A trend of relatively high outbreak occurrence rate continues till 2024.
+(after clearly describing the dataset, use tables to display relevant cross-tabs and graphs to contrast groups)
+(thoroughly discuss the variables in the dataset we are using. graph the analysis data and table for summary stats)
+
+The 'Outbreaks in Toronto Healthcare Institutions' dataset [@toronto_outbreaks_dataset], obtained from City of Toronto Open Data Portal, was used for the trend analysis of outbreak occurrence. Published by Toronto Public Health under the requirement to monitor symptoms of infections, this dataset contains reports of suspected and confirmed outbreaks of gastroenteric (e.g., nausea, vomiting, diarrhea, fever) and respiratory (e.g., cough, runny nose, sore throat, fever) illness. An outbreak is defined as a localized increase in the rate of infection or illness, above that which is expected. Please note that this dataset was last updated on September 24, 2024, and contains only the information up to then.
+
+In this paper, R for statistical computing [@R] is used to handle data. In particular, packages like `tidyverse` [@tidyverse], `ggplot2` [@ggplot2], `dplyr` [@dplyr], `readr` [@readr], `lubridate` [@lubridate] were utilized to analyze data from the City of Toronto [@opendatatoronto]. Data from year 2016 to 2024 were combined, and several variables were removed in the filtering process for analysis data. 
 
 
-```{r}
-
-```
-
+## Results
 
 ```{r}
 #| label: fig-outbreak
@@ -56,7 +71,7 @@ data |>
   geom_bar() +
   theme_minimal() +
   labs(x = "Date Period", y = "Number of Outbreaks Reported",
-       title = "Total Number of Outbreaks Reported in Toronto Healthcare Institutions") +
+       title = "Total Outbreak Counts Reported in Toronto Healthcare Institutions") +
   scale_x_continuous(breaks = seq(min(data$year), max(data$year), by = 1))
 
 ```
@@ -92,16 +107,10 @@ ggplot(outbreak_counts, aes(x = "", y = n, fill = outbreak_setting)) +
 
 
 
-Contrary to the expectation that the number of outbreaks would have increased the most rapidly immediately after COVID-19, the analysis with actual data shows that the number of outbreaks is on the rise as we approach 2022. Since there are various variables that can affect the result above, we would like to consider this one by one and proceed with an accurate analysis of the outbreak occurrence situation.
-### NEED TO MODIFY
-# check for factors such as comparing the number of outbreaks as a whole vs. only in healthcare institutions
-# would the _begin, _end sorting of timeline affect the shape of the graph above?
-# search for background information of healthcare environments in Canada that could relate to the data above
 
 
-# Result 
 
-To dive deeper into the causations of this trend in outbreak reports, we show the frequency trend of top-3 causative agents respectively over the same time period (@fig-causations).
+
 ```{r}
 
 ```
@@ -213,7 +222,9 @@ Talk way more about it.
 
 # Discussion
 
-## First discussion point {#sec-first-point}
+(brief summary of what was done in the paper)
+
+## First discussion point 
 
 analyze the total outbreak frequency trend over the time period given.
 (in relation to the social/political background in healthcare)
@@ -242,15 +253,16 @@ For further inspection, taking the place information in consideration might also
 \appendix
 
 # Appendix {-}
-INFO OF RAW DATA, CONDITIONS OF DATA COLLECTION, ETC
 
 # Additional data details
-NEED TO MODIFY
+
+## Other Similar Datasets
+
+## Raw Data Variables Overview
 
 
 \newpage
 
 
 # References
-NEED TO ADD REFERENCES
 
