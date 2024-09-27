@@ -36,92 +36,62 @@ head(simulated_data)
 
 
 User
-cleaned_data <-
-  raw_data |>
-  janitor::clean_names() |>
-  select(causative_agent_1, date_outbreak_began)
-
-From the dataset above, I want to make the dates to be in a format of "YYYY-MM". After that, I would like to sort those dates into "YYYY_first_half" if the months are from 01 to 06 and "YYYY_second_half" if the months are from 07 to 12. 
+With this dataset, I want to create a line plot that shows the trend of outbreak counts, by type of outbreaks. Show the R codes for making that plot. I also want the Respiratory in red, Enteric in Blue, Other in Black.
 
 ChatGPT
 ```r
 # Load necessary libraries
-library(dplyr)
-library(lubridate)
+library(ggplot2)
+library(tidyr)
 
-# Clean and process the data
-cleaned_data <- raw_data |>
-  janitor::clean_names() |>
-  select(causative_agent_1, date_outbreak_began) |>
-  mutate(
-    # Convert the date to "YYYY-MM" format
-    date_outbreak_began = format(as.Date(date_outbreak_began), "%Y-%m"),
-    
-    # Extract year and month
-    year = substr(date_outbreak_began, 1, 4),
-    month = as.numeric(substr(date_outbreak_began, 6, 7)),
-    
-    # Classify into "YYYY_first_half" or "YYYY_second_half"
-    date_period = case_when(
-      month %in% 1:6 ~ paste0(year, "_first_half"),
-      month %in% 7:12 ~ paste0(year, "_second_half")
-    )
-  ) |>
-  select(causative_agent_1, date_outbreak_began, date_period)
+# Convert the year column to a factor with levels in chronological order
+annual_data$year <- factor(annual_data$year, levels = unique(annual_data$year))
 
-# View the first few rows of the cleaned and processed data
-head(cleaned_data)
+# Create the line plot
+ggplot(annual_data, aes(x = year, y = outbreak_count, group = type_of_outbreak, color = type_of_outbreak)) +
+  geom_line(size = 1) +
+  geom_point(size = 2) +
+  scale_color_manual(values = c("Respiratory" = "red", "Enteric" = "blue", "Other" = "black")) +
+  labs(title = "Trend of Outbreak Counts by Type (2016-2024)",
+       x = "Year", y = "Outbreak Count", color = "Type of Outbreak") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  scale_x_discrete(drop = FALSE) # Ensure all years are shown on the x-axis
 ```
 
 User
-I also want to rename 'causative_agent_1' to 'causative_agent'.
-
-ChatGPT
-```r
-# Rename the column causative_agent_1 to causative_agent
-  rename(causative_agent = causative_agent_1) |>
-```
-
-
-
-User
-I want to figure out what the top 3 causative agents are from the total dataset. What are the ways I can figure this out? Please write the relevant R codes for solving this problem.
+I want to create simulation data for the dataset above. Please generate random numbers and also plot what the simulated data looks like. Finally, we have to save the plot image in png files.
 
 ChatGPT
 ```r
 # Load necessary libraries
-library(dplyr)
-library(readr)
+library(ggplot2)
 
-# Read the data
-cleaned_data <- read_csv("data/analysis_data/analysis_data.csv")
+# Set seed for reproducibility
+set.seed(123)
 
-# Process the data to get the top 3 causative agents
-top_causative_agents <- cleaned_data |>
-  janitor::clean_names() |>
-  
-  # Group by causative agent and count occurrences
-  group_by(causative_agent) |>
-  summarise(total_cases = n()) |>
-  
-  # Arrange in descending order of total cases
-  arrange(desc(total_cases)) |>
-  
-  # Select the top 3 causative agents
-  slice_max(order_by = total_cases, n = 3)
+# Define the years and settings
+years <- 2016:2024
+settings <- c("Hospital-Acute Care", "Hospital-Chronic Care", "Hospital-Psychiatric", 
+              "LTCH", "Retirement Home", "Shelter", "Transitional Care")
 
-# View the top 3 causative agents
-top_causative_agents
+# Generate random outbreak counts for each setting and year
+data <- expand.grid(Year = years, Setting = settings)
+data$Count <- round(runif(nrow(data), min = 0, max = 300))  # Random counts between 0 and 300
+
+# Create the stacked bar chart
+ggplot(data, aes(x = Year, y = Count, fill = Setting)) +
+  geom_bar(stat = "identity") +
+  labs(title = "Annual Respiratory Outbreak Counts by Setting",
+       x = "Year",
+       y = "Outbreak Count",
+       fill = "Outbreak Setting") +
+  scale_fill_manual(values = c("#d3a9d3", "#a455a4", "#b3b3b3", "#a2d6f9", "#b6f5d3", "#963232", "#000000")) +
+  theme_minimal()
+
+# Save the plot as a PNG file
+ggsave("outbreaks_reported_by_setting.png", plot = p, width = 10, height = 8, dpi = 300)
 ```
-
-
-
-User
-I want to get rid of the 'NA' and 'Unable to identify'  datasets from the causative_agent variable
-
-ChatGPT
-  # Filter out rows where causative_agent is NA or 'Unable to identify'
-  filter(!is.na(causative_agent) & causative_agent != "Unable to identify") |>
 
 
 
