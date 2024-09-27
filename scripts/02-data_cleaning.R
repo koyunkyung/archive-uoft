@@ -17,11 +17,8 @@ cleaned_data <- raw_data |>
   janitor::clean_names() |>
   select(outbreak_setting, type_of_outbreak, date_outbreak_began) |>
   mutate(
-    # Convert the date to "YYYY-MM" format
-    date = format(as.Date(date_outbreak_began), "%Y-%m"),
-    # Extract year and month
+    # Extract year
     year = substr(date_outbreak_began, 1, 4),
-    month = as.numeric(substr(date_outbreak_began, 6, 7)),
   )
 
 #### Save data ####
