@@ -1,4 +1,4 @@
-# Outbreaks in Toronto Healthcare Institutions After Covid-19: Analysis of the Frequency Trends and the Causative Agent
+# Disease Outbreaks in Toronto Healthcare Institutions: Analysis of Outbreak Patterns Based on Its Type and Settings
 
 ## Overview
 
@@ -9,10 +9,11 @@ This repo contains an analysis of outbreaks that occurred in Toronto healthcare 
 
 The repo is structured as:
 
--   `data/raw_data` contains the raw data as obtained from X.
+-   `data/raw_data` contains the raw data as obtained from https://open.toronto.ca/dataset/outbreaks-in-toronto-healthcare-institutions/.
+-   `data/raw_data/simulated_data` contains simulation data corresponding to each analysis conducted in this paper.
+-   `data/raw_data/simulated_results` contains test results of simulation data, regarding its sanity and hypothesis verification.
 -   `data/analysis_data` contains the cleaned dataset that was constructed.
--   `model` contains fitted models. 
--   `other` contains relevant literature, details about LLM chat interactions, and sketches.
+-   `other` contains details about LLM chat interactions, and sketches.
 -   `paper` contains the files used to generate the paper, including the Quarto document and reference bibliography file, as well as the PDF of the paper. 
 -   `scripts` contains the R scripts used to simulate, download and clean data.
 
