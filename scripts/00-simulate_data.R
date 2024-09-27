@@ -37,7 +37,7 @@ poisson_values <- rpois(length(formatted_dates), lambda)
 sim_date_total <- data.frame(Date = formatted_dates, Number_of_Outbreaks = poisson_values)
 
 ### Write CSV
-write_csv(sim_date_total, file="data/raw_data/simulated_data/simulated_date_total.csv")
+write_csv(sim_date_total, file = "data/raw_data/simulated_data/simulated_date_total.csv")
 
 
 
@@ -49,12 +49,11 @@ set.seed(123)
 
 # Simulated data with random numbers
 sim_setting_total <- data.frame(
-  Setting = c("Hospital-Acute Care", "Hospital-Chronic Care", "Hospital-Psychiatric", 
-              "LTCH", "Retirement Home", "Shelter", "Transitional Care"),
+  Setting = c("Hospital-Acute Care", "Hospital-Chronic Care", "Hospital-Psychiatric", "LTCH", "Retirement Home", "Shelter", "Transitional Care"),
   Count = round(runif(7, min = 1, max = 1000)) # Generate random numbers between 1 and 1000
 )
 ### Write CSV
-write_csv(sim_setting_total, file="data/raw_data/simulated_data/simulated_setting_total.csv")
+write_csv(sim_setting_total, file = "data/raw_data/simulated_data/simulated_setting_total.csv")
 
 
 
@@ -69,8 +68,8 @@ years <- 2015:2025
 
 # Generate random outbreak counts for each type of outbreak
 respiratory <- round(runif(length(years), min = 200, max = 1000)) # Respiratory outbreaks
-enteric <- round(runif(length(years), min = 0, max = 100))        # Enteric outbreaks
-other <- round(runif(length(years), min = 0, max = 50))           # Other outbreaks
+enteric <- round(runif(length(years), min = 0, max = 100)) # Enteric outbreaks
+other <- round(runif(length(years), min = 0, max = 50)) # Other outbreaks
 
 # Combine data into a dataframe
 sim_date_type <- data.frame(
@@ -79,7 +78,7 @@ sim_date_type <- data.frame(
   Type = factor(rep(c("Respiratory", "Enteric", "Other"), each = length(years)))
 )
 ### Write CSV
-write_csv(sim_date_type, file="data/raw_data/simulated_data/simulated_date_type.csv")
+write_csv(sim_date_type, file = "data/raw_data/simulated_data/simulated_date_type.csv")
 
 
 
@@ -90,15 +89,14 @@ set.seed(123)
 
 # Define the years and settings
 years <- 2015:2025
-settings <- c("Hospital-Acute Care", "Hospital-Chronic Care", "Hospital-Psychiatric", 
-              "LTCH", "Retirement Home", "Shelter", "Transitional Care")
+settings <- c("Hospital-Acute Care", "Hospital-Chronic Care", "Hospital-Psychiatric", "LTCH", "Retirement Home", "Shelter", "Transitional Care")
 
 # Generate random outbreak counts for each setting and year
 sim_date_respiratory <- expand.grid(Year = years, Setting = settings)
-sim_date_respiratory$Count <- round(runif(nrow(sim_data_respiratory), min = 0, max = 500))  # Random counts between 0 and 500
+sim_date_respiratory$Count <- round(runif(nrow(sim_date_respiratory), min = 0, max = 500)) # Random counts between 0 and 500
 
 ### Write CSV
-write_csv(sim_date_respiratory, file="data/raw_data/simulated_data/simulated_date_repository.csv")
+write_csv(sim_date_respiratory, file = "data/raw_data/simulated_data/simulated_date_repository.csv")
 
 
 
@@ -110,13 +108,17 @@ set.seed(123)
 
 # Define the years and settings
 years <- 2015:2025
-settings <- c("Hospital-Acute Care", "Hospital-Chronic Care", "Hospital-Psychiatric", 
-              "LTCH", "Retirement Home", "Shelter", "Transitional Care")
+settings <- c("Hospital-Acute Care", "Hospital-Chronic Care", "Hospital-Psychiatric", "LTCH", "Retirement Home", "Shelter", "Transitional Care")
 
 # Generate random outbreak counts for each setting and year
 sim_date_enteric <- expand.grid(Year = years, Setting = settings)
-sim_date_enteric$Count <- round(runif(nrow(sim_date_enteric), min = 0, max = 100))  # Random counts between 0 and 100
+sim_date_enteric$Count <- round(runif(nrow(sim_date_enteric), min = 0, max = 100)) # Random counts between 0 and 100
 
 ### Write CSV
-write_csv(sim_date_enteric, file="data/raw_data/simulated_data/simulated_date_enteric.csv")
+write_csv(sim_date_enteric, file = "data/raw_data/simulated_data/simulated_date_enteric.csv")
 
+# Code linting and styling
+library(lintr)
+library(styler)
+style_file(path = "scripts/00-simulate_data.R")
+lint(filename = "scripts/00-simulate_data.R")
