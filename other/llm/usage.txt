@@ -93,5 +93,64 @@ ggplot(data, aes(x = Year, y = Count, fill = Setting)) +
 ggsave("outbreaks_reported_by_setting.png", plot = p, width = 10, height = 8, dpi = 300)
 ```
 
+LLM: ChatGPT-4.
+Date: 26 September 2024
 
+User
+I want to express exact number of percentages on the pie chart. Provide me with R codes for that.
 
+ChatGPT
+```r
+library(dplyr)
+library(ggplot2)
+
+# Calculate counts and percentages
+outbreak_counts <- data %>%
+  count(outbreak_setting) %>%
+  mutate(percentage = n / sum(n) * 100)
+
+# Create pie chart with percentages
+ggplot(outbreak_counts, aes(x = "", y = n, fill = outbreak_setting)) +
+  geom_bar(stat = "identity", width = 1) +
+  coord_polar("y", start = 0) +
+  theme_minimal() +
+  scale_fill_manual(values = c("LTCH" = "#B4E1FF",
+                               "Retirement Home" = "#B3FFC6",
+                               "Hospital-Chronic Care" = "#BA55D3",
+                               "Hospital-Acute Care" = "#DDA0DD",
+                               "Hospital-Psychiatric" = "grey",
+                               "Shelter" = "brown",
+                               "Transitional Care" = "black")) +
+  geom_text(aes(label = paste0(round(percentage, 1), "%")),
+            position = position_stack(vjust = 0.5)) +  # Add percentage labels
+  labs(x = NULL, y = NULL, fill = "Outbreak Setting",
+       title = "Outbreaks Count by Setting") +
+  theme(axis.text.x = element_blank(),
+        axis.ticks = element_blank(),
+        panel.grid = element_blank())
+```
+
+User
+I want a table that can show all the summary statistics of each variable in this raw dataset.
+write the R codes for doing that so that I can put it on my qmd file
+
+ChatGPT
+```r
+# Load necessary libraries
+library(tidyverse)
+
+# Read the dataset
+data <- read_csv("path/to/your/raw_data.csv")
+
+# Generate summary statistics for all variables
+summary_stats <- data %>%
+  summarise(across(everything(), 
+                   list(count = ~sum(!is.na(.)),
+                        unique = ~n_distinct(.),
+                        top = ~names(sort(table(.), decreasing = TRUE)[1]),
+                        freq = ~max(table(.), na.rm = TRUE)),
+                   .names = "{.col}_{.fn}"))
+
+# Print the summary statistics table
+summary_stats
+```
