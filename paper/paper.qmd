@@ -4,7 +4,7 @@ subtitle: "Coldplay reamins more danceable over the years"
 author: 
   - Chenika Bukes
   - Khushaal Nandwani
-  - Yongkyung Ko
+  - Yunkyung Ko
 thanks: "Code and data are available at: https://github.com/chenikabukes/RadioheadColdplay"
 date: today
 date-format: long
