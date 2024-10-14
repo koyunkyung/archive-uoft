@@ -1,5 +1,5 @@
 #### Preamble ####
-# Purpose: Cleans the raw elections data
+# Purpose: Cleans the raw elections data and selects relevant variables for the analysis
 # Author: Yunkyung Ko
 # Date: 12 October 2024
 # Contact: yunkyung.ko@mail.utoronto.ca
@@ -11,34 +11,13 @@
 library(tidyverse)
 
 #### Clean data ####
-raw_data <- read_csv("data/01-raw_data/raw_elections_data.csv")
+raw_elections_data <- read_csv("data/01-raw_data/raw_elections_data.csv")
 
 cleaned_data <-
-  raw_data |>
+  raw_elections_data |>
   janitor::clean_names() |>
-  select(wing_width_mm, wing_length_mm, flying_time_sec_first_timer) |>
-  filter(wing_width_mm != "caw") |>
-  mutate(
-    flying_time_sec_first_timer = if_else(flying_time_sec_first_timer == "1,35",
-                                   "1.35",
-                                   flying_time_sec_first_timer)
-  ) |>
-  mutate(wing_width_mm = if_else(wing_width_mm == "490",
-                                 "49",
-                                 wing_width_mm)) |>
-  mutate(wing_width_mm = if_else(wing_width_mm == "6",
-                                 "60",
-                                 wing_width_mm)) |>
-  mutate(
-    wing_width_mm = as.numeric(wing_width_mm),
-    wing_length_mm = as.numeric(wing_length_mm),
-    flying_time_sec_first_timer = as.numeric(flying_time_sec_first_timer)
-  ) |>
-  rename(flying_time = flying_time_sec_first_timer,
-         width = wing_width_mm,
-         length = wing_length_mm
-         ) |> 
+  select(pollster_id, pollster, methodology, transparency_score, state, race_id, sample_size, party, answer) |>
   tidyr::drop_na()
 
 #### Save data ####
-write_csv(cleaned_data, "outputs/data/analysis_data.csv")
+write_csv(cleaned_data, "data/02-analysis_data/elections_data.csv")
