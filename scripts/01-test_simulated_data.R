@@ -1,7 +1,7 @@
 #### Preamble ####
-# Purpose: Tests the structure and validity of the simulated US presidential election polls data
+# Purpose: Tests the structure and validity of the simulated US presidential election polls data. In addition, plot the data to check the overall expected outcomes.
 # Author: Yunkyung Ko
-# Date: 12 October 2024
+# Date: 19 October 2024
 # Contact: yunkyung.ko@mail.utoronto.ca
 # License: MIT
 # Pre-requisites: 
@@ -12,77 +12,99 @@
 
 #### Workspace setup ####
 library(tidyverse)
-
-analysis_data <- read_csv("data/00-simulated_data/simulated_data.csv")
+library(ggplot2)
+sim_harris_data <- read_csv("data/00-simulated_data/simulated_data.csv")
 
 # Test if the data was successfully loaded
-if (exists("analysis_data")) {
+if (exists("sim_harris_data")) {
   message("Test Passed: The dataset was successfully loaded.")
 } else {
   stop("Test Failed: The dataset could not be loaded.")
 }
 
 
-#### Test data ####
-
-# Check if the dataset has 151 rows
-if (nrow(analysis_data) == 151) {
-  message("Test Passed: The dataset has 151 rows.")
+#### Test the structure and validity of simulated dataset ####
+# Check if the dataset has 540 rows
+if (nrow(sim_harris_data) == 540) {
+  message("Test Passed: The dataset has 540 rows.")
 } else {
-  stop("Test Failed: The dataset does not have 151 rows.")
+  stop("Test Failed: The dataset does not have 540 rows.")
 }
 
-# Check if the dataset has 3 columns
-if (ncol(analysis_data) == 3) {
-  message("Test Passed: The dataset has 3 columns.")
+# Check if the dataset has 8 columns
+if (ncol(sim_harris_data) == 8) {
+  message("Test Passed: The dataset has 8 columns.")
 } else {
-  stop("Test Failed: The dataset does not have 3 columns.")
+  stop("Test Failed: The dataset does not have 8 columns.")
 }
 
-# Check if all values in the 'division' column are unique
-if (n_distinct(analysis_data$division) == nrow(analysis_data)) {
-  message("Test Passed: All values in 'division' are unique.")
+# Check if the 'national' column contains valid binary values
+valid_NA <- c(0,1)
+if (all(sim_harris_data$national %in% valid_NA)) {
+  message("Test Passed: The 'national' column contains only valid binary values.")
 } else {
-  stop("Test Failed: The 'division' column contains duplicate values.")
+  stop("Test Failed: The 'national' column contains invalid values.")
 }
 
-# Check if the 'state' column contains only valid Australian state names
-valid_states <- c("New South Wales", "Victoria", "Queensland", "South Australia", 
-                  "Western Australia", "Tasmania", "Northern Territory", 
-                  "Australian Capital Territory")
-
-if (all(analysis_data$state %in% valid_states)) {
-  message("Test Passed: The 'state' column contains only valid Australian state names.")
+# Check if the 'pollster' column contains valid pollster names
+valid_pollsters <- c("YouGov", "RMG Research", "CBS News", "Napolitan News", "Ipsos", "SurveyMonkey", "Other")
+if (all(sim_harris_data$pollster %in% valid_pollsters)) {
+  message("Test Passed: The 'pollster' column contains only valid pollster names.")
 } else {
-  stop("Test Failed: The 'state' column contains invalid state names.")
-}
-
-# Check if the 'party' column contains only valid party names
-valid_parties <- c("Labor", "Liberal", "Greens", "National", "Other")
-
-if (all(analysis_data$party %in% valid_parties)) {
-  message("Test Passed: The 'party' column contains only valid party names.")
-} else {
-  stop("Test Failed: The 'party' column contains invalid party names.")
+  stop("Test Failed: The 'pollster' column contains invalid pollster names.")
 }
 
 # Check if there are any missing values in the dataset
-if (all(!is.na(analysis_data))) {
+if (all(!is.na(sim_harris_data))) {
   message("Test Passed: The dataset contains no missing values.")
 } else {
   stop("Test Failed: The dataset contains missing values.")
 }
 
-# Check if there are no empty strings in 'division', 'state', and 'party' columns
-if (all(analysis_data$division != "" & analysis_data$state != "" & analysis_data$party != "")) {
-  message("Test Passed: There are no empty strings in 'division', 'state', or 'party'.")
+# Check if there are no empty strings in 'pollster' and 'candidate_name' columns
+if (all(sim_harris_data$pollster != "" & sim_harris_data$candidate_name != "" )) {
+  message("Test Passed: There are no empty strings in 'pollster' or 'candidate_name'.")
 } else {
   stop("Test Failed: There are empty strings in one or more columns.")
 }
 
-# Check if the 'party' column has at least two unique values
-if (n_distinct(analysis_data$party) >= 2) {
-  message("Test Passed: The 'party' column contains at least two unique values.")
-} else {
-  stop("Test Failed: The 'party' column contains less than two unique values.")
-}
+
+#### Plot the simulated data ####
+# Generate a plot for Harris over time
+sim_harris_time <- ggplot(sim_harris_data, aes(x = date, y = pct)) +
+  geom_point() +
+  geom_smooth() +
+  theme_classic() +
+  labs(y = "Harris Percent", x = "Date", title = "The Percentage of Vote/Support that Harris Received in the Poll.")
+ggsave("data/00-simulated_data/test_plots/sim_harris_time.png", sim_harris_time, width = 8, height = 6, dpi = 300)
+
+# Plot by pollster
+sim_harris_pollster_a <- # Plot by pollster
+  ggplot(sim_harris_data, aes(x = date, y = pct, color = pollster)) +
+  geom_point() +
+  geom_smooth() +
+  theme_classic() +
+  labs(y = "Harris Percent", x = "Date", title = "The Vote that Harris Received in the Poll, by Pollster.") +
+  scale_color_manual(values = c("YouGov" = "blue", "RMG Research" = "red", "CBS News" = "green",
+                                "Napolitan News" = "purple", "Ipsos" = "brown", "SurveyMonkey" = "yellow", "Other" = "grey")) +
+  theme(legend.position = "bottom")
+ggsave("data/00-simulated_data/test_plots/sim_harris_pollster.png", sim_harris_pollster_a, width = 8, height = 6, dpi = 300)
+# Faceted plot by pollster
+sim_harris_pollster_b <- ggplot(sim_harris_data, aes(x = date, y = pct)) +
+  geom_point() +
+  geom_smooth() +
+  facet_wrap(~pollster) +
+  theme_classic() +
+  labs(y = "Harris Percent", x = "Date", title = "The Vote that Harris Received in the Poll, by Pollster.")
+ggsave("data/00-simulated_data/test_plots/sim_harris_pollster_facets.png", sim_harris_pollster_b, width = 8, height = 6, dpi = 300)
+
+# Plot by pollscore
+sim_harris_pollscore <- ggplot(sim_harris_data, aes(x = date, y = pct, color = pollscore)) +
+  geom_point() +
+  geom_smooth() +
+  theme_classic() +
+  labs(y = "Harris Percent", x = "Date", title = "The Vote that Harris Received in the Poll, by Pollscore") +
+  scale_color_viridis_c() +
+  theme(legend.position = "bottom")
+ggsave("data/00-simulated_data/test_plots/sim_harris_pollscore.png", sim_harris_pollscore, width = 8, height = 6, dpi = 300)
+
