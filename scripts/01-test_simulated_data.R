@@ -4,9 +4,9 @@
 # Date: 19 October 2024
 # Contact: yunkyung.ko@mail.utoronto.ca
 # License: MIT
-# Pre-requisites: 
-  # - The `tidyverse` package must be installed and loaded
-  # - 00-simulate_data.R must have been run
+# Pre-requisites:
+# - The `tidyverse` package must be installed and loaded
+# - 00-simulate_data.R must have been run
 # Any other information needed? Make sure you are in the `us_election` rproj
 
 
@@ -39,7 +39,7 @@ if (ncol(sim_harris_data) == 8) {
 }
 
 # Check if the 'national' column contains valid binary values
-valid_NA <- c(0,1)
+valid_NA <- c(0, 1)
 if (all(sim_harris_data$national %in% valid_NA)) {
   message("Test Passed: The 'national' column contains only valid binary values.")
 } else {
@@ -62,7 +62,7 @@ if (all(!is.na(sim_harris_data))) {
 }
 
 # Check if there are no empty strings in 'pollster' and 'candidate_name' columns
-if (all(sim_harris_data$pollster != "" & sim_harris_data$candidate_name != "" )) {
+if (all(sim_harris_data$pollster != "" & sim_harris_data$candidate_name != "")) {
   message("Test Passed: There are no empty strings in 'pollster' or 'candidate_name'.")
 } else {
   stop("Test Failed: There are empty strings in one or more columns.")
@@ -85,8 +85,10 @@ sim_harris_pollster_a <- # Plot by pollster
   geom_smooth() +
   theme_classic() +
   labs(y = "Harris Percent", x = "Date", title = "The Vote that Harris Received in the Poll, by Pollster.") +
-  scale_color_manual(values = c("YouGov" = "blue", "RMG Research" = "red", "CBS News" = "green",
-                                "Napolitan News" = "purple", "Ipsos" = "brown", "SurveyMonkey" = "yellow", "Other" = "grey")) +
+  scale_color_manual(values = c(
+    "YouGov" = "blue", "RMG Research" = "red", "CBS News" = "green",
+    "Napolitan News" = "purple", "Ipsos" = "brown", "SurveyMonkey" = "yellow", "Other" = "grey"
+  )) +
   theme(legend.position = "bottom")
 ggsave("data/00-simulated_data/test_plots/sim_harris_pollster.png", sim_harris_pollster_a, width = 8, height = 6, dpi = 300)
 # Faceted plot by pollster
@@ -107,4 +109,3 @@ sim_harris_pollscore <- ggplot(sim_harris_data, aes(x = date, y = pct, color = p
   scale_color_viridis_c() +
   theme(legend.position = "bottom")
 ggsave("data/00-simulated_data/test_plots/sim_harris_pollscore.png", sim_harris_pollscore, width = 8, height = 6, dpi = 300)
-

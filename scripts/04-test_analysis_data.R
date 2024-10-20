@@ -45,9 +45,11 @@ test_that("no missing values in dataset", {
 })
 
 # Test that 'state' contains only valid US state or territory names
-valid_states <- c("Arizona", "California", "Florida", "Georgia", "Iowa", "Maryland", "Massachusetts",
-                  "Michigan", "Minesota", "Montana", "Nevada", "New Hampshire", "New Mexico", "New York",
-                  "North Carolina", "Ohio", "Pennsylvania", "Tennessee", "Texas", "Virginia", "Wisconsin", "Other")
+valid_states <- c(
+  "Arizona", "California", "Florida", "Georgia", "Iowa", "Maryland", "Massachusetts",
+  "Michigan", "Minesota", "Montana", "Nevada", "New Hampshire", "New Mexico", "New York",
+  "North Carolina", "Ohio", "Pennsylvania", "Tennessee", "Texas", "Virginia", "Wisconsin", "Other"
+)
 test_that("'state' contains valid US state names", {
   harris_data <- read_csv("../data/02-analysis_data/harris_elections_data.csv")
   expect_true(all(harris_data$state %in% valid_states))

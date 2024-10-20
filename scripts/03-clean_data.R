@@ -23,20 +23,20 @@ elections_data <-
   ) |>
   group_by(state) |>
   mutate(
-    state_count = n()  # Count the number of polls per state
+    state_count = n() # Count the number of polls per state
   ) |>
   ungroup() |>
   mutate(
-    state = if_else(state_count < 60, "Other", state)  # Assign "Other" for states with fewer than 60 polls
+    state = if_else(state_count < 60, "Other", state) # Assign "Other" for states with fewer than 60 polls
   ) |>
-  select(-state_count)  # Remove the 'state_count' column
+  select(-state_count) # Remove the 'state_count' column
 
 # Filter data to Harris estimates based on high-quality polls after she declared
-harris_data <- 
+harris_data <-
   elections_data |>
   filter(
     candidate_name == "Kamala Harris",
-    numeric_grade >= 2.7 # Need to investigate this choice - come back and fix. 
+    numeric_grade >= 2.7 # Need to investigate this choice - come back and fix.
   ) |>
   mutate(
     state = if_else(is.na(state), "National", state),
@@ -49,11 +49,9 @@ harris_data <-
   group_by(pollster) |>
   filter(n() > 35) |> # Filter for pollsters with more than 35 polls
   ungroup() |>
-  select(-pct)  # Remove the 'state_count' and 'pct' columns
+  select(-pct) # Remove the 'state_count' and 'pct' columns
 
 
 #### Save data ####
 write_csv(elections_data, "data/02-analysis_data/elections_data.csv")
 write_csv(harris_data, "data/02-analysis_data/harris_elections_data.csv")
-
-

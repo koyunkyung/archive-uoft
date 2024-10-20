@@ -11,9 +11,7 @@
 library(tidyverse)
 
 #### Download data ####
-raw_elections_data <-read_csv(file ="https://projects.fivethirtyeight.com/polls/data/president_polls.csv")
+raw_elections_data <- read_csv(file = "https://projects.fivethirtyeight.com/polls/data/president_polls.csv")
 
 #### Save data ####
 write_csv(raw_elections_data, "data/01-raw_data/raw_elections_data.csv")
-
-         
