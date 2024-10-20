@@ -1,11 +1,11 @@
 #### Preamble ####
-# Purpose: Models... [...UPDATE THIS...]
+# Purpose: Regression Models for predicting the percentage of supportive polls
 # Author: Yunkyung Ko
 # Date: 20 October 2024
 # Contact: yunkyung.ko@mail.utoronto.ca
 # License: MIT
-# Pre-requisites: [...UPDATE THIS...]
-# Any other information needed? [...UPDATE THIS...]
+# Pre-requisites: Need to have downloaded the data.
+# Any other information needed? None
 
 
 #### Workspace setup ####
