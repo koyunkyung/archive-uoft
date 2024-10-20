@@ -14,10 +14,10 @@ library(testthat)
 
 
 #### Test data ####
-# Test that the dataset has 8 columns
-test_that("dataset has 8 columns", {
+# Test that the dataset has 9 columns
+test_that("dataset has 9 columns", {
   harris_data <- read_csv("../data/02-analysis_data/harris_elections_data.csv")
-  expect_equal(ncol(harris_data), 8)
+  expect_equal(ncol(harris_data), 9)
 })
 
 # Test that the 'pollster' column is character type

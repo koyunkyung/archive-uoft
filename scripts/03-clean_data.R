@@ -48,8 +48,7 @@ harris_data <-
   ) |>
   group_by(pollster) |>
   filter(n() > 35) |> # Filter for pollsters with more than 35 polls
-  ungroup() |>
-  select(-pct) # Remove the 'state_count' and 'pct' columns
+  ungroup()
 
 
 #### Save data ####
