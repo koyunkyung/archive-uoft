@@ -38,6 +38,41 @@ model_date_pollster <- stan_glm(
   seed = 853
 )
 
+# Bayesian Model 1: random intercept for pollster
+# Change 'pollster' and 'state' to factor variables
+harris_data <- harris_data |>
+  mutate(
+    pollster = factor(pollster),
+    state = factor(state)
+  )
+# Specify priors
+priors <- normal(0, 2.5, autoscale = TRUE)
+
+model_formula_1 <- cbind(num_harris, sample_size - num_harris) ~ (1 | pollster)
+bayesian_model_1 <- stan_glmer(
+  formula = model_formula_1,
+  data = harris_data,
+  family = binomial(link = "logit"),
+  prior = priors,
+  prior_intercept = priors,
+  seed = 123,
+  cores = 4,
+  adapt_delta = 0.95
+)
+
+# Bayesian Model 2: random intercepts for pollster and state
+model_formula_2 <- cbind(num_harris, sample_size - num_harris) ~ (1 | pollster) + (1 | state)
+
+bayesian_model_2 <- stan_glmer(
+  formula = model_formula_2,
+  data = harris_data,
+  family = binomial(link = "logit"),
+  prior = priors,
+  prior_intercept = priors,
+  seed = 123,
+  cores = 4,
+  adapt_delta = 0.95
+)
 
 #### Save model ####
 saveRDS(
@@ -50,3 +85,12 @@ saveRDS(
   file = "models/model_date_pollster.rds"
 )
 
+saveRDS(
+  bayesian_model_1,
+  file = "models/bayesian_model_1.rds"
+)
+
+saveRDS(
+  bayesian_model_2,
+  file = "models/bayesian_model_2.rds"
+)
