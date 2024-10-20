@@ -1,134 +1,134 @@
-pollster,numeric_grade,pollscore,state,end_date,candidate_name,sample_size,num_harris
-Emerson,2.9,-1.1,California,2024-10-14,Kamala Harris,1000,610
-Siena/NYT,3,-1.5,Pennsylvania,2024-10-10,Kamala Harris,857,428
-Siena/NYT,3,-1.5,Pennsylvania,2024-10-10,Kamala Harris,857,420
-Siena/NYT,3,-1.5,Pennsylvania,2024-10-10,Kamala Harris,857,428
-Siena/NYT,3,-1.5,Pennsylvania,2024-10-10,Kamala Harris,857,420
-Siena/NYT,3,-1.5,Arizona,2024-10-10,Kamala Harris,808,372
-Siena/NYT,3,-1.5,Arizona,2024-10-10,Kamala Harris,808,364
-Siena/NYT,3,-1.5,Arizona,2024-10-10,Kamala Harris,808,364
-Siena/NYT,3,-1.5,Arizona,2024-10-10,Kamala Harris,808,356
-Emerson,2.9,-1.1,Arizona,2024-10-08,Kamala Harris,1000,482
-Emerson,2.9,-1.1,Georgia,2024-10-08,Kamala Harris,1000,498
-Emerson,2.9,-1.1,Michigan,2024-10-08,Kamala Harris,950,472
-Emerson,2.9,-1.1,Nevada,2024-10-08,Kamala Harris,900,443
-Emerson,2.9,-1.1,North Carolina,2024-10-08,Kamala Harris,1000,490
-Emerson,2.9,-1.1,Pennsylvania,2024-10-08,Kamala Harris,1000,490
-Emerson,2.9,-1.1,Wisconsin,2024-10-08,Kamala Harris,1000,492
-Siena/NYT,3,-1.5,Montana,2024-10-08,Kamala Harris,656,256
-Siena/NYT,3,-1.5,Montana,2024-10-08,Kamala Harris,656,249
-Siena/NYT,3,-1.5,Montana,2024-10-08,Kamala Harris,656,262
-Siena/NYT,3,-1.5,Montana,2024-10-08,Kamala Harris,656,256
-Siena/NYT,3,-1.5,Florida,2024-10-06,Kamala Harris,622,255
-Siena/NYT,3,-1.5,Florida,2024-10-06,Kamala Harris,622,249
-Siena/NYT,3,-1.5,Florida,2024-10-06,Kamala Harris,622,255
-Siena/NYT,3,-1.5,Florida,2024-10-06,Kamala Harris,622,249
-Siena/NYT,3,-1.5,Texas,2024-10-04,Kamala Harris,617,271
-Siena/NYT,3,-1.5,Texas,2024-10-04,Kamala Harris,617,259
-Siena/NYT,3,-1.5,Texas,2024-10-04,Kamala Harris,617,271
-Siena/NYT,3,-1.5,Texas,2024-10-04,Kamala Harris,617,253
-Emerson,2.9,-1.1,Arizona,2024-09-28,Kamala Harris,920,438
-Emerson,2.9,-1.1,North Carolina,2024-09-28,Kamala Harris,850,417
-Emerson,2.9,-1.1,Pennsylvania,2024-09-28,Kamala Harris,1000,493
-Siena/NYT,3,-1.5,Other,2024-09-26,Kamala Harris,680,347
-Siena/NYT,3,-1.5,Other,2024-09-26,Kamala Harris,680,333
-Siena/NYT,3,-1.5,Other,2024-09-26,Kamala Harris,680,354
-Siena/NYT,3,-1.5,Other,2024-09-26,Kamala Harris,680,347
-Siena/NYT,3,-1.5,Michigan,2024-09-26,Kamala Harris,688,310
-Siena/NYT,3,-1.5,Michigan,2024-09-26,Kamala Harris,688,296
-Siena/NYT,3,-1.5,Michigan,2024-09-26,Kamala Harris,688,330
-Siena/NYT,3,-1.5,Michigan,2024-09-26,Kamala Harris,688,316
-Siena/NYT,3,-1.5,Ohio,2024-09-26,Kamala Harris,687,309
-Siena/NYT,3,-1.5,Ohio,2024-09-26,Kamala Harris,687,302
-Siena/NYT,3,-1.5,Ohio,2024-09-26,Kamala Harris,687,302
-Siena/NYT,3,-1.5,Ohio,2024-09-26,Kamala Harris,687,295
-Siena/NYT,3,-1.5,Wisconsin,2024-09-26,Kamala Harris,680,333
-Siena/NYT,3,-1.5,Wisconsin,2024-09-26,Kamala Harris,680,326
-Siena/NYT,3,-1.5,Wisconsin,2024-09-26,Kamala Harris,680,333
-Siena/NYT,3,-1.5,Wisconsin,2024-09-26,Kamala Harris,680,326
-Emerson,2.9,-1.1,New York,2024-09-25,Kamala Harris,1000,555
-Emerson,2.9,-1.1,Texas,2024-09-24,Kamala Harris,950,444
-Emerson,2.9,-1.1,Virginia,2024-09-24,Kamala Harris,860,453
-Siena/NYT,3,-1.5,Arizona,2024-09-21,Kamala Harris,713,321
-Siena/NYT,3,-1.5,Arizona,2024-09-21,Kamala Harris,713,321
-Siena/NYT,3,-1.5,Arizona,2024-09-21,Kamala Harris,713,299
-Siena/NYT,3,-1.5,Arizona,2024-09-21,Kamala Harris,713,307
-Siena/NYT,3,-1.5,Georgia,2024-09-21,Kamala Harris,682,300
-Siena/NYT,3,-1.5,Georgia,2024-09-21,Kamala Harris,682,307
-Siena/NYT,3,-1.5,Georgia,2024-09-21,Kamala Harris,682,293
-Siena/NYT,3,-1.5,Georgia,2024-09-21,Kamala Harris,682,300
-Siena/NYT,3,-1.5,North Carolina,2024-09-21,Kamala Harris,682,321
-Siena/NYT,3,-1.5,North Carolina,2024-09-21,Kamala Harris,682,321
-Siena/NYT,3,-1.5,North Carolina,2024-09-21,Kamala Harris,682,314
-Siena/NYT,3,-1.5,North Carolina,2024-09-21,Kamala Harris,682,307
-Emerson,2.9,-1.1,Arizona,2024-09-18,Kamala Harris,868,423
-Emerson,2.9,-1.1,Georgia,2024-09-18,Kamala Harris,975,470
-Emerson,2.9,-1.1,Michigan,2024-09-18,Kamala Harris,875,438
-Emerson,2.9,-1.1,Nevada,2024-09-18,Kamala Harris,895,437
-Emerson,2.9,-1.1,Pennsylvania,2024-09-18,Kamala Harris,880,436
-Emerson,2.9,-1.1,North Carolina,2024-09-18,Kamala Harris,1000,497
-Emerson,2.9,-1.1,Wisconsin,2024-09-18,Kamala Harris,1000,487
-Siena/NYT,3,-1.5,Pennsylvania,2024-09-16,Kamala Harris,1082,541
-Siena/NYT,3,-1.5,Pennsylvania,2024-09-16,Kamala Harris,1082,541
-Siena/NYT,3,-1.5,Pennsylvania,2024-09-16,Kamala Harris,1082,519
-Siena/NYT,3,-1.5,Pennsylvania,2024-09-16,Kamala Harris,1082,530
-Emerson,2.9,-1.1,Maryland,2024-09-13,Kamala Harris,890,581
-Emerson,2.9,-1.1,Other,2024-09-13,Kamala Harris,850,369
-Emerson,2.9,-1.1,Other,2024-09-13,Kamala Harris,1000,407
-Emerson,2.9,-1.1,California,2024-09-05,Kamala Harris,815,496
-Emerson,2.9,-1.1,Florida,2024-09-05,Kamala Harris,815,388
-Emerson,2.9,-1.1,Texas,2024-09-05,Kamala Harris,845,406
-Emerson,2.9,-1.1,Ohio,2024-09-05,Kamala Harris,945,422
-Emerson,2.9,-1.1,Arizona,2024-08-28,Kamala Harris,720,342
-Emerson,2.9,-1.1,Michigan,2024-08-28,Kamala Harris,800,410
-Emerson,2.9,-1.1,Nevada,2024-08-28,Kamala Harris,1168,577
-Emerson,2.9,-1.1,Pennsylvania,2024-08-28,Kamala Harris,950,469
-Emerson,2.9,-1.1,Wisconsin,2024-08-28,Kamala Harris,850,417
-Emerson,2.9,-1.1,North Carolina,2024-08-28,Kamala Harris,775,380
-Emerson,2.9,-1.1,Georgia,2024-08-28,Kamala Harris,800,401
-Emerson,2.9,-1.1,New Mexico,2024-08-22,Kamala Harris,965,517
-Emerson,2.9,-1.1,New Mexico,2024-08-22,Kamala Harris,965,492
-Siena/NYT,3,-1.5,Nevada,2024-08-15,Kamala Harris,677,311
-Siena/NYT,3,-1.5,Nevada,2024-08-15,Kamala Harris,677,318
-Siena/NYT,3,-1.5,Nevada,2024-08-15,Kamala Harris,677,284
-Siena/NYT,3,-1.5,Nevada,2024-08-15,Kamala Harris,677,298
-Siena/NYT,3,-1.5,Arizona,2024-08-15,Kamala Harris,677,332
-Siena/NYT,3,-1.5,Arizona,2024-08-15,Kamala Harris,677,338
-Siena/NYT,3,-1.5,Arizona,2024-08-15,Kamala Harris,677,305
-Siena/NYT,3,-1.5,Arizona,2024-08-15,Kamala Harris,677,318
-Emerson,2.9,-1.1,Pennsylvania,2024-08-14,Kamala Harris,1000,493
-Emerson,2.9,-1.1,Pennsylvania,2024-08-14,Kamala Harris,1000,468
-Siena/NYT,3,-1.5,North Carolina,2024-08-14,Kamala Harris,655,321
-Siena/NYT,3,-1.5,North Carolina,2024-08-14,Kamala Harris,655,321
-Siena/NYT,3,-1.5,North Carolina,2024-08-14,Kamala Harris,655,295
-Siena/NYT,3,-1.5,North Carolina,2024-08-14,Kamala Harris,655,301
-Siena/NYT,3,-1.5,Georgia,2024-08-14,Kamala Harris,661,291
-Siena/NYT,3,-1.5,Georgia,2024-08-14,Kamala Harris,661,304
-Siena/NYT,3,-1.5,Georgia,2024-08-14,Kamala Harris,661,271
-Siena/NYT,3,-1.5,Georgia,2024-08-14,Kamala Harris,661,291
-Siena/NYT,3,-1.5,Pennsylvania,2024-08-09,Kamala Harris,693,340
-Siena/NYT,3,-1.5,Pennsylvania,2024-08-09,Kamala Harris,693,346
-Siena/NYT,3,-1.5,Pennsylvania,2024-08-09,Kamala Harris,693,312
-Siena/NYT,3,-1.5,Pennsylvania,2024-08-09,Kamala Harris,693,319
-Siena/NYT,3,-1.5,Michigan,2024-08-08,Kamala Harris,619,279
-Siena/NYT,3,-1.5,Michigan,2024-08-08,Kamala Harris,619,310
-Siena/NYT,3,-1.5,Michigan,2024-08-08,Kamala Harris,619,272
-Siena/NYT,3,-1.5,Michigan,2024-08-08,Kamala Harris,619,297
-Siena/NYT,3,-1.5,Wisconsin,2024-08-08,Kamala Harris,661,330
-Siena/NYT,3,-1.5,Wisconsin,2024-08-08,Kamala Harris,661,330
-Siena/NYT,3,-1.5,Wisconsin,2024-08-08,Kamala Harris,661,324
-Siena/NYT,3,-1.5,Wisconsin,2024-08-08,Kamala Harris,661,324
-Emerson,2.9,-1.1,Montana,2024-08-06,Kamala Harris,1000,425
-Emerson,2.9,-1.1,Montana,2024-08-06,Kamala Harris,1000,390
-Emerson,2.9,-1.1,New Hampshire,2024-07-28,Kamala Harris,1000,524
-Emerson,2.9,-1.1,New Hampshire,2024-07-28,Kamala Harris,1000,477
-Emerson,2.9,-1.1,Arizona,2024-07-23,Kamala Harris,800,379
-Emerson,2.9,-1.1,Arizona,2024-07-23,Kamala Harris,800,318
-Emerson,2.9,-1.1,Georgia,2024-07-23,Kamala Harris,800,391
-Emerson,2.9,-1.1,Georgia,2024-07-23,Kamala Harris,800,346
-Emerson,2.9,-1.1,Michigan,2024-07-23,Kamala Harris,800,393
-Emerson,2.9,-1.1,Michigan,2024-07-23,Kamala Harris,800,350
-Emerson,2.9,-1.1,Wisconsin,2024-07-23,Kamala Harris,845,428
-Emerson,2.9,-1.1,Wisconsin,2024-07-23,Kamala Harris,845,384
-Emerson,2.9,-1.1,Pennsylvania,2024-07-23,Kamala Harris,850,416
-Emerson,2.9,-1.1,Pennsylvania,2024-07-23,Kamala Harris,850,377
+pollster,numeric_grade,pollscore,state,end_date,candidate_name,sample_size,pct,num_harris
+Emerson,2.9,-1.1,California,2024-10-14,Kamala Harris,1000,61,610
+Siena/NYT,3,-1.5,Pennsylvania,2024-10-10,Kamala Harris,857,50,428
+Siena/NYT,3,-1.5,Pennsylvania,2024-10-10,Kamala Harris,857,49,420
+Siena/NYT,3,-1.5,Pennsylvania,2024-10-10,Kamala Harris,857,50,428
+Siena/NYT,3,-1.5,Pennsylvania,2024-10-10,Kamala Harris,857,49,420
+Siena/NYT,3,-1.5,Arizona,2024-10-10,Kamala Harris,808,46,372
+Siena/NYT,3,-1.5,Arizona,2024-10-10,Kamala Harris,808,45,364
+Siena/NYT,3,-1.5,Arizona,2024-10-10,Kamala Harris,808,45,364
+Siena/NYT,3,-1.5,Arizona,2024-10-10,Kamala Harris,808,44,356
+Emerson,2.9,-1.1,Arizona,2024-10-08,Kamala Harris,1000,48.2,482
+Emerson,2.9,-1.1,Georgia,2024-10-08,Kamala Harris,1000,49.8,498
+Emerson,2.9,-1.1,Michigan,2024-10-08,Kamala Harris,950,49.7,472
+Emerson,2.9,-1.1,Nevada,2024-10-08,Kamala Harris,900,49.2,443
+Emerson,2.9,-1.1,North Carolina,2024-10-08,Kamala Harris,1000,49,490
+Emerson,2.9,-1.1,Pennsylvania,2024-10-08,Kamala Harris,1000,49,490
+Emerson,2.9,-1.1,Wisconsin,2024-10-08,Kamala Harris,1000,49.2,492
+Siena/NYT,3,-1.5,Montana,2024-10-08,Kamala Harris,656,39,256
+Siena/NYT,3,-1.5,Montana,2024-10-08,Kamala Harris,656,38,249
+Siena/NYT,3,-1.5,Montana,2024-10-08,Kamala Harris,656,40,262
+Siena/NYT,3,-1.5,Montana,2024-10-08,Kamala Harris,656,39,256
+Siena/NYT,3,-1.5,Florida,2024-10-06,Kamala Harris,622,41,255
+Siena/NYT,3,-1.5,Florida,2024-10-06,Kamala Harris,622,40,249
+Siena/NYT,3,-1.5,Florida,2024-10-06,Kamala Harris,622,41,255
+Siena/NYT,3,-1.5,Florida,2024-10-06,Kamala Harris,622,40,249
+Siena/NYT,3,-1.5,Texas,2024-10-04,Kamala Harris,617,44,271
+Siena/NYT,3,-1.5,Texas,2024-10-04,Kamala Harris,617,42,259
+Siena/NYT,3,-1.5,Texas,2024-10-04,Kamala Harris,617,44,271
+Siena/NYT,3,-1.5,Texas,2024-10-04,Kamala Harris,617,41,253
+Emerson,2.9,-1.1,Arizona,2024-09-28,Kamala Harris,920,47.6,438
+Emerson,2.9,-1.1,North Carolina,2024-09-28,Kamala Harris,850,49.1,417
+Emerson,2.9,-1.1,Pennsylvania,2024-09-28,Kamala Harris,1000,49.3,493
+Siena/NYT,3,-1.5,Other,2024-09-26,Kamala Harris,680,51,347
+Siena/NYT,3,-1.5,Other,2024-09-26,Kamala Harris,680,49,333
+Siena/NYT,3,-1.5,Other,2024-09-26,Kamala Harris,680,52,354
+Siena/NYT,3,-1.5,Other,2024-09-26,Kamala Harris,680,51,347
+Siena/NYT,3,-1.5,Michigan,2024-09-26,Kamala Harris,688,45,310
+Siena/NYT,3,-1.5,Michigan,2024-09-26,Kamala Harris,688,43,296
+Siena/NYT,3,-1.5,Michigan,2024-09-26,Kamala Harris,688,48,330
+Siena/NYT,3,-1.5,Michigan,2024-09-26,Kamala Harris,688,46,316
+Siena/NYT,3,-1.5,Ohio,2024-09-26,Kamala Harris,687,45,309
+Siena/NYT,3,-1.5,Ohio,2024-09-26,Kamala Harris,687,44,302
+Siena/NYT,3,-1.5,Ohio,2024-09-26,Kamala Harris,687,44,302
+Siena/NYT,3,-1.5,Ohio,2024-09-26,Kamala Harris,687,43,295
+Siena/NYT,3,-1.5,Wisconsin,2024-09-26,Kamala Harris,680,49,333
+Siena/NYT,3,-1.5,Wisconsin,2024-09-26,Kamala Harris,680,48,326
+Siena/NYT,3,-1.5,Wisconsin,2024-09-26,Kamala Harris,680,49,333
+Siena/NYT,3,-1.5,Wisconsin,2024-09-26,Kamala Harris,680,48,326
+Emerson,2.9,-1.1,New York,2024-09-25,Kamala Harris,1000,55.5,555
+Emerson,2.9,-1.1,Texas,2024-09-24,Kamala Harris,950,46.7,444
+Emerson,2.9,-1.1,Virginia,2024-09-24,Kamala Harris,860,52.7,453
+Siena/NYT,3,-1.5,Arizona,2024-09-21,Kamala Harris,713,45,321
+Siena/NYT,3,-1.5,Arizona,2024-09-21,Kamala Harris,713,45,321
+Siena/NYT,3,-1.5,Arizona,2024-09-21,Kamala Harris,713,42,299
+Siena/NYT,3,-1.5,Arizona,2024-09-21,Kamala Harris,713,43,307
+Siena/NYT,3,-1.5,Georgia,2024-09-21,Kamala Harris,682,44,300
+Siena/NYT,3,-1.5,Georgia,2024-09-21,Kamala Harris,682,45,307
+Siena/NYT,3,-1.5,Georgia,2024-09-21,Kamala Harris,682,43,293
+Siena/NYT,3,-1.5,Georgia,2024-09-21,Kamala Harris,682,44,300
+Siena/NYT,3,-1.5,North Carolina,2024-09-21,Kamala Harris,682,47,321
+Siena/NYT,3,-1.5,North Carolina,2024-09-21,Kamala Harris,682,47,321
+Siena/NYT,3,-1.5,North Carolina,2024-09-21,Kamala Harris,682,46,314
+Siena/NYT,3,-1.5,North Carolina,2024-09-21,Kamala Harris,682,45,307
+Emerson,2.9,-1.1,Arizona,2024-09-18,Kamala Harris,868,48.7,423
+Emerson,2.9,-1.1,Georgia,2024-09-18,Kamala Harris,975,48.2,470
+Emerson,2.9,-1.1,Michigan,2024-09-18,Kamala Harris,875,50,438
+Emerson,2.9,-1.1,Nevada,2024-09-18,Kamala Harris,895,48.8,437
+Emerson,2.9,-1.1,Pennsylvania,2024-09-18,Kamala Harris,880,49.6,436
+Emerson,2.9,-1.1,North Carolina,2024-09-18,Kamala Harris,1000,49.7,497
+Emerson,2.9,-1.1,Wisconsin,2024-09-18,Kamala Harris,1000,48.7,487
+Siena/NYT,3,-1.5,Pennsylvania,2024-09-16,Kamala Harris,1082,50,541
+Siena/NYT,3,-1.5,Pennsylvania,2024-09-16,Kamala Harris,1082,50,541
+Siena/NYT,3,-1.5,Pennsylvania,2024-09-16,Kamala Harris,1082,48,519
+Siena/NYT,3,-1.5,Pennsylvania,2024-09-16,Kamala Harris,1082,49,530
+Emerson,2.9,-1.1,Maryland,2024-09-13,Kamala Harris,890,65.3,581
+Emerson,2.9,-1.1,Other,2024-09-13,Kamala Harris,850,43.4,369
+Emerson,2.9,-1.1,Other,2024-09-13,Kamala Harris,1000,40.7,407
+Emerson,2.9,-1.1,California,2024-09-05,Kamala Harris,815,60.8,496
+Emerson,2.9,-1.1,Florida,2024-09-05,Kamala Harris,815,47.6,388
+Emerson,2.9,-1.1,Texas,2024-09-05,Kamala Harris,845,48,406
+Emerson,2.9,-1.1,Ohio,2024-09-05,Kamala Harris,945,44.7,422
+Emerson,2.9,-1.1,Arizona,2024-08-28,Kamala Harris,720,47.5,342
+Emerson,2.9,-1.1,Michigan,2024-08-28,Kamala Harris,800,51.2,410
+Emerson,2.9,-1.1,Nevada,2024-08-28,Kamala Harris,1168,49.4,577
+Emerson,2.9,-1.1,Pennsylvania,2024-08-28,Kamala Harris,950,49.4,469
+Emerson,2.9,-1.1,Wisconsin,2024-08-28,Kamala Harris,850,49.1,417
+Emerson,2.9,-1.1,North Carolina,2024-08-28,Kamala Harris,775,49,380
+Emerson,2.9,-1.1,Georgia,2024-08-28,Kamala Harris,800,50.1,401
+Emerson,2.9,-1.1,New Mexico,2024-08-22,Kamala Harris,965,53.6,517
+Emerson,2.9,-1.1,New Mexico,2024-08-22,Kamala Harris,965,51,492
+Siena/NYT,3,-1.5,Nevada,2024-08-15,Kamala Harris,677,46,311
+Siena/NYT,3,-1.5,Nevada,2024-08-15,Kamala Harris,677,47,318
+Siena/NYT,3,-1.5,Nevada,2024-08-15,Kamala Harris,677,42,284
+Siena/NYT,3,-1.5,Nevada,2024-08-15,Kamala Harris,677,44,298
+Siena/NYT,3,-1.5,Arizona,2024-08-15,Kamala Harris,677,49,332
+Siena/NYT,3,-1.5,Arizona,2024-08-15,Kamala Harris,677,50,338
+Siena/NYT,3,-1.5,Arizona,2024-08-15,Kamala Harris,677,45,305
+Siena/NYT,3,-1.5,Arizona,2024-08-15,Kamala Harris,677,47,318
+Emerson,2.9,-1.1,Pennsylvania,2024-08-14,Kamala Harris,1000,49.3,493
+Emerson,2.9,-1.1,Pennsylvania,2024-08-14,Kamala Harris,1000,46.8,468
+Siena/NYT,3,-1.5,North Carolina,2024-08-14,Kamala Harris,655,49,321
+Siena/NYT,3,-1.5,North Carolina,2024-08-14,Kamala Harris,655,49,321
+Siena/NYT,3,-1.5,North Carolina,2024-08-14,Kamala Harris,655,45,295
+Siena/NYT,3,-1.5,North Carolina,2024-08-14,Kamala Harris,655,46,301
+Siena/NYT,3,-1.5,Georgia,2024-08-14,Kamala Harris,661,44,291
+Siena/NYT,3,-1.5,Georgia,2024-08-14,Kamala Harris,661,46,304
+Siena/NYT,3,-1.5,Georgia,2024-08-14,Kamala Harris,661,41,271
+Siena/NYT,3,-1.5,Georgia,2024-08-14,Kamala Harris,661,44,291
+Siena/NYT,3,-1.5,Pennsylvania,2024-08-09,Kamala Harris,693,49,340
+Siena/NYT,3,-1.5,Pennsylvania,2024-08-09,Kamala Harris,693,50,346
+Siena/NYT,3,-1.5,Pennsylvania,2024-08-09,Kamala Harris,693,45,312
+Siena/NYT,3,-1.5,Pennsylvania,2024-08-09,Kamala Harris,693,46,319
+Siena/NYT,3,-1.5,Michigan,2024-08-08,Kamala Harris,619,45,279
+Siena/NYT,3,-1.5,Michigan,2024-08-08,Kamala Harris,619,50,310
+Siena/NYT,3,-1.5,Michigan,2024-08-08,Kamala Harris,619,44,272
+Siena/NYT,3,-1.5,Michigan,2024-08-08,Kamala Harris,619,48,297
+Siena/NYT,3,-1.5,Wisconsin,2024-08-08,Kamala Harris,661,50,330
+Siena/NYT,3,-1.5,Wisconsin,2024-08-08,Kamala Harris,661,50,330
+Siena/NYT,3,-1.5,Wisconsin,2024-08-08,Kamala Harris,661,49,324
+Siena/NYT,3,-1.5,Wisconsin,2024-08-08,Kamala Harris,661,49,324
+Emerson,2.9,-1.1,Montana,2024-08-06,Kamala Harris,1000,42.5,425
+Emerson,2.9,-1.1,Montana,2024-08-06,Kamala Harris,1000,39,390
+Emerson,2.9,-1.1,New Hampshire,2024-07-28,Kamala Harris,1000,52.4,524
+Emerson,2.9,-1.1,New Hampshire,2024-07-28,Kamala Harris,1000,47.7,477
+Emerson,2.9,-1.1,Arizona,2024-07-23,Kamala Harris,800,47.4,379
+Emerson,2.9,-1.1,Arizona,2024-07-23,Kamala Harris,800,39.8,318
+Emerson,2.9,-1.1,Georgia,2024-07-23,Kamala Harris,800,48.9,391
+Emerson,2.9,-1.1,Georgia,2024-07-23,Kamala Harris,800,43.3,346
+Emerson,2.9,-1.1,Michigan,2024-07-23,Kamala Harris,800,49.1,393
+Emerson,2.9,-1.1,Michigan,2024-07-23,Kamala Harris,800,43.8,350
+Emerson,2.9,-1.1,Wisconsin,2024-07-23,Kamala Harris,845,50.6,428
+Emerson,2.9,-1.1,Wisconsin,2024-07-23,Kamala Harris,845,45.4,384
+Emerson,2.9,-1.1,Pennsylvania,2024-07-23,Kamala Harris,850,48.9,416
+Emerson,2.9,-1.1,Pennsylvania,2024-07-23,Kamala Harris,850,44.3,377
