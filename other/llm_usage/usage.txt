@@ -50,6 +50,7 @@ This code produces a plot with the x-axis showing dates, the y-axis showing poll
 
 User
 I want the sim_harris_data to have the variable of "national" which is a binary variable that shows 1 if the state variable is NA or 0 if not
+
 ChatGPT
 ```{r}
 # Add 'national' binary variable
@@ -58,4 +59,30 @@ sim_poll_data <- sim_poll_data %>%
 ```
 
 
+User
+I want to filter only the pollsters that have more than 50 polls. please write the relevant codes for me
+
+ChatGPT
+```{r}
+group_by(pollster) |>
+  filter(n() > 50) |> # Filter for pollsters with more than 50 polls
+  ungroup() # Ungroup after filtering
+```  
+
+
+User
+I want to make the states with less than 60 polls to all be treated as "other" for the states variable. please write the relevant codes for me
+
+ChatGPT
+```{r}
+ group_by(state) |>
+  mutate(
+    state_count = n()  # Count the number of polls per state
+  ) |>
+  ungroup() |>
+  mutate(
+    state = if_else(state_count < 60, "Other", state)  # Assign "Other" for states with fewer than 60 polls
+  ) |>
+  select(-state_count)  # Remove the state_count column if not needed anymore
+```  
 

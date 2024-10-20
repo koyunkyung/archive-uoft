@@ -1,69 +1,75 @@
 #### Preamble ####
-# Purpose: Tests... [...UPDATE THIS...]
-# Author: Rohan Alexander [...UPDATE THIS...]
-# Date: 26 September 2024 [...UPDATE THIS...]
-# Contact: rohan.alexander@utoronto.ca [...UPDATE THIS...]
+# Purpose: Tests the structure and validity of the US presidential election polls data.
+# Author: Yunkyung Ko
+# Date: 19 October 2024
+# Contact: yunkyung.ko@mail.utoronto.ca
 # License: MIT
-# Pre-requisites: [...UPDATE THIS...]
-# Any other information needed? [...UPDATE THIS...]
+# Pre-requisites: Need to have downloaded and cleaned the data.
+# Any other information needed? None
 
 
 #### Workspace setup ####
 library(tidyverse)
 library(testthat)
 
-data <- read_csv("data/02-analysis_data/analysis_data.csv")
-
 
 #### Test data ####
-# Test that the dataset has 151 rows - there are 151 divisions in Australia
-test_that("dataset has 151 rows", {
-  expect_equal(nrow(analysis_data), 151)
+# Test that the dataset has 8 columns
+test_that("dataset has 8 columns", {
+  harris_data <- read_csv("../data/02-analysis_data/harris_elections_data.csv")
+  expect_equal(ncol(harris_data), 8)
 })
 
-# Test that the dataset has 3 columns
-test_that("dataset has 3 columns", {
-  expect_equal(ncol(analysis_data), 3)
-})
-
-# Test that the 'division' column is character type
-test_that("'division' is character", {
-  expect_type(analysis_data$division, "character")
-})
-
-# Test that the 'party' column is character type
-test_that("'party' is character", {
-  expect_type(analysis_data$party, "character")
+# Test that the 'pollster' column is character type
+test_that("'pollster' is character", {
+  harris_data <- read_csv("../data/02-analysis_data/harris_elections_data.csv")
+  expect_type(harris_data$pollster, "character")
 })
 
 # Test that the 'state' column is character type
 test_that("'state' is character", {
-  expect_type(analysis_data$state, "character")
+  harris_data <- read_csv("../data/02-analysis_data/harris_elections_data.csv")
+  expect_type(harris_data$state, "character")
+})
+
+# Test that the 'candidate_name' column is character type
+test_that("'candidate_name' is character", {
+  harris_data <- read_csv("../data/02-analysis_data/harris_elections_data.csv")
+  expect_type(harris_data$candidate_name, "character")
 })
 
 # Test that there are no missing values in the dataset
 test_that("no missing values in dataset", {
-  expect_true(all(!is.na(analysis_data)))
+  harris_data <- read_csv("../data/02-analysis_data/harris_elections_data.csv")
+  expect_true(all(!is.na(harris_data)))
 })
 
-# Test that 'division' contains unique values (no duplicates)
-test_that("'division' column contains unique values", {
-  expect_equal(length(unique(analysis_data$division)), 151)
+# Test that 'state' contains only valid US state or territory names
+valid_states <- c("Arizona", "California", "Florida", "Georgia", "Iowa", "Maryland", "Massachusetts",
+                  "Michigan", "Minesota", "Montana", "Nevada", "New Hampshire", "New Mexico", "New York",
+                  "North Carolina", "Ohio", "Pennsylvania", "Tennessee", "Texas", "Virginia", "Wisconsin", "Other")
+test_that("'state' contains valid US state names", {
+  harris_data <- read_csv("../data/02-analysis_data/harris_elections_data.csv")
+  expect_true(all(harris_data$state %in% valid_states))
 })
 
-# Test that 'state' contains only valid Australian state or territory names
-valid_states <- c("New South Wales", "Victoria", "Queensland", "South Australia", "Western Australia", 
-                  "Tasmania", "Northern Territory", "Australian Capital Territory")
-test_that("'state' contains valid Australian state names", {
-  expect_true(all(analysis_data$state %in% valid_states))
+# Test that 'candidate_name' contains only "Kamala Harris" as we intended in the filtering stage
+candidate_filter <- c("Kamala Harris")
+test_that("'candidate_name' contains only shows Kamala Harris as we filtered", {
+  harris_data <- read_csv("../data/02-analysis_data/harris_elections_data.csv")
+  expect_true(all(harris_data$candidate_name %in% candidate_filter))
 })
 
-# Test that there are no empty strings in 'division', 'party', or 'state' columns
-test_that("no empty strings in 'division', 'party', or 'state' columns", {
-  expect_false(any(analysis_data$division == "" | analysis_data$party == "" | analysis_data$state == ""))
+# Test that there are no empty strings in 'pollster', 'state', or 'candidate_name' columns
+test_that("no empty strings in 'pollster', 'state', or 'candidate_name' columns", {
+  harris_data <- read_csv("../data/02-analysis_data/harris_elections_data.csv")
+  expect_false(any(harris_data$pollster == "" | harris_data$state == "" | harris_data$candidate_name == ""))
 })
 
-# Test that the 'party' column contains at least 2 unique values
-test_that("'party' column contains at least 2 unique values", {
-  expect_true(length(unique(analysis_data$party)) >= 2)
+# Test for negative numbers in numeric columns
+test_that("no negative numbers in numeric columns", {
+  harris_data <- read_csv("../data/02-analysis_data/harris_elections_data.csv")
+  expect_true(min(harris_data$numeric_grade) >= 0)
+  expect_true(min(harris_data$sample_size) >= 0)
+  expect_true(min(harris_data$num_harris) >= 0)
 })
