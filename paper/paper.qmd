@@ -1,6 +1,6 @@
 ---
-title: "My title"
-subtitle: "My subtitle if needed"
+title: "Kamala Harris Rises as the 2024 Election Front Runner: A Poll-of-Polls Forecast"
+subtitle: "How Poll Aggregation Reveals US Presidental Race Trends[!!!UPDATE IT TO MAIN RESULTS!!!]"
 author: 
   - Yunkyung Ko
 thanks: "Code and data are available at: [https://github.com/koyunkyung/us_election_2024](https://github.com/koyunkyung/us_election_2024)."
@@ -10,6 +10,10 @@ abstract: "First sentence. Second sentence. Third sentence. Fourth sentence."
 format: pdf
 number-sections: true
 bibliography: references.bib
+toc: true
+toc-title: "Table of Contents"
+toc-depth: 2
+toc-location: left
 ---
 
 ```{r}
@@ -18,40 +22,49 @@ bibliography: references.bib
 #| message: false
 
 library(tidyverse)
+library(janitor)
+library(lubridate)
+library(broom)
+library(modelsummary)
+library(rstanarm)
+library(splines)
+library(ggplot2)
+library(knitr)
+library(kableExtra)
 
 ```
 
 
 # Introduction
 
-Overview paragraph
+The US presidential election is an event that receives a lot of international attention due to its far-reaching implications beyond the country's borders. The effects of US elections are not only related to economy and international relations around the world, but also link to social and environmental issues such as climate change [@euromonitor2024]. In the anticipation of the 2024 US electoral competition, this paper is aimed at predicting possible outcomes of the election by analyzing the level of support that Kamala Harris will gain.
 
-Estimand paragraph
+We forecast the support of Kamala Harris based on the polling results at the national and state levels, and apply a linear regression and a Bayesian approach. The main parameter of interest is the proportion of vote or support that Harris received in surveys, which is traced over time. By considering the effect of changes in poll-making organizations and geographical distinctions, our objective is to correct for variation across different voter bases with the pooling the polls approach [@poolingpolls]. 
 
-Results paragraph
+Our initial linear model examining the support for Harris over time suggests that the rate of support remained relatively stable around 47%, with no significant increase or decrease. However large variability was detected, as seen in the spread of points around the fitted line. Consequently, pollster-specific effects and state-level random effects were added to the model but resulted in even higher variations. Some pollsters or states consistently reported higher or lower support for Harris compared to others, proposing that [!!!!!MEANINGFUL RESULT ADDED LATER!!!!!].
 
-Why it matters paragraph
+These prognostics provide much more than merely forecasting the election in question. Hinting the trajectory the US might take in matters of foreign policy, economics, and global politics, predictions enable stakeholders worldwide to take preemptive measures for the resulted changes of a newly elected government [@csis2024]. As such, this study not only contributes to the domestic political discourse but also provides a valuable tool for global actors seeking to navigate the uncertainty surrounding the 2024 US presidential election[@csis2024].
 
-Telegraphing paragraph: The remainder of this paper is structured as follows. @sec-data....
-
-
-
-
+The paper is structured as follows. Initially, @sec-data and @sec-model explores the data and methodology used, including filtering and modeling techniques applied to the polling data. Following that, @sec-results presents the results from the linear and Bayesian models, while the next section @sec-discussion discusses the broader implications of these findings. Finally, the paper concludes with remarks on future directions for research and applications of these models [@sec-discussion].
 
 
 # Data {#sec-data}
 
 ## Overview
 
-We use the statistical programming language R [@citeR].... Our data [@shelter].... Following @tellingstories, we consider...
+We use the statistical programming language R [@citeR] to analyze US presidential polling data from FiveThirtyEight [@fivethirtyeight2024], focusing on support for Kamala Harris. The dataset includes 15831 poll results from various national and state-level polls, with key variables such as pollster, sample size, percentage of support for Harris, and end date of the poll. Following the guidance of @tellingstories, we compiled the results of each opinion poll over a period of time and compared them taking into account the methodological peculiarities of polling by pollsters and geographical scope of the conducted polls. 
 
-Overview text
+To ensure data quality, we filtered the dataset to include only polls that measured Kamala Harris' support, with a numeric grade of pollster 2.7 or higher for reliability. We also limited the analysis to polls conducted after July 21, 2024, when Harris officially declared her candidacy, and excluded pollsters with fewer than 35 polls to focus on those with sufficient data for robust results.
+
+In performing the analysis, we utilized several R packages. @tidyverse was used for data manipulation and visualization and @rstanarm, @modelsummary was respectively used for Bayesian modeling and generating model summaries. For visualizing results, @ggplot2 was used and @kableExtra helped format tables for presentation. These packages provided a framework for efficient data processing, modeling, and reporting.
 
 ## Measurement
 	
 Some paragraphs about how we go from a phenomena in the world to an entry in the dataset.
 
 ## Outcome variables
+
+### pct: the percentage of the vote or support that the candidate received in the poll
 
 Add graphs, tables and text. Use sub-sub-headings for each outcome variable or update the subheading to be singular.
 
@@ -85,6 +98,15 @@ Talk way more about it.
 
 ## Predictor variables
 
+### end_date: the date the poll ended
+
+### pollster: the polling organization that conducted the poll
+
+mention that it was filtered by numeric_grade
+
+### pollscore: the score or reliability of the pollster in question
+
+
 Add graphs, tables and text.
 
 Use sub-sub-headings for each outcome variable and feel free to combine a few into one if they go together naturally.
@@ -96,7 +118,7 @@ Use sub-sub-headings for each outcome variable and feel free to combine a few in
 
 
 
-# Model
+# Model {#sec-model}
 
 The goal of our modelling strategy is twofold. Firstly,...
 
@@ -125,7 +147,7 @@ We expect a positive relationship between the size of the wings and time spent a
 We can use maths by including latex between dollar signs, for instance $\theta$.
 
 
-# Results
+# Results {#sec-results}
 
 Our results are summarized in @tbl-modelresults.
 
@@ -135,10 +157,7 @@ Our results are summarized in @tbl-modelresults.
 #| warning: false
 #| message: false
 
-library(rstanarm)
 
-first_model <-
-  readRDS(file = here::here("models/first_model.rds"))
 ```
 
 ```{r}
@@ -148,19 +167,13 @@ first_model <-
 #| tbl-cap: "Explanatory models of flight time based on wing width and wing length"
 #| warning: false
 
-modelsummary::modelsummary(
-  list(
-    "First model" = first_model
-  ),
-  statistic = "mad",
-  fmt = 2
-)
+
 ```
 
 
 
 
-# Discussion
+# Discussion {#sec-discussion}
 
 ## First discussion point {#sec-first-point}
 
