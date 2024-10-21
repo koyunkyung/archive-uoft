@@ -21,6 +21,6 @@ The repo is structured as:
 
 ## Statement on LLM usage
 
-This project utilized the assistance of ChatGPT 4.0 to enhance the efficiency and accuracy of the data analysis and visualization process. Specifically, it provided guidance in aspects of the codes in R scripts, as well as in generating insights through creation of graphical visualizations. The entire chat history is available in 'other/llm/usage.txt'.
+This project utilized the assistance of ChatGPT 4.0 to enhance the efficiency and accuracy of the data analysis and visualization process. Specifically, it provided guidance in aspects of the codes in R scripts, as well as in generating insights through creation of graphical visualizations. The entire chat history is available in `other/llm/usage.txt`.
 
 
