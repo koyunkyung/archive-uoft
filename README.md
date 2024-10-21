@@ -3,7 +3,7 @@
 
 ## Overview
 
-This repository contains an analysis of polling trends for Kamala Harris in the 2024 US presidential election, aiming to forecast possible electoral outcomes. Using the polling data from FiveThirtyEight, the analysis applies both linear regression and Bayesian modeling taking into account methodological peculiarities of polling such as pollsters and geographical scope. Our objective is to correct for variation across different voter bases with the pooling the polls approach and narrow down the estimates for the 2024 US presidential election outcomes.
+This repo contains an analysis of polling trends for Kamala Harris in the 2024 US presidential election, aiming to forecast possible electoral outcomes. Using the polling data from FiveThirtyEight, the analysis applies both linear regression and Bayesian modeling taking into account methodological peculiarities of polling such as pollsters and geographical scope. Our objective is to correct for variation across different voter bases with the pooling the polls approach and narrow down the estimates for the 2024 US presidential election outcomes.
 
 
 ## File Structure
