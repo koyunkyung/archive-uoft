@@ -579,7 +579,32 @@ In addition to robust sampling, the methodology incorporates weighting methods t
 
 ## Idealized Survey
 
-The proposed survey questionnarie design is provided in the following link: 
+The proposed survey questionnarie design is provided in the following link: https://forms.gle/zQ8iJyPk3HhJYrKd9.
+
+::: {.layout}
+## Image Row
+
+::: {.column width="1/5"}
+![Survey Intro](../other/idealized_survey/survey_intro.png)
+:::
+
+::: {.column width="1/5"}
+![Survey Questions 1](../other/idealized_survey/survey_q1.png)
+:::
+
+::: {.column width="1/5"}
+![Survey Questions 2](../other/idealized_survey/survey_q2.png)
+:::
+
+::: {.column width="1/5"}
+![Survey Questions 3](../other/idealized_survey/survey_q3.png)
+:::
+
+::: {.column width="1/5"}
+![Survey Final Thanks](../other/idealized_survey/survey_outro.png)
+:::
+:::
+
 
 # Model details {#sec-model-details}
 
