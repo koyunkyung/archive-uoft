@@ -49,6 +49,22 @@ Siena/NYT,3,-1.5,Wisconsin,2024-09-26,Kamala Harris,680,48,326
 Emerson,2.9,-1.1,New York,2024-09-25,Kamala Harris,1000,55.5,555
 Emerson,2.9,-1.1,Texas,2024-09-24,Kamala Harris,950,46.7,444
 Emerson,2.9,-1.1,Virginia,2024-09-24,Kamala Harris,860,52.7,453
+Beacon/Shaw,2.8,-1.1,Arizona,2024-09-24,Kamala Harris,1021,47,480
+Beacon/Shaw,2.8,-1.1,Arizona,2024-09-24,Kamala Harris,764,47,359
+Beacon/Shaw,2.8,-1.1,Arizona,2024-09-24,Kamala Harris,1021,48,490
+Beacon/Shaw,2.8,-1.1,Arizona,2024-09-24,Kamala Harris,764,48,367
+Beacon/Shaw,2.8,-1.1,Georgia,2024-09-24,Kamala Harris,1006,49,493
+Beacon/Shaw,2.8,-1.1,Georgia,2024-09-24,Kamala Harris,707,50,354
+Beacon/Shaw,2.8,-1.1,Georgia,2024-09-24,Kamala Harris,1006,51,513
+Beacon/Shaw,2.8,-1.1,Georgia,2024-09-24,Kamala Harris,707,51,361
+Beacon/Shaw,2.8,-1.1,North Carolina,2024-09-24,Kamala Harris,787,47,370
+Beacon/Shaw,2.8,-1.1,North Carolina,2024-09-24,Kamala Harris,991,48,476
+Beacon/Shaw,2.8,-1.1,North Carolina,2024-09-24,Kamala Harris,787,49,386
+Beacon/Shaw,2.8,-1.1,North Carolina,2024-09-24,Kamala Harris,991,50,496
+Beacon/Shaw,2.8,-1.1,Pennsylvania,2024-09-24,Kamala Harris,775,47,364
+Beacon/Shaw,2.8,-1.1,Pennsylvania,2024-09-24,Kamala Harris,1021,48,490
+Beacon/Shaw,2.8,-1.1,Pennsylvania,2024-09-24,Kamala Harris,775,49,380
+Beacon/Shaw,2.8,-1.1,Pennsylvania,2024-09-24,Kamala Harris,1021,50,510
 Siena/NYT,3,-1.5,Arizona,2024-09-21,Kamala Harris,713,45,321
 Siena/NYT,3,-1.5,Arizona,2024-09-21,Kamala Harris,713,45,321
 Siena/NYT,3,-1.5,Arizona,2024-09-21,Kamala Harris,713,42,299
@@ -86,6 +102,14 @@ Emerson,2.9,-1.1,Pennsylvania,2024-08-28,Kamala Harris,950,49.4,469
 Emerson,2.9,-1.1,Wisconsin,2024-08-28,Kamala Harris,850,49.1,417
 Emerson,2.9,-1.1,North Carolina,2024-08-28,Kamala Harris,775,49,380
 Emerson,2.9,-1.1,Georgia,2024-08-28,Kamala Harris,800,50.1,401
+Beacon/Shaw,2.8,-1.1,Arizona,2024-08-26,Kamala Harris,1014,48,487
+Beacon/Shaw,2.8,-1.1,Arizona,2024-08-26,Kamala Harris,1014,50,507
+Beacon/Shaw,2.8,-1.1,Georgia,2024-08-26,Kamala Harris,1014,48,487
+Beacon/Shaw,2.8,-1.1,Georgia,2024-08-26,Kamala Harris,1014,50,507
+Beacon/Shaw,2.8,-1.1,Nevada,2024-08-26,Kamala Harris,1026,48,492
+Beacon/Shaw,2.8,-1.1,Nevada,2024-08-26,Kamala Harris,1026,50,513
+Beacon/Shaw,2.8,-1.1,North Carolina,2024-08-26,Kamala Harris,999,47,470
+Beacon/Shaw,2.8,-1.1,North Carolina,2024-08-26,Kamala Harris,999,49,490
 Emerson,2.9,-1.1,New Mexico,2024-08-22,Kamala Harris,965,53.6,517
 Emerson,2.9,-1.1,New Mexico,2024-08-22,Kamala Harris,965,51,492
 Siena/NYT,3,-1.5,Nevada,2024-08-15,Kamala Harris,677,46,311
@@ -122,6 +146,14 @@ Emerson,2.9,-1.1,Montana,2024-08-06,Kamala Harris,1000,42.5,425
 Emerson,2.9,-1.1,Montana,2024-08-06,Kamala Harris,1000,39,390
 Emerson,2.9,-1.1,New Hampshire,2024-07-28,Kamala Harris,1000,52.4,524
 Emerson,2.9,-1.1,New Hampshire,2024-07-28,Kamala Harris,1000,47.7,477
+Beacon/Shaw,2.8,-1.1,Wisconsin,2024-07-24,Kamala Harris,1046,46,481
+Beacon/Shaw,2.8,-1.1,Wisconsin,2024-07-24,Kamala Harris,1046,49,513
+Beacon/Shaw,2.8,-1.1,Pennsylvania,2024-07-24,Kamala Harris,1034,45,465
+Beacon/Shaw,2.8,-1.1,Pennsylvania,2024-07-24,Kamala Harris,1034,49,507
+Beacon/Shaw,2.8,-1.1,Minnesota,2024-07-24,Kamala Harris,1071,47,503
+Beacon/Shaw,2.8,-1.1,Minnesota,2024-07-24,Kamala Harris,1071,52,557
+Beacon/Shaw,2.8,-1.1,Michigan,2024-07-24,Kamala Harris,1012,43,435
+Beacon/Shaw,2.8,-1.1,Michigan,2024-07-24,Kamala Harris,1012,49,496
 Emerson,2.9,-1.1,Arizona,2024-07-23,Kamala Harris,800,47.4,379
 Emerson,2.9,-1.1,Arizona,2024-07-23,Kamala Harris,800,39.8,318
 Emerson,2.9,-1.1,Georgia,2024-07-23,Kamala Harris,800,48.9,391

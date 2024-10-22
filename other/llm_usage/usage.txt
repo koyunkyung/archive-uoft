@@ -86,3 +86,46 @@ ChatGPT
   select(-state_count)  # Remove the state_count column if not needed anymore
 ```  
 
+LLM: ChatGPT-4.
+Date: 21 October 2024
+
+User
+I want to show the summary statistics in a table/graph format of the 'pct' variables. write the relevant codes for me. 
+
+ChatGPT
+Here's the relevant R code to calculate and display summary statistics for the pct variable in both table and graph formats:
+Summary Statistics Table
+```{r}
+# Load necessary libraries
+library(dplyr)
+library(knitr)
+library(kableExtra)
+# Calculate summary statistics for the 'pct' variable
+summary_stats <- just_harris_high_quality %>%
+  summarize(
+    mean = mean(pct, na.rm = TRUE),
+    median = median(pct, na.rm = TRUE),
+    min = min(pct, na.rm = TRUE),
+    max = max(pct, na.rm = TRUE),
+    sd = sd(pct, na.rm = TRUE),
+    n = n()
+  )
+# Display the summary statistics in a nicely formatted table
+summary_stats %>%
+  kable() %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed"), full_width = F)
+```  
+Graph: Distribution of the pct Variable
+```{r}
+# Load necessary libraries
+library(ggplot2)
+# Plot the distribution of 'pct' using a histogram
+ggplot(just_harris_high_quality, aes(x = pct)) +
+  geom_histogram(binwidth = 5, fill = "blue", alpha = 0.7, color = "black") +
+  theme_minimal() +
+  labs(title = "Distribution of Support for Kamala Harris (pct)",
+       x = "Percentage Support (pct)",
+       y = "Count")
+```
+The first part creates a table with summary statistics of the pct variable (mean, median, min, max, standard deviation, and count).
+The second part visualizes the distribution of the pct variable using a histogram.

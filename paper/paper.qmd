@@ -22,6 +22,7 @@ toc-location: left
 #| message: false
 
 library(tidyverse)
+library(readr)
 library(janitor)
 library(lubridate)
 library(broom)
@@ -31,7 +32,11 @@ library(splines)
 library(ggplot2)
 library(knitr)
 library(kableExtra)
+library(gridExtra)
+library(here)
 
+raw_elections_data <- read_csv(here::here("data/01-raw_data/raw_elections_data.csv"))
+harris_data <- read_csv(here::here("data/02-analysis_data/harris_elections_data.csv"))
 ```
 
 
@@ -52,71 +57,342 @@ The paper is structured as follows. Initially, @sec-data and @sec-model explores
 
 ## Overview
 
-We use the statistical programming language R [@citeR] to analyze US presidential polling data from FiveThirtyEight [@fivethirtyeight2024], focusing on support for Kamala Harris. The dataset includes 15831 poll results from various national and state-level polls, with key variables such as pollster, sample size, percentage of support for Harris, and end date of the poll. Following the guidance of @tellingstories, we compiled the results of each opinion poll over a period of time and compared them taking into account the methodological peculiarities of polling by pollsters and geographical scope of the conducted polls. 
+We use the statistical programming language R [@citeR] to analyze US presidential polling data from FiveThirtyEight [@fivethirtyeight2024], focusing on support for Kamala Harris. The dataset includes a wide range of poll results from various national and state-level polls, with key variables such as pollster, sample size, percentage of support for Harris, and end date of the poll. Following the guidance of @tellingstories, we compiled the results of each opinion poll over a period of time and compared them taking into account the methodological peculiarities of polling by pollsters and geographical scope of the conducted polls. 
 
-To ensure data quality, we filtered the dataset to include only polls that measured Kamala Harris' support, with a numeric grade of pollster 2.7 or higher for reliability. We also limited the analysis to polls conducted after July 21, 2024, when Harris officially declared her candidacy, and excluded pollsters with fewer than 35 polls to focus on those with sufficient data for robust results.
+To ensure data quality, we filtered the dataset to include only polls that measured Kamala Harris' support, with a numeric grade of pollster 2.7 or higher for reliability. We also limited the analysis to polls conducted after July 21, 2024, when Harris officially declared her candidacy, and excluded pollsters with fewer than 30 polls to focus on those with sufficient data for robust results.
 
 In performing the analysis, we utilized several R packages. @tidyverse was used for data manipulation and visualization and @rstanarm, @modelsummary was respectively used for Bayesian modeling and generating model summaries. For visualizing results, @ggplot2 was used and @kableExtra helped format tables for presentation. These packages provided a framework for efficient data processing, modeling, and reporting.
 
+(Data last updated on [Day] [Month] 2024.) - [!!! MODIFY AT FINAL !!!]
+
 ## Measurement
-	
-Some paragraphs about how we go from a phenomena in the world to an entry in the dataset.
+
+[!!! MODIFY OBSV. NUMBERS AFTER DATA UPDATES !!!] - ERASE AT FINAL
+
+The original dataset sourced from FiveThirtyEight [@fivethirtyeight2024] aggregates a wide range of poll results (15971 observations, based on dataset available at Oct 21, 22:00). The polls conducted by various polling organizations capture voter preferences by taking a representative sample of the electorate and asking for the voters' candidate of choice. Surveys were conducted at the state and national levels, providing the wide perspective on public feelings across the country.
+
+Each poll represents a predictor of an actual event, namely voter opinion at a particular moment. Nevertheless, like all survey results, the raw data is susceptible to many potential limitations including the following: sampling error, variation in polling methods, distortion because of inappropriate survey responses such as missing data or response from respondents who misunderstood the questions [@tellingstories].
+
+While applying several filters to the original dataset such as restricting to those with a numeric grade of 2.7 or higher or pollsters with more than 30 polls improves data reliability, certain limitations still exist. Selection bias and sampling error remains as a concern, since polls always represent only part of the population. Differences in the way different organizations conducted their polling might introduce more inconsistencies. Finally, by focusing our attention on post-declaration polls only, we exclude earlier trends that could add more insight into how Harris' support has evolved over time. 
 
 ## Outcome variables
 
-### pct: the percentage of the vote or support that the candidate received in the poll
+### pct
 
-Add graphs, tables and text. Use sub-sub-headings for each outcome variable or update the subheading to be singular.
-
-
-
-Some of our data is of penguins (@fig-bills), from @palmerpenguins.
+The main variable of interest that we aim to forecast is the 'pct' variable, which represents the proportion of vote or support that a candidate received in the poll. @tbl-pctraw1 and @fig-pct2 respectively shows the summary statistics and distribution of the 'pct' variable in the original dataset [@fivethirtyeight2024]. @tbl-pctfilter1 and @fig-pctfilter2 shows the summary statistics and distribution of the same variable, but in the filtered dataset that only comprises of the supporting votes for Harris from relatively high-quality polling organizations. Comparing the summary statistics for the raw data (@tbl-pctraw1) and filtered data (@tbl-pctfilter1), higher numbers were derived from data filtered only by Harris supporters. Also, @fig-pctfilter2 illustrates that a significant number of polls indicate support levels ranging from 40% to 50%, which suggests a stable yet not substantial endorsement. This proposes that Harris possesses a reliable foundational support, although her capacity to obtain a majority remains ambiguous.
 
 ```{r}
-#| label: fig-bills
-#| fig-cap: Bills of penguins
+#| label: tbl-pctraw1
+#| tbl-cap: Summary Statistics for the 'pct' Variable (Raw Data)
 #| echo: false
 
+# Calculate summary statistics for the 'pct' variable
+summary_stats <- raw_elections_data %>%
+  summarize(
+    mean = mean(pct, na.rm = TRUE),
+    median = median(pct, na.rm = TRUE),
+    min = min(pct, na.rm = TRUE),
+    max = max(pct, na.rm = TRUE),
+    sd = sd(pct, na.rm = TRUE),
+    n = n()
+  )
+
+# Display the summary statistics in a nicely formatted table
+summary_stats %>%
+  kable() %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed"), full_width = F)
+
+```
+```{r}
+#| label: fig-pct2
+#| fig-cap: Distribution of the 'pct' Variable (Raw Data)
+#| echo: false
+
+# Plot the distribution of 'pct' using a histogram
+ggplot(raw_elections_data, aes(x = pct)) +
+  geom_histogram(binwidth = 5, fill = "blue", alpha = 0.7, color = "black") +
+  theme_minimal() +
+  labs(x = "Percentage of Support (pct)",
+       y = "Frequency")
+
+```
+```{r}
+#| label: tbl-pctfilter1
+#| tbl-cap: Summary Statistics for the 'pct' Variable (Filtered Data)
+#| echo: false
+
+# Calculate summary statistics for the 'pct' variable
+summary_stats <- harris_data %>%
+  summarize(
+    mean = mean(pct, na.rm = TRUE),
+    median = median(pct, na.rm = TRUE),
+    min = min(pct, na.rm = TRUE),
+    max = max(pct, na.rm = TRUE),
+    sd = sd(pct, na.rm = TRUE),
+    n = n()
+  )
+
+# Display the summary statistics in a nicely formatted table
+summary_stats %>%
+  kable() %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed"), full_width = F)
+
+```
+```{r}
+#| label: fig-pctfilter2
+#| fig-cap: Distribution of the 'pct' Variable (Filtered Data)
+#| echo: false
+
+# Plot the distribution of 'pct' using a histogram
+ggplot(harris_data, aes(x = pct)) +
+  geom_histogram(binwidth = 5, fill = "blue", alpha = 0.7, color = "black") +
+  theme_minimal() +
+  labs(x = "Percentage of Support (pct)",
+       y = "Frequency")
 
 ```
 
-Talk more about it.
-
-And also planes (@fig-planes). (You can change the height and width, but don't worry about doing that until you have finished every other aspect of the paper - Quarto will try to make it look nice and the defaults usually work well once you have enough text.)
-
-```{r}
-#| label: fig-planes
-#| fig-cap: Relationship between wing length and width
-#| echo: false
-#| warning: false
-#| message: false
-
-
-```
-
-Talk way more about it. 
 
 ## Predictor variables
 
-### end_date: the date the poll ended
+### end_date
 
-### pollster: the polling organization that conducted the poll
+[!!! MODIFY DATE RANGE AFTER DATA UPDATES !!!] - ERASE AT FINAL
 
-mention that it was filtered by numeric_grade
+The date variable representing the time the poll was concluded helps was put into account to keep track of how support for a candidate changes in time. The reported end dates in the original dataset [@fivethirtyeight2024] ranges from 1 January, 2023 to 9 September, 2024 (@tbl-date). @fig-date shows that the polling data is more concentrated on survey results conducted in the recent period.
 
-### pollscore: the score or reliability of the pollster in question
+```{r}
+#| label: tbl-date
+#| tbl-cap: Summary Statistics for the 'end_date' Variable (Raw Data)
+#| echo: false
+
+summary_stats <- raw_elections_data %>%
+  summarize(
+    min = min(end_date, na.rm = TRUE),
+    max = max(end_date, na.rm = TRUE)
+  )
+
+# Display the summary statistics in a nicely formatted table
+summary_stats %>%
+  kable() %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed"), full_width = F)
+
+```
+```{r}
+#| label: fig-date
+#| fig-cap: Distribution of the 'end_date' Variable (Raw Data)
+#| echo: false
+
+# Convert 'end_date' to a proper date format
+raw_elections_dataa <- raw_elections_data %>%
+  mutate(end_date = mdy(end_date))
+filtered_data <- raw_elections_dataa %>%
+  filter(end_date >= as.Date("2023-01-01"))
+
+# Distribution of 'end_date'
+ggplot(filtered_data, aes(x = end_date)) +
+  geom_histogram(fill = "grey", alpha = 0.7, color = "black", binwidth = 30) +  # Set binwidth explicitly
+  theme_minimal() +
+  labs(x = "End Date",
+       y = "Count")
+
+```
+
+[!!! MODIFY DATE RANGE AFTER DATA UPDATES !!!] - ERASE AT FINAL
+
+When filtering the data, not only pollster quality and candidate type but also the date variable was considered. The filtered data contains only the polling data after the declaration of Harris. So, the date variable for filtered data ranges from 23 July, 2024 to 14 October, 2024 (@tbl-date2). @fig-date2 shows that overall, polling is conducted regularly but intensifies around specific dates.
+
+```{r}
+#| label: tbl-date2
+#| tbl-cap: Summary Statistics for the 'end_date' Variable (Filtered Data)
+#| echo: false
+
+summary_stats <- harris_data %>%
+  summarize(
+    min = min(end_date, na.rm = TRUE),
+    max = max(end_date, na.rm = TRUE)
+  )
+
+# Display the summary statistics in a nicely formatted table
+summary_stats %>%
+  kable() %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed"), full_width = F)
+
+```
+
+```{r}
+#| label: fig-date2
+#| fig-cap: Distribution of the 'end_date' Variable (Filtered Data)
+#| echo: false
+
+# Convert 'end_date' to a proper date format
+harris_dataa <- harris_data %>%
+  mutate(end_date = ymd(end_date))  # Change mdy() to ymd() or dmy() depending on the format
+
+# Distribution of 'end_date'
+ggplot(harris_dataa, aes(x = end_date)) +
+  geom_histogram(fill = "grey", alpha = 0.7, color = "black", binwidth = 10) +  # Set binwidth explicitly
+  theme_minimal() +
+  labs(x = "End Date",
+       y = "Count")
+
+```
+
+### pollster, state
+
+The 'pollster' and 'state' variable were selected to consider the effect of changes in poll-making organizations and geographical distinctions. The two variables respectively represent the polling organization that conducted the poll and the US state where the poll was conducted or focused.
+
+@tbl-predictors shows that the original dataset [@fivethirtyeight2024] contains 222 distinct pollsters and 54 distinct states. After filtering for high-quality polls and assigning 'other' for states with fewer than 60 polls, the analysis data contains 3 distinct poll-making organizations and 19 geographical distinctions as shown in @tbl-predictors.
+
+```{r}
+#| label: tbl-predictors
+#| tbl-cap: Number of Distinct Values for the 'pollster', 'state' Variable (Raw Data)
+#| echo: false
+
+summary_stats <- raw_elections_data %>%
+  summarize(
+    pollsters = n_distinct(pollster),
+    states = n_distinct(state)
+  )
+
+# Display the summary statistics in a nicely formatted table
+summary_stats %>%
+  kable() %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed"), full_width = F)
+
+```
+
+```{r}
+#| label: tbl-predictors
+#| tbl-cap: Number of Distinct Values for the 'pollster', 'state' Variable (Filtered Data)
+#| echo: false
+
+summary_stats <- harris_data %>%
+  summarize(
+    pollsters = n_distinct(pollster),
+    states = n_distinct(state)
+  )
+
+# Display the summary statistics in a nicely formatted table
+summary_stats %>%
+  kable() %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed"), full_width = F)
+
+```
+
+The distribution of polling counts for different pollsters in @fig-pollster suggests that the analysis data is dominated by a few pollsters, particularly Siena/NYT. Depending on their polling methodology, the general results may have potential biases. A detailed analysis of the polling methodology and possible errors of the organization will be covered in @sec-data-details.
+
+```{r}
+#| label: fig-pollster
+#| fig-cap: Distribution of the 'pollster' Variable (Filtered Data for Harris)
+#| echo: false
+
+# Distribution of 'pollster' (bar plot since it's categorical)
+ggplot(harris_data, aes(x = pollster)) +
+  geom_bar(fill = "purple", alpha = 0.7, color = "black") +
+  theme_minimal() +
+  labs(x = "Pollster",
+       y = "Count") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+```
+
+@fig-state displays the distribution of polls across different states in the analysis data. Pennsylvania, Arizona, and Georgia are the top 3 states with high number of polls while states like Montana, New Mexico, and Maryland have much fewer polls. Note that a significant number of national or unspecified state-level polls are aggregated in this analysis data regarding the high count in 'Other' category. The concentration of polls in certain states further suggests a strategic focus on areas likely to impact the election outcome [@11alive2024].
+
+```{r}
+#| label: fig-state
+#| fig-cap: Distribution of the 'state' Variable (Filtered Data for Harris)
+#| echo: false
+
+# Distribution of 'state' (bar plot)
+ggplot(harris_data, aes(x = reorder(state, -table(state)[state]))) +
+  geom_bar(fill = "black", alpha = 0.7, color = "black") +
+  theme_minimal() +
+  labs(x = "State",
+       y = "Count") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+```
+
+### pollscore
+
+This variable was another factor we had put into consideration to check whether the validity of the polling questions affects the polling results. The 'pollscore' variable represents the score or reliability of the pollster in question. The numeric values are the error and bias that can be attributed to the pollster, which means negative numbers are better. @tbl-pollscore and @fig-pollscore suggests that while the majority of the polls are moderately to highly qualitative in the original dataset, a fraction of the polls with low-quality or no scores could add noise or uncertainty to the analysis.
+
+```{r}
+#| label: tbl-pollscore
+#| tbl-cap: Summary statistics for the 'pollscore' Variable (Raw Data)
+#| echo: false
+
+summary_stats <- raw_elections_data %>%
+  summarize(
+    mean = mean(pollscore, na.rm = TRUE),
+    median = median(pollscore, na.rm = TRUE),
+    min = min(pollscore, na.rm = TRUE),
+    max = max(pollscore, na.rm = TRUE),
+    sd = sd(pollscore, na.rm = TRUE),
+    n = n()
+  )
+
+# Display the summary statistics in a nicely formatted table
+summary_stats %>%
+  kable() %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed"), full_width = F)
+
+```
+
+```{r}
+#| label: fig-pollscore
+#| fig-cap: Distribution of the 'pollscore' Variable (Raw Data)
+#| echo: false
 
 
-Add graphs, tables and text.
+# Distribution of 'pollscore' (bar plot)
+ggplot(raw_elections_data, aes(x = factor(pollscore))) +
+  geom_bar(fill = "skyblue", alpha = 0.7, color = "black") +
+  theme_minimal() +
+  labs(x = "Pollscore",
+       y = "Count")
 
-Use sub-sub-headings for each outcome variable and feel free to combine a few into one if they go together naturally.
+```
+
+After the filtering to polling data of high-quality polling organizations, we can find that the overall value and standard deviation of pollscores went down in @tbl-pollscore2. This implies that the polling data narrowed down to the responses from more reliable survey questions. @fig-pollscore2 also indicates that the data cleaning process effectively excluded less reliable sources, which can enhance the robustness of subsequent analyses.
+
+```{r}
+#| label: tbl-pollscore2
+#| tbl-cap: Summary statistics for the 'pollscore' Variable (Filtered Data)
+#| echo: false
+
+summary_stats <- harris_data %>%
+  summarize(
+    mean = mean(pollscore, na.rm = TRUE),
+    median = median(pollscore, na.rm = TRUE),
+    min = min(pollscore, na.rm = TRUE),
+    max = max(pollscore, na.rm = TRUE),
+    sd = sd(pollscore, na.rm = TRUE),
+    n = n()
+  )
+
+# Display the summary statistics in a nicely formatted table
+summary_stats %>%
+  kable() %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed"), full_width = F)
+
+```
+
+```{r}
+#| label: fig-pollscore2
+#| fig-cap: Distribution of the 'pollscore' Variable (Filtered Data)
+#| echo: false
 
 
+# Distribution of 'pollscore' (bar plot)
+ggplot(harris_data, aes(x = factor(pollscore))) +
+  geom_bar(fill = "skyblue", alpha = 0.7, color = "black", width = 0.5) +
+  theme_minimal() +
+  labs(x = "Pollscore",
+       y = "Count")
 
-
-
-
-
+```
 
 # Model {#sec-model}
 
@@ -193,10 +469,16 @@ Weaknesses and next steps should also be included.
 
 \appendix
 
-# Appendix {-}
+# Appendix
 
 
-# Additional data details
+# Additional data details {#sec-data-details}
+
+## Pollster Methodology Overview and Evaluation
+
+## Idealized Methodolgy
+
+## Idealized Survey
 
 # Model details {#sec-model-details}
 
