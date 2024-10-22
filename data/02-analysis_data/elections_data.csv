@@ -1,4 +1,12 @@
 pollster,numeric_grade,pollscore,state,end_date,candidate_name,sample_size,pct
+InsiderAdvantage,2,-0.3,Nevada,10/20/24,Kamala Harris,800,47.7
+InsiderAdvantage,2,-0.3,Nevada,10/20/24,Donald Trump,800,47.9
+InsiderAdvantage,2,-0.3,Arizona,10/20/24,Kamala Harris,800,47
+InsiderAdvantage,2,-0.3,Arizona,10/20/24,Donald Trump,800,49.5
+Trafalgar Group,0.7,0.6,Wisconsin,10/20/24,Kamala Harris,1083,46.6
+Trafalgar Group,0.7,0.6,Wisconsin,10/20/24,Donald Trump,1083,46.8
+Trafalgar Group,0.7,0.6,Michigan,10/20/24,Kamala Harris,1090,44.2
+Trafalgar Group,0.7,0.6,Michigan,10/20/24,Donald Trump,1090,46
 Trafalgar Group,0.7,0.6,Pennsylvania,10/19/24,Kamala Harris,1084,43.3
 Trafalgar Group,0.7,0.6,Pennsylvania,10/19/24,Donald Trump,1084,46.3
 Redfield & Wilton Strategies,1.8,0.4,Arizona,10/18/24,Kamala Harris,691,46
@@ -44,6 +52,13 @@ PPP,1.4,0,Other,10/17/24,Kamala Harris,716,53
 PPP,1.4,0,Other,10/17/24,Donald Trump,716,41
 RMG Research,2.3,-0.4,Florida,10/17/24,Kamala Harris,788,47
 RMG Research,2.3,-0.4,Florida,10/17/24,Donald Trump,788,52
+Siena,2.7,-0.8,New York,10/17/24,Kamala Harris,872,54
+Siena,2.7,-0.8,New York,10/17/24,Donald Trump,872,37
+Siena,2.7,-0.8,New York,10/17/24,Jill Stein,872,1
+Siena,2.7,-0.8,New York,10/17/24,Chase Oliver,872,1
+Siena,2.7,-0.8,New York,10/17/24,Cornel West,872,1
+Siena,2.7,-0.8,New York,10/17/24,Kamala Harris,872,58
+Siena,2.7,-0.8,New York,10/17/24,Donald Trump,872,39
 AtlasIntel,2.7,-0.8,Arizona,10/17/24,Kamala Harris,1440,48.6
 AtlasIntel,2.7,-0.8,Arizona,10/17/24,Donald Trump,1440,49.2
 AtlasIntel,2.7,-0.8,Arizona,10/17/24,Jill Stein,1440,0.7
@@ -109,6 +124,10 @@ RMG Research,2.3,-0.4,Wisconsin,10/16/24,Kamala Harris,787,49
 RMG Research,2.3,-0.4,Wisconsin,10/16/24,Donald Trump,787,50
 RMG Research,2.3,-0.4,Michigan,10/16/24,Kamala Harris,789,49
 RMG Research,2.3,-0.4,Michigan,10/16/24,Donald Trump,789,49
+U. Georgia SPIA,2.2,-0.2,Georgia,10/16/24,Kamala Harris,1000,43.4
+U. Georgia SPIA,2.2,-0.2,Georgia,10/16/24,Donald Trump,1000,47
+U. Georgia SPIA,2.2,-0.2,Georgia,10/16/24,Chase Oliver,1000,0.4
+U. Georgia SPIA,2.2,-0.2,Georgia,10/16/24,Jill Stein,1000,0.4
 InsiderAdvantage,2,-0.3,Georgia,10/15/24,Kamala Harris,800,47
 InsiderAdvantage,2,-0.3,Georgia,10/15/24,Donald Trump,800,49
 Morning Consult,1.9,-0.3,Arizona,10/15/24,Kamala Harris,653,49
