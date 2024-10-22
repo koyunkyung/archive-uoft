@@ -6,7 +6,7 @@ author:
 thanks: "Code and data are available at: [https://github.com/koyunkyung/us_election_2024](https://github.com/koyunkyung/us_election_2024)."
 date: today
 date-format: long
-abstract: "First sentence. Second sentence. Third sentence. Fourth sentence."
+abstract: "In the anticipation of the 2024 US presidential election, this paper intends to analyze and predict the level of support that Kamala Harris will gain. The support polls for Harris remained relatively constant. However, there were some variations detected when accounting for pollster and geographical differences. Our objective is to propose a reliable electoral prediction considering those variations help global stakeholders take reasonable preemptive measures."
 format: pdf
 number-sections: true
 bibliography: references.bib
@@ -46,7 +46,7 @@ The US presidential election is an event that receives a lot of international at
 
 We forecast the support of Kamala Harris based on the polling results at the national and state levels, and apply a linear regression and a Bayesian approach. The main parameter of interest is the proportion of vote or support that Harris received in surveys, which is traced over time. By considering the effect of changes in poll-making organizations and geographical distinctions, our objective is to correct for variation across different voter bases with the pooling the polls approach [@poolingpolls]. 
 
-Our initial linear model examining the support for Harris over time suggests that the rate of support remained relatively stable around 47%, with no significant increase or decrease. However large variability was detected, as seen in the spread of points around the fitted line. Consequently, pollster-specific effects and state-level random effects were added to the model but resulted in even higher variations. Some pollsters or states consistently reported higher or lower support for Harris compared to others, proposing that [!!!!!MEANINGFUL RESULT ADDED LATER!!!!!].
+Our initial linear model examining the support for Harris over time suggests that the rate of support remained relatively stable around 47%, with no significant increase or decrease. However large variability was detected, as seen in the spread of points around the fitted line. Consequently, pollster-specific effects and state-level random effects were added to the model but resulted in even higher variations. Some pollsters or states consistently reported higher or lower support for Harris compared to others, proposing the significance of considering distinct pollster and state environment when interpreting electoral polling results.
 
 These prognostics provide much more than merely forecasting the election in question. Hinting the trajectory the US might take in matters of foreign policy, economics, and global politics, predictions enable stakeholders worldwide to take preemptive measures for the resulted changes of a newly elected government [@csis2024]. As such, this study not only contributes to the domestic political discourse but also provides a valuable tool for global actors seeking to navigate the uncertainty surrounding the 2024 US presidential election[@csis2024].
 
@@ -534,18 +534,19 @@ modelsummary(
 
 # Discussion {#sec-discussion}
 
+[!!! NEED MODIFICATION !!!]
 
 ## Stability in Support Levels for Harris {#sec-first-point}
 
-
+Kamala Harris' polling numbers show stability, a common trend for well-known candidates whose electorate solidifies in its opinion over time. Articles from The New York Times [@nyt2024harristrump] note that "once voters form opinions about candidates, those views rarely fluctuate significantly unless a major event occurs, such as a scandal or a high-profile policy shift. In the case of Harris, her polling numbers have been consistent, only changing slightly since she announced in 2024 (@fig-date2). This suggests that her supporters are more or less consistent and unlikely to change much as the election draws closer.
 
 ## Pollster-Specific Variability {#sec-second-point}
 
-
+Various polling entities, including Siena/NYT and Quinnipiac, use distinct methodologies, resulting in potential systematic discrepancies within their outcomes. According to Michael Wines, the inherent biases of each pollster result in different interpretations of the elections prediction [@nyt2024pollproblems]. For instance, Siena/NYT's live-interview method often skews slightly older and more conservative in its responses compared to online polling methods used by other organizations [@siena_scri_2024_poll]. This variability makes clear that when interpreting for polling results, the source of the poll must be included at minimum.
 
 ## State-Level Differences {#sec-third-point}
 
-
+Certain states, particularly battleground states like Florida, Pennsylvania, and Georgia, show significantly different polling results compared to national trends due to regional issues and voter priorities [@politico2024battleground]. These reflect state-specific issues, such as local economies, immigration, and access to healthcare. Surveys carried out within these states often show wider variation in candidate support, which makes state-level analysis necessary for more accurate predictions. Incorporating state-specific factors into electoral models allows a better representation of the diverse political landscapes seen across the United States, hence improving the precision of prediction in these key areas.
 
 ## Weaknesses and next steps
 

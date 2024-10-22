@@ -129,3 +129,15 @@ ggplot(just_harris_high_quality, aes(x = pct)) +
 ```
 The first part creates a table with summary statistics of the pct variable (mean, median, min, max, standard deviation, and count).
 The second part visualizes the distribution of the pct variable using a histogram.
+
+LLM: ChatGPT-4.
+Date: 21 October 2024
+
+User
+why does predicting electoral outcomes matter?
+
+ChatGPT
+Predicting electoral outcomes matters because it helps stakeholders—such as political campaigns, policymakers, and the media—strategically allocate resources, understand public sentiment, and prepare for potential shifts in governance. Moreover, these predictions can influence financial markets, international relations, and policy decisions, as the outcome of U.S. elections has far-reaching implications beyond national borders, affecting global economies and diplomatic strategies.
+
+
+
