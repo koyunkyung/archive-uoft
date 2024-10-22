@@ -1,6 +1,6 @@
 ---
 title: "Kamala Harris Rises as the 2024 Election Front Runner: A Poll-of-Polls Forecast"
-subtitle: "How Poll Aggregation Reveals US Presidental Race Trends[!!!UPDATE IT TO MAIN RESULTS!!!]"
+subtitle: "How Poll Aggregation Reveals US Presidental Race Trends"
 author: 
   - Yunkyung Ko
 thanks: "Code and data are available at: [https://github.com/koyunkyung/us_election_2024](https://github.com/koyunkyung/us_election_2024)."
@@ -168,8 +168,8 @@ The date variable representing the time the poll was concluded helps was put int
 
 summary_stats <- raw_elections_data %>%
   summarize(
-    min = min(end_date, na.rm = TRUE),
-    max = max(end_date, na.rm = TRUE)
+    Min = min(end_date, na.rm = TRUE),
+    Max = max(end_date, na.rm = TRUE)
   )
 
 # Display the summary statistics in a nicely formatted table
@@ -209,8 +209,8 @@ When filtering the data, not only pollster quality and candidate type but also t
 
 summary_stats <- harris_data %>%
   summarize(
-    min = min(end_date, na.rm = TRUE),
-    max = max(end_date, na.rm = TRUE)
+    Min = min(end_date, na.rm = TRUE),
+    Max = max(end_date, na.rm = TRUE)
   )
 
 # Display the summary statistics in a nicely formatted table
@@ -242,17 +242,17 @@ ggplot(harris_dataa, aes(x = end_date)) +
 
 The 'pollster' and 'state' variable were selected to consider the effect of changes in poll-making organizations and geographical distinctions. The two variables respectively represent the polling organization that conducted the poll and the US state where the poll was conducted or focused.
 
-@tbl-predictors shows that the original dataset [@fivethirtyeight2024] contains 222 distinct pollsters and 54 distinct states. After filtering for high-quality polls and assigning 'other' for states with fewer than 60 polls, the analysis data contains 3 distinct poll-making organizations and 19 geographical distinctions as shown in @tbl-predictors.
+@tbl-predictors1 shows that the original dataset [@fivethirtyeight2024] contains 222 distinct pollsters and 54 distinct states. After filtering for high-quality polls and assigning 'other' for states with fewer than 60 polls, the analysis data contains 3 distinct poll-making organizations and 19 geographical distinctions as shown in @tbl-predictors2.
 
 ```{r}
-#| label: tbl-predictors
+#| label: tbl-predictors1
 #| tbl-cap: Number of Distinct Values for the 'pollster', 'state' Variable (Raw Data)
 #| echo: false
 
 summary_stats <- raw_elections_data %>%
   summarize(
-    pollsters = n_distinct(pollster),
-    states = n_distinct(state)
+    Pollster = n_distinct(pollster),
+    State = n_distinct(state)
   )
 
 # Display the summary statistics in a nicely formatted table
@@ -263,14 +263,14 @@ summary_stats %>%
 ```
 
 ```{r}
-#| label: tbl-predictors
+#| label: tbl-predictors2
 #| tbl-cap: Number of Distinct Values for the 'pollster', 'state' Variable (Filtered Data)
 #| echo: false
 
 summary_stats <- harris_data %>%
   summarize(
-    pollsters = n_distinct(pollster),
-    states = n_distinct(state)
+    Pollster = n_distinct(pollster),
+    State = n_distinct(state)
   )
 
 # Display the summary statistics in a nicely formatted table
@@ -396,36 +396,86 @@ ggplot(harris_data, aes(x = factor(pollscore))) +
 
 # Model {#sec-model}
 
-The goal of our modelling strategy is twofold. Firstly,...
-
-Here we briefly describe the Bayesian analysis model used to investigate... Background details and diagnostics are included in [Appendix -@sec-model-details].
+The goal of our modelling strategy is to estimate Kamala Harris's support percentage in the 2024 US election polls, accounting for potential variations over time, as well as across different pollsters and states. The model balances complexity with interpretability, incorporating both linear and Bayesian frameworks to capture patterns in the data. Background details and diagnostics are included in [Appendix -@sec-model-details].
 
 ## Model set-up
 
-Define $y_i$ as the number of seconds that the plane remained aloft. Then $\beta_i$ is the wing width and $\gamma_i$ is the wing length, both measured in millimeters.  
+Define $y_i$ as the percentage of support that Kamala Harris receives in poll $i$. We begin with two simple linear models and progress to more complex Bayesian models that account for hierarchical structures.
 
-\begin{align} 
-y_i|\mu_i, \sigma &\sim \mbox{Normal}(\mu_i, \sigma) \\
-\mu_i &= \alpha + \beta_i + \gamma_i\\
-\alpha &\sim \mbox{Normal}(0, 2.5) \\
-\beta &\sim \mbox{Normal}(0, 2.5) \\
-\gamma &\sim \mbox{Normal}(0, 2.5) \\
-\sigma &\sim \mbox{Exponential}(1)
+The following models outline our approach:
+
+### Linear Model by Date 
+
+```{=latex}
+\begin{align}  
+y_i &= \beta_0 + \beta_1 \cdot \text{end\_date}_i + \epsilon_i \\
+\epsilon_i &\sim \text{Normal}(0, \sigma^2)
 \end{align}
+```
 
-We run the model in R [@citeR] using the `rstanarm` package of @rstanarm. We use the default priors from `rstanarm`.
+where:
+- $y_i$ is the percentage of support for Harris in poll $i$,
+- $\beta_0$ is the intercept,
+- $\beta_1$ represents the effect of the poll's end date,
+- $\epsilon_i$ is the error term.
 
+### Linear Model by Date and Pollster
+
+```{=latex}
+\begin{align}  
+y_i &= \beta_0 + \beta_1 \cdot \text{end\_date}_i + \gamma_{p[i]} + \epsilon_i \\
+\epsilon_i &\sim \text{Normal}(0, \sigma^2)
+\end{align}
+```
+
+where:
+- $\gamma_{p[i]}$ is a fixed effect for pollster $p$ conducting poll $i$ (e.g., Siena/NYT).
+
+### Bayesian Model with Random Intercept for Pollster 
+
+```{=latex}
+\begin{align}  
+y_i | \mu_i, \sigma &\sim \text{Normal}(\mu_i, \sigma) \\
+\mu_i &= \beta_0 + \beta_1 \cdot \text{end\_date}_i + \gamma_{p[i]} \\
+\gamma_p &\sim \text{Normal}(0, \sigma_{\gamma})
+\end{align}
+```
+
+where:
+- $\gamma_p$ is a random effect for pollster $p$.
+
+### Bayesian Model with Random Intercept for Pollster and State
+
+```{=latex}
+\begin{align}  
+y_i | \mu_i, \sigma &\sim \text{Normal}(\mu_i, \sigma) \\
+\mu_i &= \beta_0 + \beta_1 \cdot \text{end\_date}_i + \gamma_{p[i]} + \delta_{s[i]} \\
+\gamma_p &\sim \text{Normal}(0, \sigma_{\gamma}) \\
+\delta_s &\sim \text{Normal}(0, \sigma_{\delta})
+\end{align}
+```
+
+where:
+- $\delta_{s[i]}$ is a random effect for state $s$.
+
+The Bayesian models are fit using `rstanarm` in R. The priors used are weakly informative:
+- $\beta_0 \sim \text{Normal}(0, 10)$
+- $\sigma \sim \text{Exponential}(1)$
 
 ### Model justification
 
-We expect a positive relationship between the size of the wings and time spent aloft. In particular...
+Different pollsters and states induce variations in polling results, as pollsters may have distinct methodologies and states represent diverse voter bases. Incorporating random effects for both pollsters and states allows us to improve the robustness of the model.
 
-We can use maths by including latex between dollar signs, for instance $\theta$.
+These models are run through the rstanarm package [@rstanarm] in R  [@citeR], which makes Bayesian modeling available through the use of Stan's strong inference engine. To validate the models, RMSE and WAIC have been made use of to check the goodness of fit; Bayesian models with reduced RMSE and WAIC outperform linear models. We use weakly informative priors; for example, $\beta_0 \sim \text{Normal}(0, 10)$ and $\sigma \sim \text{Exponential}(1)$. This reflects our initial uncertainty but prevents overfitting. The priors were chosen conservatively to ensure that the model remains consistent.
 
+Model diagnostics, including posterior predictive checks and convergence diagnostics, were carried out to ensure the reliability of the results. The Bayesian models converged successfully, as indicated by $\hat{R} = 1$ for all parameters.
+
+The main assumption in these models is that the pollster and state effects can be treated as random. This assumes that the effects are normally distributed across pollsters and states, which may not always be accurate. Additionally, the model assumes that polling data is representative of the actual electorate, an assumption that can be violated if polls are biased or have non-random sampling issues. Despite these limitations, the hierarchical structure allows us to capture important variability, making the model suitable for predicting Harris's support. Future improvements could involve incorporating time-varying effects or exploring interactions between pollsters and states.
 
 # Results {#sec-results}
 
-Our results are summarized in @tbl-modelresults.
+Our results are summarized in @tbl-modelresults1 and @tbl-modelresults2.
+[!!! ADD MORE WORDS !!!]
 
 ```{r}
 #| echo: false
@@ -433,37 +483,75 @@ Our results are summarized in @tbl-modelresults.
 #| warning: false
 #| message: false
 
+model_date <-
+  readRDS(file = here::here("models/model_date.rds"))
+
+model_date_pollster <-
+  readRDS(file = here::here("models/model_date_pollster.rds"))
+
+bayesian_model_1 <-
+  readRDS(file = here::here("models/bayesian_model_1.rds"))
+  
+bayesian_model_2 <-
+  readRDS(file = here::here("models/bayesian_model_2.rds"))
 
 ```
 
 ```{r}
 #| echo: false
 #| eval: true
-#| label: tbl-modelresults
-#| tbl-cap: "Explanatory models of flight time based on wing width and wing length"
+#| label: tbl-modelresults1
+#| tbl-cap: "Linear models of support percentages for Harris based on date and pollster"
 #| warning: false
 
+modelsummary(
+  list(
+    "Linear by Date" = model_date,
+    "Linear by Date, Pollster" = model_date_pollster
+  ),
+  statistic = "mad",
+  fmt = 2)
+
+```
+
+```{r}
+#| echo: false
+#| eval: true
+#| label: tbl-modelresults2
+#| tbl-cap: "Bayesian models of support percentages for Harris based on pollster and state"
+#| warning: false
+
+modelsummary(
+  list(
+    "Bayesian with Pollster" = bayesian_model_1,
+    "Bayesian with Pollster, State" = bayesian_model_2
+  ),
+  statistic = "mad",
+  fmt = 2)
 
 ```
 
 
-
-
 # Discussion {#sec-discussion}
 
-## First discussion point {#sec-first-point}
 
-If my paper were 10 pages, then should be be at least 2.5 pages. The discussion is a chance to show off what you know and what you learnt from all this. 
+## Stability in Support Levels for Harris {#sec-first-point}
 
-## Second discussion point
 
-Please don't use these as sub-heading labels - change them to be what your point actually is.
 
-## Third discussion point
+## Pollster-Specific Variability {#sec-second-point}
+
+
+
+## State-Level Differences {#sec-third-point}
+
+
 
 ## Weaknesses and next steps
 
-Weaknesses and next steps should also be included.
+Future studies could focus on the incorporation of time-varying effects to capture dynamic shifts in public opinion, especially at times of large campaign events. Interaction terms between pollster and state can be included in the model, since some polling organizations may be more effective or influential in specific regions. This can give further explanation to how pollsters and regional dynamics affect overall support for a candidate. Moreover, extending the model to incorporate voter demographics, such as age, gender, and education, could show which segments of the population are driving changes in support.
+
+While our model provides a foundation to understand Harris' polling support, it will take further refinements are necessary to enhance its accuracy and applicability. The combination of hierarchical modeling with Bayesian methods is effective at accounting for the heterogeneity across pollsters and states, yet there remain considerable directions of inquiry to explore at the intersection of polling methodology, voter behavior, and regional electoral dynamics.
 
 \newpage
 
@@ -471,41 +559,59 @@ Weaknesses and next steps should also be included.
 
 # Appendix
 
-
 # Additional data details {#sec-data-details}
 
 ## Pollster Methodology Overview and Evaluation
 
+The New York Times/Siena College polling partnership, the polling organization that accounted for the majority of polls in our analysis (@fig-pollster), conducts polls tailored for specific elections, such as state or national races [@nyt_siena_2020_methodology]. Their sample size typically includes 600 to 1000 likely voters per poll, with oversampling in battleground states to capture regional nuances [@nyt_siena_2020_methodology]. The methodology uses random-digit dialing (RDD) for landlines and mobile phones to ensure representative sample coverage across demographics. In addition, online surveys are administered to complement phone-based responses, ensuring broader accessibility [@nyt_siena_2020_methodology]. The stratified random sampling approach is employed, where the population is divided into strata (based on demographic variables like race, education, and geography), and a random sample is drawn from each stratum [@tellingstories]. This allows for precision in reflecting the political leanings and key demographic shifts in specific regions.
+
+The organization intends to enhance transparency in how public opinion is assessed, ensuring that questions are carefully designed to represent contemporary political discussions, and that the terminology is polished through a process of iterative testing to achieve clarity. They devote extensive resources to cognitive testing to ensure question wording reflects what the public thinks [@siena_scri_2024_poll]. Their polling methodology stands out in that its strategic focus on using representative samples reflect political leanings and demographics of a region for more contextual and precise polling. Siena/NYT has its reputation for accurately predicting key battleground state outcomes during previous elections, such as Florida in 2016[@siena_nyt_perfect_partnership_2024].
+
+The limitations of Siena/NYT's methodology are the challenge of polling itself. Since polling is a "snapshot in time",  the results can fluctuate based on recent political events or campaign dynamics. Additionally, while the effort to represent a broad demographic is laudable, there are still issues with nonresponse bias in polling-particularly among the hard-to-reach voter or voters suspicious of polling organizations themselves [@pew2023polling].
+
+
 ## Idealized Methodolgy
 
+The proposed methodology for forecasting the 2024 U.S. presidential election with a budget of $100,000 would be designed as follows. First, a stratified random sampling method will be employed that allows for the capture of the demographic elements such as age, gender, race, and education level. This could alleviate bias and make the sample more representative of the population [@pew2023polling]. The data collection process will encompass both telephone surveys and internet polling, thereby effectively engaging a diverse range of voters [@pew2023polling]. Survey respondents would include older populations via conventional methods and younger, technologically intellectual individuals through digital platforms. This multifaceted approach enhances the reliability and inclusiveness of the gathered data.
+
+In addition to robust sampling, the methodology incorporates weighting methods that account for groups that are underrepresented, ensuring that the outcomes are not skewed by sampling errors [@pew2023polling]. The final model would use Bayesian hierarchical modeling, which allows for more flexible modeling of uncertainty and variation across states, pollsters, and other external factors. These models, along with out-of-sample testing and cross-validation, enable accurate prediction sensitive to the dynamics of real-world changes, including political events [@pew2023polling]. The inclusion of external factors, such as major political events, debates, or sudden economic shifts, would help the model remain responsive to rapid changes in voter sentiment. 
+
 ## Idealized Survey
+
+The proposed survey questionnarie design is provided in the following link: 
 
 # Model details {#sec-model-details}
 
 ## Posterior predictive check
 
-In @fig-ppcheckandposteriorvsprior-1 we implement a posterior predictive check. This shows...
+In the first posterior predictive check (@fig-ppcheck-1), we compare the observed data with replicated data generated from the posterior distribution. This shows that the model is able to replicate the overall distribution of the observed data, with the replicated curves (light blue) closely following the true data (dark blue line). This indicates that the model fits the data well in terms of capturing the main pattern or trend [@stan2023posteriorchecks].
 
-In @fig-ppcheckandposteriorvsprior-2 we compare the posterior with the prior. This shows... 
+In the second plot (@fig-ppcheck-2), the replicated data which had both the pollster and state variable as random intercepts, shows relatively closer approximation to the true data distribution. The narrowing of uncertainty in the posterior relative to the prior indicates the impact of the data on refining the model's predictions. This reassures that the model fits the data reasonably well and that the prior information has been appropriately updated by the observed data [@stan2023posteriorchecks].
 
 ```{r}
 #| eval: true
 #| echo: false
 #| message: false
 #| warning: false
-#| label: fig-ppcheckandposteriorvsprior
+#| label: fig-ppcheck
 #| layout-ncol: 2
-#| fig-cap: "Examining how the model fits, and is affected by, the data"
-#| fig-subcap: ["Posterior prediction check", "Comparing the posterior with the prior"]
+#| fig-cap: "Examining how the Bayesian model fits, and is affected by, the data"
+#| fig-subcap: ["Posterior prediction check"]
 
+pp_check(bayesian_model_1) +
+  theme_classic() +
+  theme(legend.position = "bottom")
 
+pp_check(bayesian_model_2) +
+  theme_classic() +
+  theme(legend.position = "bottom")
 ```
 
 ## Diagnostics
 
-@fig-stanareyouokay-1 is a trace plot. It shows... This suggests...
+@fig-stanareyouokay-1 is a trace plot. The sampled values for posterior distribution of intercept parameter across iterations of the MCMC algorithm shows good convergence [@stan_mcmc_traces]. The lines for the parameter appear to be stable and fluctuating around a central value without any clear trends or patterns. This suggests that the MCMC algorithm has likely converged, and the posterior samples are representative of the target distribution.
 
-@fig-stanareyouokay-2 is a Rhat plot. It shows... This suggests...
+@fig-stanareyouokay-2 is a Rhat plot. The Rhat value is approximately 1.0 for the intercept, which shows that the variance within and between multiple chains have converged. An Rhat value close to 1 indicates that the chains have mixed well and are drawing from the same distribution while values significantly greater than 1 would indicate that further iterations are needed [@stan_mcmc_diagnostics].This suggests that the Bayesian models for both "pollster" and "state" have likely converged, and the results derived from these models are reliable.
 
 ```{r}
 #| echo: false
@@ -516,6 +622,12 @@ In @fig-ppcheckandposteriorvsprior-2 we compare the posterior with the prior. Th
 #| fig-cap: "Checking the convergence of the MCMC algorithm"
 #| fig-subcap: ["Trace plot", "Rhat plot"]
 #| layout-ncol: 2
+
+
+
+plot(bayesian_model_1, pars = "(Intercept)", prob = 0.95)
+
+plot(bayesian_model_2, pars = "(Intercept)", prob = 0.95)
 
 
 ```

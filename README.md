@@ -1,5 +1,5 @@
 # Kamala Harris Rises as the 2024 Election Front Runner: A Poll-of-Polls Forecast
-## How Poll Aggregation Reveals US Presidental Race Trends [!!!UPDATE IT TO MAIN RESULTS!!!]
+## How Poll Aggregation Reveals US Presidental Race Trends
 
 ## Overview
 
