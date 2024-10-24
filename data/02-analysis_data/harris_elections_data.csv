@@ -1,4 +1,11 @@
 pollster,numeric_grade,pollscore,state,end_date,candidate_name,sample_size,pct,num_harris
+Emerson,2.9,-1.1,Pennsylvania,2024-10-22,Kamala Harris,860,49,421
+Emerson,2.9,-1.1,North Carolina,2024-10-22,Kamala Harris,950,48.2,458
+Emerson,2.9,-1.1,Wisconsin,2024-10-22,Kamala Harris,800,49.2,394
+Emerson,2.9,-1.1,Other,2024-10-22,Kamala Harris,825,36.5,301
+Emerson,2.9,-1.1,Maryland,2024-10-21,Kamala Harris,865,64,554
+Emerson,2.9,-1.1,Texas,2024-10-21,Kamala Harris,815,45.9,374
+Emerson,2.9,-1.1,Florida,2024-10-20,Kamala Harris,860,45.9,395
 Emerson,2.9,-1.1,California,2024-10-14,Kamala Harris,1000,61,610
 Siena/NYT,3,-1.5,Pennsylvania,2024-10-10,Kamala Harris,857,50,428
 Siena/NYT,3,-1.5,Pennsylvania,2024-10-10,Kamala Harris,857,49,420

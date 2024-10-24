@@ -63,13 +63,13 @@ To ensure data quality, we filtered the dataset to include only polls that measu
 
 In performing the analysis, we utilized several R packages. `tidyverse` [@tidyverse] was used for data manipulation and visualization and `rstanarm` [@rstanarm], `modelsummary` [@modelsummary] was respectively used for Bayesian modeling and generating model summaries. For visualizing results, `ggplot2` [@ggplot2] was used and `kableExtra` [@kableExtra] helped format tables for presentation. These packages provided a framework for efficient data processing, modeling, and reporting.
 
-(Data last updated on 22 Oct 2024.) - [!!! MODIFY AT FINAL !!!]
+(Data last updated on 24 Oct 2024.) - [!!! MODIFY AT FINAL !!!]
 
 ## Measurement
 
 [!!! MODIFY OBSV. NUMBERS AFTER DATA UPDATES !!!] - ERASE AT FINAL
 
-The original dataset sourced from FiveThirtyEight [@fivethirtyeight2024] aggregates a wide range of poll results (16012 observations, based on dataset available at Oct 22, 13:00). The polls conducted by various polling organizations capture voter preferences by taking a representative sample of the electorate and asking for the voters' candidate of choice. Surveys were conducted at the state and national levels, providing the wide perspective on public feelings across the country.
+The original dataset sourced from FiveThirtyEight [@fivethirtyeight2024] aggregates a wide range of poll results (16264 observations, based on dataset available at Oct 24, 13:00). The polls conducted by various polling organizations capture voter preferences by taking a representative sample of the electorate and asking for the voters' candidate of choice. Surveys were conducted at the state and national levels, providing the wide perspective on public feelings across the country.
 
 Each poll represents a predictor of an actual event, namely voter opinion at a particular moment. Nevertheless, like all survey results, the raw data is susceptible to many potential limitations including the following: sampling error, variation in polling methods, distortion because of inappropriate survey responses such as missing data or response from respondents who misunderstood the questions [@tellingstories].
 

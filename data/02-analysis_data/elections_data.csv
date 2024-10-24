@@ -1,12 +1,157 @@
 pollster,numeric_grade,pollscore,state,end_date,candidate_name,sample_size,pct
+Emerson,2.9,-1.1,Pennsylvania,10/22/24,Kamala Harris,860,49
+Emerson,2.9,-1.1,Pennsylvania,10/22/24,Donald Trump,860,50.7
+Emerson,2.9,-1.1,North Carolina,10/22/24,Kamala Harris,950,48.2
+Emerson,2.9,-1.1,North Carolina,10/22/24,Donald Trump,950,50.2
+Emerson,2.9,-1.1,Wisconsin,10/22/24,Kamala Harris,800,49.2
+Emerson,2.9,-1.1,Wisconsin,10/22/24,Donald Trump,800,49.9
+Emerson,2.9,-1.1,Other,10/22/24,Kamala Harris,825,36.5
+Emerson,2.9,-1.1,Other,10/22/24,Donald Trump,825,62
+Marist,2.9,-0.9,Georgia,10/22/24,Kamala Harris,1356,49
+Marist,2.9,-0.9,Georgia,10/22/24,Donald Trump,1356,48
+Marist,2.9,-0.9,Georgia,10/22/24,Kamala Harris,1193,49
+Marist,2.9,-0.9,Georgia,10/22/24,Donald Trump,1193,49
+Marist,2.9,-0.9,North Carolina,10/22/24,Kamala Harris,1410,48
+Marist,2.9,-0.9,North Carolina,10/22/24,Donald Trump,1410,49
+Marist,2.9,-0.9,North Carolina,10/22/24,Kamala Harris,1226,48
+Marist,2.9,-0.9,North Carolina,10/22/24,Donald Trump,1226,50
+Marist,2.9,-0.9,Arizona,10/22/24,Kamala Harris,1329,49
+Marist,2.9,-0.9,Arizona,10/22/24,Donald Trump,1329,49
+Marist,2.9,-0.9,Arizona,10/22/24,Kamala Harris,1193,49
+Marist,2.9,-0.9,Arizona,10/22/24,Donald Trump,1193,50
+University of Maryland/Washington Post,2.5,-0.3,Maryland,10/22/24,Kamala Harris,1000,61
+University of Maryland/Washington Post,2.5,-0.3,Maryland,10/22/24,Donald Trump,1000,33
+Emerson,2.9,-1.1,Maryland,10/21/24,Kamala Harris,865,64
+Emerson,2.9,-1.1,Maryland,10/21/24,Donald Trump,865,34.4
+Emerson,2.9,-1.1,Texas,10/21/24,Kamala Harris,815,45.9
+Emerson,2.9,-1.1,Texas,10/21/24,Donald Trump,815,53.1
+Change Research,1.4,0.6,Other,10/21/24,Kamala Harris,815,41
+Change Research,1.4,0.6,Other,10/21/24,Donald Trump,815,55
+Quinnipiac,2.8,-0.5,Michigan,10/21/24,Kamala Harris,1136,49
+Quinnipiac,2.8,-0.5,Michigan,10/21/24,Donald Trump,1136,46
+Quinnipiac,2.8,-0.5,Michigan,10/21/24,Jill Stein,1136,1
+Quinnipiac,2.8,-0.5,Michigan,10/21/24,Chase Oliver,1136,0
+Quinnipiac,2.8,-0.5,Michigan,10/21/24,Cornel West,1136,1
+Quinnipiac,2.8,-0.5,Michigan,10/21/24,Randall A. Terry,1136,0
+Quinnipiac,2.8,-0.5,Michigan,10/21/24,Kamala Harris,1136,50
+Quinnipiac,2.8,-0.5,Michigan,10/21/24,Donald Trump,1136,46
+Quinnipiac,2.8,-0.5,Wisconsin,10/21/24,Kamala Harris,1108,48
+Quinnipiac,2.8,-0.5,Wisconsin,10/21/24,Donald Trump,1108,48
+Quinnipiac,2.8,-0.5,Wisconsin,10/21/24,Jill Stein,1108,0
+Quinnipiac,2.8,-0.5,Wisconsin,10/21/24,Chase Oliver,1108,0
+Quinnipiac,2.8,-0.5,Wisconsin,10/21/24,Cornel West,1108,0
+Quinnipiac,2.8,-0.5,Wisconsin,10/21/24,Randall A. Terry,1108,0
+Quinnipiac,2.8,-0.5,Wisconsin,10/21/24,Claudia De La Cruz,1108,0
+Quinnipiac,2.8,-0.5,Wisconsin,10/21/24,Kamala Harris,1108,48
+Quinnipiac,2.8,-0.5,Wisconsin,10/21/24,Donald Trump,1108,48
 InsiderAdvantage,2,-0.3,Nevada,10/20/24,Kamala Harris,800,47.7
 InsiderAdvantage,2,-0.3,Nevada,10/20/24,Donald Trump,800,47.9
 InsiderAdvantage,2,-0.3,Arizona,10/20/24,Kamala Harris,800,47
 InsiderAdvantage,2,-0.3,Arizona,10/20/24,Donald Trump,800,49.5
+InsiderAdvantage,2,-0.3,North Carolina,10/20/24,Kamala Harris,800,46.8
+InsiderAdvantage,2,-0.3,North Carolina,10/20/24,Donald Trump,800,48.7
+HighGround,1.8,-0.3,Arizona,10/20/24,Kamala Harris,400,46.2
+HighGround,1.8,-0.3,Arizona,10/20/24,Donald Trump,400,46.8
 Trafalgar Group,0.7,0.6,Wisconsin,10/20/24,Kamala Harris,1083,46.6
 Trafalgar Group,0.7,0.6,Wisconsin,10/20/24,Donald Trump,1083,46.8
 Trafalgar Group,0.7,0.6,Michigan,10/20/24,Kamala Harris,1090,44.2
 Trafalgar Group,0.7,0.6,Michigan,10/20/24,Donald Trump,1090,46
+Emerson,2.9,-1.1,Florida,10/20/24,Kamala Harris,860,45.9
+Emerson,2.9,-1.1,Florida,10/20/24,Donald Trump,860,53.6
+SurveyUSA/High Point University,2.8,-1.3,North Carolina,10/20/24,Kamala Harris,1164,47
+SurveyUSA/High Point University,2.8,-1.3,North Carolina,10/20/24,Donald Trump,1164,46
+Morning Consult,1.9,-0.3,Arizona,10/20/24,Kamala Harris,915,48
+Morning Consult,1.9,-0.3,Arizona,10/20/24,Donald Trump,915,48
+Morning Consult,1.9,-0.3,Arizona,10/20/24,Jill Stein,915,1
+Morning Consult,1.9,-0.3,Arizona,10/20/24,Chase Oliver,915,2
+Morning Consult,1.9,-0.3,Arizona,10/20/24,Kamala Harris,915,49
+Morning Consult,1.9,-0.3,Arizona,10/20/24,Donald Trump,915,49
+Morning Consult,1.9,-0.3,Arizona,10/20/24,Kamala Harris,861,48
+Morning Consult,1.9,-0.3,Arizona,10/20/24,Donald Trump,861,48
+Morning Consult,1.9,-0.3,Arizona,10/20/24,Jill Stein,861,1
+Morning Consult,1.9,-0.3,Arizona,10/20/24,Chase Oliver,861,2
+Morning Consult,1.9,-0.3,Arizona,10/20/24,Kamala Harris,861,49
+Morning Consult,1.9,-0.3,Arizona,10/20/24,Donald Trump,861,49
+Morning Consult,1.9,-0.3,Georgia,10/20/24,Kamala Harris,914,48
+Morning Consult,1.9,-0.3,Georgia,10/20/24,Donald Trump,914,47
+Morning Consult,1.9,-0.3,Georgia,10/20/24,Jill Stein,914,0
+Morning Consult,1.9,-0.3,Georgia,10/20/24,Chase Oliver,914,2
+Morning Consult,1.9,-0.3,Georgia,10/20/24,Kamala Harris,914,48
+Morning Consult,1.9,-0.3,Georgia,10/20/24,Donald Trump,914,49
+Morning Consult,1.9,-0.3,Georgia,10/20/24,Kamala Harris,855,48
+Morning Consult,1.9,-0.3,Georgia,10/20/24,Donald Trump,855,49
+Morning Consult,1.9,-0.3,Georgia,10/20/24,Jill Stein,855,0
+Morning Consult,1.9,-0.3,Georgia,10/20/24,Chase Oliver,855,1
+Morning Consult,1.9,-0.3,Georgia,10/20/24,Kamala Harris,855,48
+Morning Consult,1.9,-0.3,Georgia,10/20/24,Donald Trump,855,50
+Morning Consult,1.9,-0.3,Michigan,10/20/24,Kamala Harris,756,47
+Morning Consult,1.9,-0.3,Michigan,10/20/24,Donald Trump,756,45
+Morning Consult,1.9,-0.3,Michigan,10/20/24,Jill Stein,756,1
+Morning Consult,1.9,-0.3,Michigan,10/20/24,Chase Oliver,756,2
+Morning Consult,1.9,-0.3,Michigan,10/20/24,Kamala Harris,756,48
+Morning Consult,1.9,-0.3,Michigan,10/20/24,Donald Trump,756,46
+Morning Consult,1.9,-0.3,Michigan,10/20/24,Kamala Harris,705,49
+Morning Consult,1.9,-0.3,Michigan,10/20/24,Donald Trump,705,46
+Morning Consult,1.9,-0.3,Michigan,10/20/24,Jill Stein,705,1
+Morning Consult,1.9,-0.3,Michigan,10/20/24,Chase Oliver,705,2
+Morning Consult,1.9,-0.3,Michigan,10/20/24,Kamala Harris,705,50
+Morning Consult,1.9,-0.3,Michigan,10/20/24,Donald Trump,705,46
+Morning Consult,1.9,-0.3,Nevada,10/20/24,Kamala Harris,449,48
+Morning Consult,1.9,-0.3,Nevada,10/20/24,Donald Trump,449,47
+Morning Consult,1.9,-0.3,Nevada,10/20/24,Jill Stein,449,0
+Morning Consult,1.9,-0.3,Nevada,10/20/24,Chase Oliver,449,2
+Morning Consult,1.9,-0.3,Nevada,10/20/24,Kamala Harris,449,49
+Morning Consult,1.9,-0.3,Nevada,10/20/24,Donald Trump,449,48
+Morning Consult,1.9,-0.3,Nevada,10/20/24,Kamala Harris,420,48
+Morning Consult,1.9,-0.3,Nevada,10/20/24,Donald Trump,420,48
+Morning Consult,1.9,-0.3,Nevada,10/20/24,Jill Stein,420,0
+Morning Consult,1.9,-0.3,Nevada,10/20/24,Chase Oliver,420,1
+Morning Consult,1.9,-0.3,Nevada,10/20/24,Kamala Harris,420,49
+Morning Consult,1.9,-0.3,Nevada,10/20/24,Donald Trump,420,48
+Morning Consult,1.9,-0.3,North Carolina,10/20/24,Kamala Harris,755,46
+Morning Consult,1.9,-0.3,North Carolina,10/20/24,Donald Trump,755,49
+Morning Consult,1.9,-0.3,North Carolina,10/20/24,Jill Stein,755,1
+Morning Consult,1.9,-0.3,North Carolina,10/20/24,Chase Oliver,755,3
+Morning Consult,1.9,-0.3,North Carolina,10/20/24,Kamala Harris,755,47
+Morning Consult,1.9,-0.3,North Carolina,10/20/24,Donald Trump,755,50
+Morning Consult,1.9,-0.3,North Carolina,10/20/24,Kamala Harris,702,48
+Morning Consult,1.9,-0.3,North Carolina,10/20/24,Donald Trump,702,49
+Morning Consult,1.9,-0.3,North Carolina,10/20/24,Jill Stein,702,1
+Morning Consult,1.9,-0.3,North Carolina,10/20/24,Chase Oliver,702,1
+Morning Consult,1.9,-0.3,North Carolina,10/20/24,Kamala Harris,702,48
+Morning Consult,1.9,-0.3,North Carolina,10/20/24,Donald Trump,702,50
+Morning Consult,1.9,-0.3,Pennsylvania,10/20/24,Kamala Harris,866,48
+Morning Consult,1.9,-0.3,Pennsylvania,10/20/24,Donald Trump,866,48
+Morning Consult,1.9,-0.3,Pennsylvania,10/20/24,Jill Stein,866,0
+Morning Consult,1.9,-0.3,Pennsylvania,10/20/24,Chase Oliver,866,2
+Morning Consult,1.9,-0.3,Pennsylvania,10/20/24,Kamala Harris,866,48
+Morning Consult,1.9,-0.3,Pennsylvania,10/20/24,Donald Trump,866,48
+Morning Consult,1.9,-0.3,Pennsylvania,10/20/24,Kamala Harris,812,50
+Morning Consult,1.9,-0.3,Pennsylvania,10/20/24,Donald Trump,812,48
+Morning Consult,1.9,-0.3,Pennsylvania,10/20/24,Jill Stein,812,0
+Morning Consult,1.9,-0.3,Pennsylvania,10/20/24,Chase Oliver,812,1
+Morning Consult,1.9,-0.3,Pennsylvania,10/20/24,Kamala Harris,812,50
+Morning Consult,1.9,-0.3,Pennsylvania,10/20/24,Donald Trump,812,48
+Morning Consult,1.9,-0.3,Wisconsin,10/20/24,Kamala Harris,635,47
+Morning Consult,1.9,-0.3,Wisconsin,10/20/24,Donald Trump,635,47
+Morning Consult,1.9,-0.3,Wisconsin,10/20/24,Jill Stein,635,1
+Morning Consult,1.9,-0.3,Wisconsin,10/20/24,Chase Oliver,635,3
+Morning Consult,1.9,-0.3,Wisconsin,10/20/24,Kamala Harris,635,48
+Morning Consult,1.9,-0.3,Wisconsin,10/20/24,Donald Trump,635,48
+Morning Consult,1.9,-0.3,Wisconsin,10/20/24,Kamala Harris,624,47
+Morning Consult,1.9,-0.3,Wisconsin,10/20/24,Donald Trump,624,47
+Morning Consult,1.9,-0.3,Wisconsin,10/20/24,Jill Stein,624,1
+Morning Consult,1.9,-0.3,Wisconsin,10/20/24,Chase Oliver,624,3
+Morning Consult,1.9,-0.3,Wisconsin,10/20/24,Kamala Harris,624,48
+Morning Consult,1.9,-0.3,Wisconsin,10/20/24,Donald Trump,624,48
+Franklin and Marshall College,2.4,-0.1,Pennsylvania,10/20/24,Kamala Harris,794,49
+Franklin and Marshall College,2.4,-0.1,Pennsylvania,10/20/24,Donald Trump,794,45
+Franklin and Marshall College,2.4,-0.1,Pennsylvania,10/20/24,Jill Stein,794,2
+Franklin and Marshall College,2.4,-0.1,Pennsylvania,10/20/24,Chase Oliver,794,1
+Franklin and Marshall College,2.4,-0.1,Pennsylvania,10/20/24,Kamala Harris,583,49
+Franklin and Marshall College,2.4,-0.1,Pennsylvania,10/20/24,Donald Trump,583,50
+Franklin and Marshall College,2.4,-0.1,Pennsylvania,10/20/24,Kamala Harris,794,48
+Franklin and Marshall College,2.4,-0.1,Pennsylvania,10/20/24,Donald Trump,794,44
 Trafalgar Group,0.7,0.6,Pennsylvania,10/19/24,Kamala Harris,1084,43.3
 Trafalgar Group,0.7,0.6,Pennsylvania,10/19/24,Donald Trump,1084,46.3
 Redfield & Wilton Strategies,1.8,0.4,Arizona,10/18/24,Kamala Harris,691,46
@@ -130,6 +275,17 @@ U. Georgia SPIA,2.2,-0.2,Georgia,10/16/24,Chase Oliver,1000,0.4
 U. Georgia SPIA,2.2,-0.2,Georgia,10/16/24,Jill Stein,1000,0.4
 InsiderAdvantage,2,-0.3,Georgia,10/15/24,Kamala Harris,800,47
 InsiderAdvantage,2,-0.3,Georgia,10/15/24,Donald Trump,800,49
+Fabrizio/Impact,1.7,-0.3,Nevada,10/15/24,Kamala Harris,600,46
+Fabrizio/Impact,1.7,-0.3,Nevada,10/15/24,Donald Trump,600,47
+Fabrizio/Impact,1.7,-0.3,Nevada,10/15/24,Chase Oliver,600,1
+Fabrizio/Impact,1.7,-0.3,Nevada,10/15/24,Kamala Harris,600,47
+Fabrizio/Impact,1.7,-0.3,Nevada,10/15/24,Donald Trump,600,49
+PPIC,2.5,-0.4,California,10/15/24,Kamala Harris,1137,59
+PPIC,2.5,-0.4,California,10/15/24,Donald Trump,1137,33
+PPIC,2.5,-0.4,California,10/15/24,Robert F. Kennedy,1137,3
+PPIC,2.5,-0.4,California,10/15/24,Chase Oliver,1137,0
+PPIC,2.5,-0.4,California,10/15/24,Jill Stein,1137,1
+PPIC,2.5,-0.4,California,10/15/24,Claudia De La Cruz,1137,1
 Morning Consult,1.9,-0.3,Arizona,10/15/24,Kamala Harris,653,49
 Morning Consult,1.9,-0.3,Arizona,10/15/24,Donald Trump,653,48
 Morning Consult,1.9,-0.3,Georgia,10/15/24,Kamala Harris,1002,48
@@ -466,6 +622,15 @@ Noble Predictive Insights,2.4,-0.4,Other,10/7/24,Joel Skousen,600,0
 Noble Predictive Insights,2.4,-0.4,Other,10/7/24,Cornel West,600,2
 Noble Predictive Insights,2.4,-0.4,Other,10/7/24,Chase Oliver,600,1
 Noble Predictive Insights,2.4,-0.4,Other,10/7/24,Jill Stein,600,1
+Digital Research,1.4,0.2,Other,10/7/24,Kamala Harris,604,48
+Digital Research,1.4,0.2,Other,10/7/24,Donald Trump,604,41
+Digital Research,1.4,0.2,Other,10/7/24,Jill Stein,604,3
+Digital Research,1.4,0.2,Other,10/7/24,Cornel West,604,1
+Digital Research,1.4,0.2,Other,10/7/24,Chase Oliver,604,1
+Digital Research,1.4,0.2,Other,10/7/24,Kamala Harris,303,56
+Digital Research,1.4,0.2,Other,10/7/24,Donald Trump,303,33
+Digital Research,1.4,0.2,Other,10/7/24,Kamala Harris,301,40
+Digital Research,1.4,0.2,Other,10/7/24,Donald Trump,301,49
 Siena/NYT,3,-1.5,Florida,10/6/24,Kamala Harris,622,41
 Siena/NYT,3,-1.5,Florida,10/6/24,Donald Trump,622,55
 Siena/NYT,3,-1.5,Florida,10/6/24,Kamala Harris,622,40
@@ -492,6 +657,10 @@ Glengariff Group Inc.,1.5,-0.2,Michigan,10/4/24,Cornel West,600,1.2
 Glengariff Group Inc.,1.5,-0.2,Michigan,10/4/24,Chase Oliver,600,0.8
 Mason-Dixon,2.6,-1.1,Florida,10/4/24,Kamala Harris,625,43
 Mason-Dixon,2.6,-1.1,Florida,10/4/24,Donald Trump,625,49
+CWS Research,1.6,0.2,Texas,10/4/24,Kamala Harris,533,43
+CWS Research,1.6,0.2,Texas,10/4/24,Donald Trump,533,48
+CWS Research,1.6,0.2,Texas,10/4/24,Chase Oliver,533,1
+CWS Research,1.6,0.2,Texas,10/4/24,Jill Stein,533,2
 Siena/NYT,3,-1.5,Texas,10/4/24,Kamala Harris,617,44
 Siena/NYT,3,-1.5,Texas,10/4/24,Donald Trump,617,50
 Siena/NYT,3,-1.5,Texas,10/4/24,Kamala Harris,617,42
@@ -998,6 +1167,8 @@ Fabrizio/Impact,1.7,-0.3,Pennsylvania,9/24/24,Kamala Harris,600,50
 Fabrizio/Impact,1.7,-0.3,Pennsylvania,9/24/24,Donald Trump,600,47
 SurveyUSA,2.8,-1.3,Other,9/23/24,Kamala Harris,558,40
 SurveyUSA,2.8,-1.3,Other,9/23/24,Donald Trump,558,56
+Monmouth,2.9,-0.9,Pennsylvania,9/23/24,Kamala Harris,654,47
+Monmouth,2.9,-0.9,Pennsylvania,9/23/24,Donald Trump,654,45
 University of Maryland/Washington Post,2.5,-0.3,Maryland,9/23/24,Kamala Harris,1012,63
 University of Maryland/Washington Post,2.5,-0.3,Maryland,9/23/24,Donald Trump,1012,31
 University of Maryland/Washington Post,2.5,-0.3,Maryland,9/23/24,Jill Stein,1012,1
