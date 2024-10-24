@@ -61,7 +61,7 @@ We use the statistical programming language R [@citeR] to analyze US presidentia
 
 To ensure data quality, we filtered the dataset to include only polls that measured Kamala Harris' support, with a numeric grade of pollster 2.7 or higher for reliability. We also limited the analysis to polls conducted after July 21, 2024, when Harris officially declared her candidacy, and excluded pollsters with fewer than 30 polls to focus on those with sufficient data for robust results.
 
-In performing the analysis, we utilized several R packages. @tidyverse was used for data manipulation and visualization and @rstanarm, @modelsummary was respectively used for Bayesian modeling and generating model summaries. For visualizing results, @ggplot2 was used and @kableExtra helped format tables for presentation. These packages provided a framework for efficient data processing, modeling, and reporting.
+In performing the analysis, we utilized several R packages. `tidyverse` [@tidyverse] was used for data manipulation and visualization and `rstanarm` [@rstanarm], `modelsummary` [@modelsummary] was respectively used for Bayesian modeling and generating model summaries. For visualizing results, `ggplot2` [@ggplot2] was used and `kableExtra` [@kableExtra] helped format tables for presentation. These packages provided a framework for efficient data processing, modeling, and reporting.
 
 (Data last updated on 22 Oct 2024.) - [!!! MODIFY AT FINAL !!!]
 
@@ -83,17 +83,17 @@ The main variable of interest that we aim to forecast is the 'pct' variable, whi
 
 ```{r}
 #| label: tbl-pctraw1
-#| tbl-cap: Summary Statistics for the 'pct' Variable (Raw Data)
+#| tbl-cap: Summary statistics for the proportion(%) of support that candidates received in the poll
 #| echo: false
 
 # Calculate summary statistics for the 'pct' variable
 summary_stats <- raw_elections_data %>%
   summarize(
-    mean = mean(pct, na.rm = TRUE),
-    median = median(pct, na.rm = TRUE),
-    min = min(pct, na.rm = TRUE),
-    max = max(pct, na.rm = TRUE),
-    sd = sd(pct, na.rm = TRUE),
+    mean = round(mean(pct, na.rm = TRUE), 2),
+    median = round(median(pct, na.rm = TRUE),2),
+    min = round(min(pct, na.rm = TRUE), 2),
+    max = round(max(pct, na.rm = TRUE), 2),
+    sd = round(sd(pct, na.rm = TRUE), 2),
     n = n()
   )
 
@@ -105,7 +105,7 @@ summary_stats %>%
 ```
 ```{r}
 #| label: fig-pct2
-#| fig-cap: Distribution of the 'pct' Variable (Raw Data)
+#| fig-cap: Distribution of the proportion(%) of support that candidates received in the poll
 #| echo: false
 
 # Plot the distribution of 'pct' using a histogram
@@ -118,17 +118,17 @@ ggplot(raw_elections_data, aes(x = pct)) +
 ```
 ```{r}
 #| label: tbl-pctfilter1
-#| tbl-cap: Summary Statistics for the 'pct' Variable (Filtered Data)
+#| tbl-cap: Summary statistics for the proportion(%) of support that Harris received in high-quality polls
 #| echo: false
 
 # Calculate summary statistics for the 'pct' variable
 summary_stats <- harris_data %>%
   summarize(
-    mean = mean(pct, na.rm = TRUE),
-    median = median(pct, na.rm = TRUE),
-    min = min(pct, na.rm = TRUE),
-    max = max(pct, na.rm = TRUE),
-    sd = sd(pct, na.rm = TRUE),
+    mean = round(mean(pct, na.rm = TRUE), 2),
+    median = round(median(pct, na.rm = TRUE), 2),
+    min = round(min(pct, na.rm = TRUE), 2),
+    max = round(max(pct, na.rm = TRUE), 2),
+    sd = round(sd(pct, na.rm = TRUE), 2),
     n = n()
   )
 
@@ -140,7 +140,7 @@ summary_stats %>%
 ```
 ```{r}
 #| label: fig-pctfilter2
-#| fig-cap: Distribution of the 'pct' Variable (Filtered Data)
+#| fig-cap: Distribution of the proportion(%) of support that Harris received in high-quality polls
 #| echo: false
 
 # Plot the distribution of 'pct' using a histogram
@@ -163,7 +163,7 @@ The date variable representing the time the poll was concluded helps was put int
 
 ```{r}
 #| label: tbl-date
-#| tbl-cap: Summary Statistics for the 'end_date' Variable (Raw Data)
+#| tbl-cap: Summary statistics for the date the poll was concluded
 #| echo: false
 
 summary_stats <- raw_elections_data %>%
@@ -180,7 +180,7 @@ summary_stats %>%
 ```
 ```{r}
 #| label: fig-date
-#| fig-cap: Distribution of the 'end_date' Variable (Raw Data)
+#| fig-cap: Distribution of the date the poll was concluded
 #| echo: false
 
 # Convert 'end_date' to a proper date format
@@ -204,7 +204,7 @@ When filtering the data, not only pollster quality and candidate type but also t
 
 ```{r}
 #| label: tbl-date2
-#| tbl-cap: Summary Statistics for the 'end_date' Variable (Filtered Data)
+#| tbl-cap: Summary statistics for the date the high-quality polls for Harris was concluded
 #| echo: false
 
 summary_stats <- harris_data %>%
@@ -222,7 +222,7 @@ summary_stats %>%
 
 ```{r}
 #| label: fig-date2
-#| fig-cap: Distribution of the 'end_date' Variable (Filtered Data)
+#| fig-cap: Distribution of the date the high-quality polls for Harris was concluded
 #| echo: false
 
 # Convert 'end_date' to a proper date format
@@ -246,7 +246,7 @@ The 'pollster' and 'state' variable were selected to consider the effect of chan
 
 ```{r}
 #| label: tbl-predictors1
-#| tbl-cap: Number of Distinct Values for the 'pollster', 'state' Variable (Raw Data)
+#| tbl-cap: Number of distinct polling organizations and US states where the poll was conducted
 #| echo: false
 
 summary_stats <- raw_elections_data %>%
@@ -264,7 +264,7 @@ summary_stats %>%
 
 ```{r}
 #| label: tbl-predictors2
-#| tbl-cap: Number of Distinct Values for the 'pollster', 'state' Variable (Filtered Data)
+#| tbl-cap: Number of distinct high-quality polling organizations and US states where more than 60 polls for Harris were conducted
 #| echo: false
 
 summary_stats <- harris_data %>%
@@ -284,7 +284,7 @@ The distribution of polling counts for different pollsters in @fig-pollster sugg
 
 ```{r}
 #| label: fig-pollster
-#| fig-cap: Distribution of the 'pollster' Variable (Filtered Data for Harris)
+#| fig-cap: Distribution of polling organizations where high-quality polls for Harris were conducted
 #| echo: false
 
 # Distribution of 'pollster' (bar plot since it's categorical)
@@ -301,7 +301,7 @@ ggplot(harris_data, aes(x = pollster)) +
 
 ```{r}
 #| label: fig-state
-#| fig-cap: Distribution of the 'state' Variable (Filtered Data for Harris)
+#| fig-cap: Distribution of US states where the more than 60 polls for Harris were conducted
 #| echo: false
 
 # Distribution of 'state' (bar plot)
@@ -320,16 +320,16 @@ This variable was another factor we had put into consideration to check whether 
 
 ```{r}
 #| label: tbl-pollscore
-#| tbl-cap: Summary statistics for the 'pollscore' Variable (Raw Data)
+#| tbl-cap: Summary statistics for the reliability scores of pollsters
 #| echo: false
 
 summary_stats <- raw_elections_data %>%
   summarize(
-    mean = mean(pollscore, na.rm = TRUE),
-    median = median(pollscore, na.rm = TRUE),
-    min = min(pollscore, na.rm = TRUE),
-    max = max(pollscore, na.rm = TRUE),
-    sd = sd(pollscore, na.rm = TRUE),
+    mean = round(mean(pollscore, na.rm = TRUE),2),
+    median = round(median(pollscore, na.rm = TRUE),2),
+    min = round(min(pollscore, na.rm = TRUE),2),
+    max = round(max(pollscore, na.rm = TRUE),2),
+    sd = round(sd(pollscore, na.rm = TRUE),2),
     n = n()
   )
 
@@ -342,16 +342,17 @@ summary_stats %>%
 
 ```{r}
 #| label: fig-pollscore
-#| fig-cap: Distribution of the 'pollscore' Variable (Raw Data)
+#| fig-cap: Distribution of the reliability scores of pollsters
 #| echo: false
 
-
-# Distribution of 'pollscore' (bar plot)
+# Distribution of 'pollscore' (bar plot) with simplified x-axis labels
 ggplot(raw_elections_data, aes(x = factor(pollscore))) +
   geom_bar(fill = "skyblue", alpha = 0.7, color = "black") +
   theme_minimal() +
+  scale_x_discrete(breaks = c(-1.5, -1, -0.5, 0, 0.5, 1, 1.5)) +  # Simplified labels at 0.5 intervals
   labs(x = "Pollscore",
        y = "Count")
+
 
 ```
 
@@ -359,16 +360,16 @@ After the filtering to polling data of high-quality polling organizations, we ca
 
 ```{r}
 #| label: tbl-pollscore2
-#| tbl-cap: Summary statistics for the 'pollscore' Variable (Filtered Data)
+#| tbl-cap: Summary statistics for the reliability scores of high-quality pollsters used for analysis
 #| echo: false
 
 summary_stats <- harris_data %>%
   summarize(
-    mean = mean(pollscore, na.rm = TRUE),
-    median = median(pollscore, na.rm = TRUE),
-    min = min(pollscore, na.rm = TRUE),
-    max = max(pollscore, na.rm = TRUE),
-    sd = sd(pollscore, na.rm = TRUE),
+    mean = round(mean(pollscore, na.rm = TRUE),2),
+    median = round(median(pollscore, na.rm = TRUE),2),
+    min = round(min(pollscore, na.rm = TRUE),2),
+    max = round(max(pollscore, na.rm = TRUE),2),
+    sd = round(sd(pollscore, na.rm = TRUE),2),
     n = n()
   )
 
@@ -381,7 +382,7 @@ summary_stats %>%
 
 ```{r}
 #| label: fig-pollscore2
-#| fig-cap: Distribution of the 'pollscore' Variable (Filtered Data)
+#| fig-cap: Distribution of the reliability scores of high-quality pollsters used for analysis
 #| echo: false
 
 
@@ -579,10 +580,11 @@ In addition to robust sampling, the methodology incorporates weighting methods t
 
 ## Idealized Survey
 
-The proposed survey questionnarie design is provided in the following link: https://forms.gle/zQ8iJyPk3HhJYrKd9.
+The proposed survey questionnarie design is provided in the following link:
+https://forms.gle/zQ8iJyPk3HhJYrKd9.
 
 ::: {.layout}
-## Image Row
+## Survey Demo
 
 ::: {.column width="1/5"}
 ![Survey Intro](../other/idealized_survey/survey_intro.png)
