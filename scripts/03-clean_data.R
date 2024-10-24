@@ -31,6 +31,10 @@ elections_data <-
   ) |>
   select(-state_count) # Remove the 'state_count' column
 
+# Remove outliers (pct values greater than 100 or less than 0)
+elections_data <- elections_data |>
+  filter(pct >= 0 & pct <= 100)
+
 # Filter data to Harris estimates based on high-quality polls after she declared
 harris_data <-
   elections_data |>
@@ -48,7 +52,8 @@ harris_data <-
   ) |>
   group_by(pollster) |>
   filter(n() > 30) |> # Filter for pollsters with more than 35 polls
-  ungroup()
+  ungroup()  |>
+  filter(pct >= 0 & pct <= 100)
 
 
 #### Save data ####

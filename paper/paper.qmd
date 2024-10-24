@@ -1,12 +1,12 @@
 ---
-title: "Kamala Harris Rises as the 2024 Election Front Runner: A Poll-of-Polls Forecast"
-subtitle: "How Poll Aggregation Reveals US Presidental Race Trends"
+title: "A Poll-of-Polls Forecast for the 2024 U.S. Presidential Election: Kamala Harris Emerges as a Leading Candidate with Constant Support Rates Hovering Around 50%"
+subtitle: "Multiple Linear Regression and Bayesian Models Accounting for Pollster and Geographical Disparities in Support Trends"
 author: 
   - Yunkyung Ko
 thanks: "Code and data are available at: [https://github.com/koyunkyung/us_election_2024](https://github.com/koyunkyung/us_election_2024)."
 date: today
 date-format: long
-abstract: "In the anticipation of the 2024 US presidential election, this paper intends to analyze and predict the level of support that Kamala Harris will gain. The support polls for Harris remained relatively constant. However, there were some variations detected when accounting for pollster and geographical differences. Our objective is to propose a reliable electoral prediction considering those variations help global stakeholders take reasonable preemptive measures."
+abstract: "In the anticipation of the 2024 US presidential election, this paper intends to analyze and predict the level of support that Kamala Harris will gain. The support polls for Harris remained relatively constant around 47%. However, there were some variations detected when accounting for pollster and geographical differences, with Siena/NYT and Texas standing out with its large fluctuation in support rates. Our objective is to propose a reliable electoral prediction considering those variations help global stakeholders take reasonable preemptive measures. [!!! NEED MODIFICATIONS FOR THE MAIN RESULTS PART !!!]"
 format: pdf
 number-sections: true
 bibliography: references.bib

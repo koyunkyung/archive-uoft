@@ -1,9 +1,9 @@
-# Kamala Harris Rises as the 2024 Election Front Runner: A Poll-of-Polls Forecast
-## How Poll Aggregation Reveals US Presidental Race Trends
+# A Poll-of-Polls Forecast for the 2024 U.S. Presidential Election: Kamala Harris Emerges as a Leading Candidate with Constant Support Rates Hovering Around 50%
+## Multiple Linear Regression and Bayesian Models Accounting for Pollster and Geographical Disparities in Support Trends
 
 ## Overview
 
-This repo contains an analysis of polling trends for Kamala Harris in the 2024 US presidential election, aiming to forecast possible electoral outcomes. Using the polling data from FiveThirtyEight, the analysis applies both linear regression and Bayesian modeling taking into account methodological peculiarities of polling such as pollsters and geographical scope. Our objective is to correct for variation across different voter bases with the pooling the polls approach and narrow down the estimates for the 2024 US presidential election outcomes.
+This repo contains an analysis of polling trends for Kamala Harris in the 2024 US presidential election, aiming to forecast possible electoral outcomes. Using the polling data from FiveThirtyEight, the analysis applies both multiple linear regression and Bayesian modeling taking into account methodological peculiarities of polling such as pollsters and geographical scope. Our objective is to correct for variation across different voter bases with the pooling the polls approach and narrow down the estimates for the 2024 US presidential election outcomes.
 
 
 ## File Structure
