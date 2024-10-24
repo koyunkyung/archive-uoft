@@ -9,6 +9,7 @@
 
 #### Workspace setup ####
 library(tidyverse)
+library(arrow)
 
 #### Clean data ####
 # Read in the data and clean variable names
@@ -59,3 +60,6 @@ harris_data <-
 #### Save data ####
 write_csv(elections_data, "data/02-analysis_data/elections_data.csv")
 write_csv(harris_data, "data/02-analysis_data/harris_elections_data.csv")
+
+write_parquet(elections_data, "data/02-analysis_data/elections_data.parquet")
+write_parquet(harris_data, "data/02-analysis_data/harris_elections_data.parquet")
