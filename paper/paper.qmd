@@ -34,6 +34,8 @@ library(knitr)
 library(kableExtra)
 library(gridExtra)
 library(here)
+library(usmap)  # For the map of US states
+library(viridis)  # For a color palette
 
 raw_elections_data <- read_csv(here::here("data/01-raw_data/raw_elections_data.csv"))
 harris_data <- read_csv(here::here("data/02-analysis_data/harris_elections_data.csv"))
@@ -75,9 +77,9 @@ Each poll represents a predictor of an actual event, namely voter opinion at a p
 
 While applying several filters to the original dataset such as restricting to those with a numeric grade of 2.7 or higher or pollsters with more than 30 polls improves data reliability, certain limitations still exist. Selection bias and sampling error remains as a concern, since polls always represent only part of the population. Differences in the way different organizations conducted their polling might introduce more inconsistencies. Finally, by focusing our attention on post-declaration polls only, we exclude earlier trends that could add more insight into how Harris' support has evolved over time. 
 
-## Outcome variables
+## Outcome variable
 
-### pct
+### The Proportion(%) of Support that a Candidate Received in the Poll 
 
 The main variable of interest that we aim to forecast is the 'pct' variable, which represents the proportion of vote or support that a candidate received in the poll. @tbl-pctraw1 and @fig-pct2 respectively shows the summary statistics and distribution of the 'pct' variable in the original dataset [@fivethirtyeight2024]. @tbl-pctfilter1 and @fig-pctfilter2 shows the summary statistics and distribution of the same variable, but in the filtered dataset that only comprises of the supporting votes for Harris from relatively high-quality polling organizations. Comparing the summary statistics for the raw data (@tbl-pctraw1) and filtered data (@tbl-pctfilter1), higher numbers were derived from data filtered only by Harris supporters. Also, @fig-pctfilter2 illustrates that a significant number of polls indicate support levels ranging from 40% to 50%, which suggests a stable yet not substantial endorsement. This proposes that Harris possesses a reliable foundational support, although her capacity to obtain a majority remains ambiguous.
 
@@ -155,11 +157,11 @@ ggplot(harris_data, aes(x = pct)) +
 
 ## Predictor variables
 
-### end_date
+### The Date the Poll was Concluded
 
 [!!! MODIFY DATE RANGE AFTER DATA UPDATES !!!] - ERASE AT FINAL
 
-The date variable representing the time the poll was concluded helps was put into account to keep track of how support for a candidate changes in time. The reported end dates in the original dataset [@fivethirtyeight2024] ranges from 1 January, 2023 to 9 September, 2024 (@tbl-date). @fig-date shows that the polling data is more concentrated on survey results conducted in the recent period.
+The 'end_date' variable representing the time the poll was concluded was put into account to keep track of how support for a candidate changes in time. The reported end dates in the original dataset [@fivethirtyeight2024] ranges from 1 January, 2023 to 9 September, 2024 (@tbl-date). @fig-date shows that the polling data is more concentrated on survey results conducted in the recent period.
 
 ```{r}
 #| label: tbl-date
@@ -238,7 +240,7 @@ ggplot(harris_dataa, aes(x = end_date)) +
 
 ```
 
-### pollster, state
+### Pollster and State
 
 The 'pollster' and 'state' variable were selected to consider the effect of changes in poll-making organizations and geographical distinctions. The two variables respectively represent the polling organization that conducted the poll and the US state where the poll was conducted or focused.
 
@@ -314,7 +316,7 @@ ggplot(harris_data, aes(x = reorder(state, -table(state)[state]))) +
 
 ```
 
-### pollscore
+### Pollscore Measuring the Validity of Polling Questions 
 
 This variable was another factor we had put into consideration to check whether the validity of the polling questions affects the polling results. The 'pollscore' variable represents the score or reliability of the pollster in question. The numeric values are the error and bias that can be attributed to the pollster, which means negative numbers are better. @tbl-pollscore and @fig-pollscore suggests that while the majority of the polls are moderately to highly qualitative in the original dataset, a fraction of the polls with low-quality or no scores could add noise or uncertainty to the analysis.
 
@@ -394,6 +396,94 @@ ggplot(harris_data, aes(x = factor(pollscore))) +
        y = "Count")
 
 ```
+
+## Correlation Between Predictor Variables
+
+By examining the relationships between predictor variables in the analysis dataset, we aim to identify potential biases in interpretation and model instability. This is expected to ensure a transparent understanding of the model's robustness and interpretability.
+
+### End Date and State
+
+@fig-correlation1 shows notable polling concentrations on certain states such as Pennsylvania, Ohio, and Nevada in week 2024-37 (September 9, 2024) or 2024-38 (September 15, 2024). This suggests that these states are key battelgrounds or areas of strategic focus during the election period. Moreover, polling activities are not consistent across all weeks and there are clear peaks in polling activity in week 2024-38 (September 15, 2024), which may correspond to significant political events, debates, or media focuses. 
+
+```{r}
+#| label: fig-correlation1
+#| fig-cap: "Polling concentration over time by state *Note:* Strategic focus of polling is directed in battleground states such as Pennsylvania and Ohio in September 15, 2024"
+#| echo: false
+
+# Aggregate the number of polls by state and by week (or month)
+poll_time_state_2 <- harris_data %>%
+  mutate(week = format(as.Date(end_date), "%Y-%U")) %>%  # Group by week of the year
+  group_by(state, week) %>%
+  summarise(total_polls = n(), .groups = "drop")  # Adding .groups = "drop"
+
+
+# Plot a heatmap of polling activity by state and week
+ggplot(poll_time_state_2, aes(x = week, y = state, fill = total_polls)) +
+  geom_tile(color = "white") +
+  scale_fill_gradient(low = "lightblue", high = "darkblue", na.value = "grey90") +
+  labs(x = "Week",
+       y = "State",
+       fill = "Total Polls") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+```
+
+
+### End Date and Pollster
+
+@fig-correlation2 shows that Siena/NYT, which made up the largest proportion of polls in our analysis dataset, has concentrated polling efforts in week 2024-37 (September 9, 2024) and week 2024-38 (September 15, 2024). Notably active periods, possibly around key election events, might introduce temporal bias and overemphasize methodologies of Siena/NYT in that specific time period. Emerson shows overall consistency of polling activities across several weeks indicating steady involvement, while other polling organizations show more sporadic or minimal involvement.
+
+```{r}
+#| label: fig-correlation2
+#| fig-cap: "Polling concentration over time by pollster *Note:* Concentrated polling efforts of Siena/NYT in the first half of September, 2024 show temporal bias and potential overemphasizing of their polling methodologies around key election events."
+#| echo: false
+
+# Aggregate the number of polls by state and by week (or month)
+poll_time_pollster <- harris_data %>%
+  mutate(week = format(as.Date(end_date), "%Y-%U")) %>%  # Group by week of the year
+  group_by(pollster, week) %>%
+  summarise(total_polls = n(), .groups = "drop")  # Adding .groups = "drop"
+
+
+# Plot a heatmap of polling activity by state and week
+ggplot(poll_time_pollster, aes(x = week, y = pollster, fill = total_polls)) +
+  geom_tile(color = "white") +
+  scale_fill_gradient(low = "lightblue", high = "darkblue", na.value = "grey90") +
+  labs(x = "Week",
+       y = "Pollster",
+       fill = "Total Polls") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+```
+
+
+### Pollster and State
+
+@fig-correlation3 shows that Siena/NYT has the strongest state-level presence in key battleground states like Michigan and Arizona. Others like AtlasIntel and Beacon/Shaw has minimal polling coverage in targeted states such as Nevada and Georgia. This vairation in coverage could influence the overall analysis in that some states might receive disproportionately more attention from certain pollsters.
+
+```{r}
+#| label: fig-correlation3
+#| fig-cap: "Polling activity by pollster and state *Note:* Siena/NYT has strongest state-level polling coverage in key battleground states"
+#| echo: false
+
+# Step 1: Filter out NAs from pollster column and summarize data by state and pollster
+pollster_state_data <- harris_data %>%
+  filter(!is.na(pollster)) %>%  # Remove NAs from pollster
+  group_by(state, pollster) %>%
+  summarise(total_polls = n(), .groups = "drop")  # Summarize number of polls
+
+# Step 2: Plot the faceted map using plot_usmap
+plot_usmap(data = pollster_state_data, values = "total_polls", regions = "states") +
+  facet_wrap(~ pollster, ncol = 2) +  # Create a map for each pollster
+  scale_fill_distiller(palette = "Blues", direction = 1, na.value = "gray90") +  # Use blue color palette
+  labs(fill = "Total Polls") +
+  theme_void() +  # Remove axes and gridlines
+  theme(strip.text = element_text(size = 12))  # Customize facet labels
+
+```
+
 
 # Model {#sec-model}
 

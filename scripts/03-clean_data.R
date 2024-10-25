@@ -52,7 +52,7 @@ harris_data <-
     num_harris = round((pct / 100) * sample_size, 0) # Need number not percent for some models
   ) |>
   group_by(pollster) |>
-  filter(n() > 30) |> # Filter for pollsters with more than 35 polls
+  filter(n() > 20) |> # Filter for pollsters with more than 20 polls
   ungroup()  |>
   filter(pct >= 0 & pct <= 100)
 
