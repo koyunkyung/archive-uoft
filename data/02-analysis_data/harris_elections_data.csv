@@ -1,4 +1,16 @@
 pollster,numeric_grade,pollscore,state,end_date,candidate_name,sample_size,pct,num_harris
+Siena/NYT,3,-1.5,Texas,2024-10-26,Kamala Harris,1180,41,484
+Siena/NYT,3,-1.5,Texas,2024-10-26,Kamala Harris,1180,40,472
+Siena/NYT,3,-1.5,Texas,2024-10-26,Kamala Harris,1180,42,496
+Siena/NYT,3,-1.5,Texas,2024-10-26,Kamala Harris,1180,40,472
+Siena/NYT,3,-1.5,Other,2024-10-26,Kamala Harris,1194,40,478
+Siena/NYT,3,-1.5,Other,2024-10-26,Kamala Harris,1194,38,454
+Siena/NYT,3,-1.5,Other,2024-10-26,Kamala Harris,1194,40,478
+Siena/NYT,3,-1.5,Other,2024-10-26,Kamala Harris,1194,39,466
+Siena/NYT,3,-1.5,Other,2024-10-26,Kamala Harris,500,54,270
+Siena/NYT,3,-1.5,Other,2024-10-26,Kamala Harris,500,53,265
+Emerson,2.9,-1.1,Montana,2024-10-25,Kamala Harris,1000,39.6,396
+Emerson,2.9,-1.1,New Hampshire,2024-10-23,Kamala Harris,915,50.9,466
 Emerson,2.9,-1.1,Pennsylvania,2024-10-22,Kamala Harris,860,49,421
 Emerson,2.9,-1.1,North Carolina,2024-10-22,Kamala Harris,950,48.2,458
 Emerson,2.9,-1.1,Wisconsin,2024-10-22,Kamala Harris,800,49.2,394

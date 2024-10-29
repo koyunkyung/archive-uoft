@@ -71,7 +71,7 @@ In performing the analysis, we utilized several R packages. `tidyverse` [@tidyve
 
 [!!! MODIFY OBSV. NUMBERS AFTER DATA UPDATES !!!] - ERASE AT FINAL
 
-The original dataset sourced from FiveThirtyEight [@fivethirtyeight2024] aggregates a wide range of poll results (16264 observations, based on dataset available at Oct 24, 13:00). The polls conducted by various polling organizations capture voter preferences by taking a representative sample of the electorate and asking for the voters' candidate of choice. Surveys were conducted at the state and national levels, providing the wide perspective on public feelings across the country.
+The original dataset sourced from FiveThirtyEight [@fivethirtyeight2024] aggregates a wide range of poll results (16506 observations, based on dataset available at Oct 29). The polls conducted by various polling organizations capture voter preferences by taking a representative sample of the electorate and asking for the voters' candidate of choice. Surveys were conducted at the state and national levels, providing the wide perspective on public feelings across the country.
 
 Each poll represents a predictor of an actual event, namely voter opinion at a particular moment. Nevertheless, like all survey results, the raw data is susceptible to many potential limitations including the following: sampling error, variation in polling methods, distortion because of inappropriate survey responses such as missing data or response from respondents who misunderstood the questions [@tellingstories].
 
@@ -565,7 +565,53 @@ The main assumption in these models is that the pollster and state effects can b
 
 # Results {#sec-results}
 
-Our results are summarized in @tbl-modelresults1 and @tbl-modelresults2.
+## Results from the relation between the prediction variable and outcome variable of the analysis data
+
+@fig-resultplot1 shows an initial increase in support following Harris' announcement, peaking around mid-September. However, this initial momentum stabilized with minor decrease in support as the election gets closer. Moreover, the scattered data points around the summary line show high variance between individual polls.
+
+```{r}
+#| label: fig-resultplot1
+#| fig-cap: "Polling votes for Harris over time *Note:* The date starts from after Harris officially announced her campaign for 2024 U.S. presidential election on July 21, 2024."
+#| echo: false
+base_plot <- ggplot(harris_data, aes(x = end_date, y = pct)) +
+  theme_classic() +
+  labs(y = "Harris percent", x = "Date")
+
+# Plots poll estimates and overall smoothing
+base_plot +
+  geom_point() +
+  geom_smooth()
+```
+
+When @fig-resultplot2
+
+```{r}
+#| label: fig-resultplot2
+#| fig-cap: "Polling votes for Harris over time by pollster *Note:* The date starts from after Harris officially announced her campaign for 2024 U.S. presidential election on July 21, 2024. Only filtered pollsters with high-quality polling questions are shown in the following."
+#| echo: false
+# Color by pollster
+base_plot +
+  geom_point(aes(color = pollster)) +
+  geom_smooth() + 
+  theme(legend.position = "bottom")
+```
+
+
+```{r}
+#| label: fig-resultplot3
+#| fig-cap: "Polling votes for Harris over time by pollster (facets) *Note:* The date starts from after Harris officially announced her campaign for 2024 U.S. presidential election on July 21, 2024. Only filtered pollsters with high-quality polling questions are shown in the following."
+#| echo: false
+# Facet by pollster
+base_plot +
+  geom_point() +
+  geom_smooth(method = "gam", formula = y ~ s(x)) +  # Use GAM smoothing to handle complex data
+  facet_wrap(vars(pollster))
+```
+
+
+## Results from the prediction model
+
+Prediction results derived from our model frameworks are summarized in @tbl-modelresults1 and @tbl-modelresults2.
 [!!! ADD MORE WORDS !!!]
 
 ```{r}
@@ -627,11 +673,14 @@ modelsummary(
 
 [!!! NEED MODIFICATION !!!]
 
-## Stability in Support Levels for Harris {#sec-first-point}
+## Why Harris could beat her polls {#sec-first-point}
 
 Kamala Harris' polling numbers show stability, a common trend for well-known candidates whose electorate solidifies in its opinion over time. Articles from The New York Times [@nyt2024harristrump] note that "once voters form opinions about candidates, those views rarely fluctuate significantly unless a major event occurs, such as a scandal or a high-profile policy shift. In the case of Harris, her polling numbers have been consistent, only changing slightly since she announced in 2024 (@fig-date2). This suggests that her supporters are more or less consistent and unlikely to change much as the election draws closer.
 
-## Pollster-Specific Variability {#sec-second-point}
+## Pollsters herding around false consensus {#sec-second-point}
+
+The polling averages for Harris and Trump don't seem to show a big difference.
+
 
 Various polling entities, including Siena/NYT and Quinnipiac, use distinct methodologies, resulting in potential systematic discrepancies within their outcomes. According to Michael Wines, the inherent biases of each pollster result in different interpretations of the elections prediction [@nyt2024pollproblems]. For instance, Siena/NYT's live-interview method often skews slightly older and more conservative in its responses compared to online polling methods used by other organizations [@siena_scri_2024_poll]. This variability makes clear that when interpreting for polling results, the source of the poll must be included at minimum.
 
