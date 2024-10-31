@@ -38,12 +38,12 @@ if (ncol(sim_harris_data) == 8) {
   stop("Test Failed: The dataset does not have 8 columns.")
 }
 
-# Check if the 'national' column contains valid binary values
-valid_NA <- c(0, 1)
-if (all(sim_harris_data$national %in% valid_NA)) {
-  message("Test Passed: The 'national' column contains only valid binary values.")
+# Check if the 'state' column contains valid state names
+valid_states <- c("Florida", "Pennsylvania", "Michigan", "Wisconsin", "Arizona", "Texas")
+if (all(sim_harris_data$state %in% valid_states)) {
+  message("Test Passed: The 'state' column contains only valid state names.")
 } else {
-  stop("Test Failed: The 'national' column contains invalid values.")
+  stop("Test Failed: The 'state' column contains invalid state names.")
 }
 
 # Check if the 'pollster' column contains valid pollster names
@@ -61,9 +61,9 @@ if (all(!is.na(sim_harris_data))) {
   stop("Test Failed: The dataset contains missing values.")
 }
 
-# Check if there are no empty strings in 'pollster' and 'candidate_name' columns
-if (all(sim_harris_data$pollster != "" & sim_harris_data$candidate_name != "")) {
-  message("Test Passed: There are no empty strings in 'pollster' or 'candidate_name'.")
+# Check if there are no empty strings in 'state', 'pollster', and 'candidate_name' columns
+if (all(sim_harris_data$state != "" & sim_harris_data$pollster != "" & sim_harris_data$candidate_name != "")) {
+  message("Test Passed: There are no empty strings in 'state', 'pollster', or 'candidate_name'.")
 } else {
   stop("Test Failed: There are empty strings in one or more columns.")
 }
@@ -97,7 +97,7 @@ sim_harris_pollster_b <- ggplot(sim_harris_data, aes(x = date, y = pct)) +
   geom_smooth() +
   facet_wrap(~pollster) +
   theme_classic() +
-  labs(y = "Harris Percent", x = "Date", title = "The Vote that Harris Received in the Poll, by Pollster.")
+  labs(y = "Harris Percent", x = "Date", title = "The Vote that Harris Received in the Poll, by Pollster (Facets)")
 ggsave("data/00-simulated_data/test_plots/sim_harris_pollster_facets.png", sim_harris_pollster_b, width = 8, height = 6, dpi = 300)
 
 # Plot by pollscore
@@ -109,3 +109,26 @@ sim_harris_pollscore <- ggplot(sim_harris_data, aes(x = date, y = pct, color = p
   scale_color_viridis_c() +
   theme(legend.position = "bottom")
 ggsave("data/00-simulated_data/test_plots/sim_harris_pollscore.png", sim_harris_pollscore, width = 8, height = 6, dpi = 300)
+
+# Plot by state
+sim_harris_state_a <-
+  ggplot(sim_harris_data, aes(x = date, y = pct, color = state)) +
+  geom_point() +
+  geom_smooth() +
+  theme_classic() +
+  labs(y = "Harris Percent", x = "Date", title = "The Vote that Harris Received in the Poll, by State") +
+  scale_color_manual(values = c(
+    "Florida" = "blue", "Pennsylvania" = "red", "Michigan" = "green",
+    "Wisconsin" = "purple", "Arizona" = "brown", "Texas" = "yellow"
+  )) +
+  theme(legend.position = "bottom")
+ggsave("data/00-simulated_data/test_plots/sim_harris_state.png", sim_harris_state_a, width = 8, height = 6, dpi = 300)
+# Faceted plot by pollster
+sim_harris_state_b <- ggplot(sim_harris_data, aes(x = date, y = pct)) +
+  geom_point() +
+  geom_smooth() +
+  facet_wrap(~state) +
+  theme_classic() +
+  labs(y = "Harris Percent", x = "Date", title = "The Vote that Harris Received in the Poll, by State (Facets)")
+ggsave("data/00-simulated_data/test_plots/sim_harris_state_facets.png", sim_harris_state_b, width = 8, height = 6, dpi = 300)
+
