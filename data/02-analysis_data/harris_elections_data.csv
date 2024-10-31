@@ -1,4 +1,25 @@
 pollster,numeric_grade,pollscore,state,end_date,candidate_name,sample_size,pct,num_harris
+AtlasIntel,2.7,-0.8,Arizona,2024-10-29,Kamala Harris,1458,46.4,677
+AtlasIntel,2.7,-0.8,Arizona,2024-10-29,Kamala Harris,1458,47.3,690
+AtlasIntel,2.7,-0.8,Georgia,2024-10-29,Kamala Harris,1429,47.1,673
+AtlasIntel,2.7,-0.8,Georgia,2024-10-29,Kamala Harris,1429,47.5,679
+AtlasIntel,2.7,-0.8,Michigan,2024-10-29,Kamala Harris,983,47.9,471
+AtlasIntel,2.7,-0.8,Michigan,2024-10-29,Kamala Harris,983,48.1,473
+AtlasIntel,2.7,-0.8,Nevada,2024-10-29,Kamala Harris,1083,47.5,514
+AtlasIntel,2.7,-0.8,Nevada,2024-10-29,Kamala Harris,1083,47.6,516
+AtlasIntel,2.7,-0.8,North Carolina,2024-10-29,Kamala Harris,1665,48.5,808
+AtlasIntel,2.7,-0.8,North Carolina,2024-10-29,Kamala Harris,1665,48.9,814
+AtlasIntel,2.7,-0.8,Pennsylvania,2024-10-29,Kamala Harris,1299,46.6,605
+AtlasIntel,2.7,-0.8,Pennsylvania,2024-10-29,Kamala Harris,1299,46.9,609
+AtlasIntel,2.7,-0.8,Wisconsin,2024-10-29,Kamala Harris,1470,48.1,707
+AtlasIntel,2.7,-0.8,Wisconsin,2024-10-29,Kamala Harris,1470,48.5,713
+YouGov,3,-1.1,Pennsylvania,2024-10-28,Kamala Harris,1273,49,624
+YouGov,3,-1.1,Other,2024-10-28,Kamala Harris,1206,40,482
+YouGov,3,-1.1,Other,2024-10-28,Kamala Harris,408,43,175
+YouGov,3,-1.1,Other,2024-10-28,Kamala Harris,393,52,204
+YouGov,3,-1.1,Other,2024-10-28,Kamala Harris,404,25,101
+Emerson,2.9,-1.1,Michigan,2024-10-27,Kamala Harris,1000,49.3,493
+Emerson,2.9,-1.1,Massachusetts,2024-10-26,Kamala Harris,1000,60.2,602
 Siena/NYT,3,-1.5,Texas,2024-10-26,Kamala Harris,1180,41,484
 Siena/NYT,3,-1.5,Texas,2024-10-26,Kamala Harris,1180,40,472
 Siena/NYT,3,-1.5,Texas,2024-10-26,Kamala Harris,1180,42,496
@@ -10,6 +31,32 @@ Siena/NYT,3,-1.5,Other,2024-10-26,Kamala Harris,1194,39,466
 Siena/NYT,3,-1.5,Other,2024-10-26,Kamala Harris,500,54,270
 Siena/NYT,3,-1.5,Other,2024-10-26,Kamala Harris,500,53,265
 Emerson,2.9,-1.1,Montana,2024-10-25,Kamala Harris,1000,39.6,396
+CES / YouGov,3,-1.1,Arizona,2024-10-25,Kamala Harris,2077,49,1018
+CES / YouGov,3,-1.1,Arizona,2024-10-25,Kamala Harris,2066,47,971
+CES / YouGov,3,-1.1,Florida,2024-10-25,Kamala Harris,5952,47,2797
+CES / YouGov,3,-1.1,Florida,2024-10-25,Kamala Harris,5916,46,2721
+CES / YouGov,3,-1.1,Georgia,2024-10-25,Kamala Harris,2682,48,1287
+CES / YouGov,3,-1.1,Georgia,2024-10-25,Kamala Harris,2663,46,1225
+CES / YouGov,3,-1.1,Michigan,2024-10-25,Kamala Harris,2347,52,1220
+CES / YouGov,3,-1.1,Michigan,2024-10-25,Kamala Harris,2336,51,1191
+CES / YouGov,3,-1.1,Minnesota,2024-10-25,Kamala Harris,1278,52,665
+CES / YouGov,3,-1.1,Minnesota,2024-10-25,Kamala Harris,1275,53,676
+CES / YouGov,3,-1.1,Nevada,2024-10-25,Kamala Harris,940,53,498
+CES / YouGov,3,-1.1,Nevada,2024-10-25,Kamala Harris,933,51,476
+CES / YouGov,3,-1.1,New Hampshire,2024-10-25,Kamala Harris,380,52,198
+CES / YouGov,3,-1.1,New Hampshire,2024-10-25,Kamala Harris,375,52,195
+CES / YouGov,3,-1.1,North Carolina,2024-10-25,Kamala Harris,2330,49,1142
+CES / YouGov,3,-1.1,North Carolina,2024-10-25,Kamala Harris,2308,48,1108
+CES / YouGov,3,-1.1,Ohio,2024-10-25,Kamala Harris,3120,45,1404
+CES / YouGov,3,-1.1,Ohio,2024-10-25,Kamala Harris,3091,45,1391
+CES / YouGov,3,-1.1,Pennsylvania,2024-10-25,Kamala Harris,3708,50,1854
+CES / YouGov,3,-1.1,Pennsylvania,2024-10-25,Kamala Harris,3685,49,1806
+CES / YouGov,3,-1.1,Texas,2024-10-25,Kamala Harris,6526,47,3067
+CES / YouGov,3,-1.1,Texas,2024-10-25,Kamala Harris,6473,47,3042
+CES / YouGov,3,-1.1,Virginia,2024-10-25,Kamala Harris,2027,53,1074
+CES / YouGov,3,-1.1,Virginia,2024-10-25,Kamala Harris,2015,52,1048
+CES / YouGov,3,-1.1,Wisconsin,2024-10-25,Kamala Harris,1552,51,792
+CES / YouGov,3,-1.1,Wisconsin,2024-10-25,Kamala Harris,1542,50,771
 Emerson,2.9,-1.1,New Hampshire,2024-10-23,Kamala Harris,915,50.9,466
 Emerson,2.9,-1.1,Pennsylvania,2024-10-22,Kamala Harris,860,49,421
 Emerson,2.9,-1.1,North Carolina,2024-10-22,Kamala Harris,950,48.2,458
@@ -42,6 +89,17 @@ AtlasIntel,2.7,-0.8,Pennsylvania,2024-10-17,Kamala Harris,2048,46.5,952
 AtlasIntel,2.7,-0.8,Pennsylvania,2024-10-17,Kamala Harris,2048,47.4,971
 AtlasIntel,2.7,-0.8,Wisconsin,2024-10-17,Kamala Harris,932,48.9,456
 AtlasIntel,2.7,-0.8,Wisconsin,2024-10-17,Kamala Harris,932,49,457
+YouGov,3,-1.1,California,2024-10-17,Kamala Harris,1139,63,718
+YouGov,3,-1.1,California,2024-10-17,Kamala Harris,1139,63,718
+YouGov,3,-1.1,Pennsylvania,2024-10-17,Kamala Harris,1062,50,531
+YouGov,3,-1.1,Pennsylvania,2024-10-17,Kamala Harris,1043,50,522
+YouGov,3,-1.1,Florida,2024-10-17,Kamala Harris,1094,46,503
+YouGov,3,-1.1,Florida,2024-10-17,Kamala Harris,1076,46,495
+YouGov,3,-1.1,Texas,2024-10-17,Kamala Harris,1108,45,499
+YouGov,3,-1.1,Texas,2024-10-17,Kamala Harris,1075,46,494
+YouGov,3,-1.1,New York,2024-10-17,Kamala Harris,1089,58,632
+YouGov,3,-1.1,New York,2024-10-17,Kamala Harris,1089,58,632
+YouGov,3,-1.1,Arizona,2024-10-16,Kamala Harris,1435,48,689
 Emerson,2.9,-1.1,California,2024-10-14,Kamala Harris,1000,61,610
 Quinnipiac,2.8,-0.5,Georgia,2024-10-14,Kamala Harris,1328,45,598
 Quinnipiac,2.8,-0.5,Georgia,2024-10-14,Kamala Harris,1328,46,611
@@ -55,6 +113,7 @@ Siena/NYT,3,-1.5,Arizona,2024-10-10,Kamala Harris,808,46,372
 Siena/NYT,3,-1.5,Arizona,2024-10-10,Kamala Harris,808,45,364
 Siena/NYT,3,-1.5,Arizona,2024-10-10,Kamala Harris,808,45,364
 Siena/NYT,3,-1.5,Arizona,2024-10-10,Kamala Harris,808,44,356
+YouGov,3,-1.1,Texas,2024-10-10,Kamala Harris,1091,46,502
 Emerson,2.9,-1.1,Arizona,2024-10-08,Kamala Harris,1000,48.2,482
 Emerson,2.9,-1.1,Georgia,2024-10-08,Kamala Harris,1000,49.8,498
 Emerson,2.9,-1.1,Michigan,2024-10-08,Kamala Harris,950,49.7,472
@@ -126,6 +185,7 @@ AtlasIntel,2.7,-0.8,Georgia,2024-09-25,Kamala Harris,1200,49,588
 AtlasIntel,2.7,-0.8,Georgia,2024-09-25,Kamala Harris,1200,49,588
 Emerson,2.9,-1.1,Texas,2024-09-24,Kamala Harris,950,46.7,444
 Emerson,2.9,-1.1,Virginia,2024-09-24,Kamala Harris,860,52.7,453
+YouGov,3,-1.1,Georgia,2024-09-24,Kamala Harris,1441,49,706
 Beacon/Shaw,2.8,-1.1,Arizona,2024-09-24,Kamala Harris,1021,47,480
 Beacon/Shaw,2.8,-1.1,Arizona,2024-09-24,Kamala Harris,764,47,359
 Beacon/Shaw,2.8,-1.1,Arizona,2024-09-24,Kamala Harris,1021,48,490
@@ -190,10 +250,15 @@ Quinnipiac,2.8,-0.5,North Carolina,2024-09-08,Kamala Harris,940,49,461
 Quinnipiac,2.8,-0.5,North Carolina,2024-09-08,Kamala Harris,940,50,470
 Quinnipiac,2.8,-0.5,Georgia,2024-09-08,Kamala Harris,969,45,436
 Quinnipiac,2.8,-0.5,Georgia,2024-09-08,Kamala Harris,969,46,446
+YouGov,3,-1.1,Michigan,2024-09-06,Kamala Harris,1077,50,538
+YouGov,3,-1.1,Pennsylvania,2024-09-06,Kamala Harris,1078,50,539
+YouGov,3,-1.1,Wisconsin,2024-09-06,Kamala Harris,946,51,482
 Emerson,2.9,-1.1,California,2024-09-05,Kamala Harris,815,60.8,496
 Emerson,2.9,-1.1,Florida,2024-09-05,Kamala Harris,815,47.6,388
 Emerson,2.9,-1.1,Texas,2024-09-05,Kamala Harris,845,48,406
 Emerson,2.9,-1.1,Ohio,2024-09-05,Kamala Harris,945,44.7,422
+YouGov,3,-1.1,Texas,2024-08-31,Kamala Harris,1200,44,528
+YouGov,3,-1.1,Texas,2024-08-31,Kamala Harris,1200,44,528
 Emerson,2.9,-1.1,Arizona,2024-08-28,Kamala Harris,720,47.5,342
 Emerson,2.9,-1.1,Michigan,2024-08-28,Kamala Harris,800,51.2,410
 Emerson,2.9,-1.1,Nevada,2024-08-28,Kamala Harris,1168,49.4,577
@@ -209,8 +274,15 @@ Beacon/Shaw,2.8,-1.1,Nevada,2024-08-26,Kamala Harris,1026,48,492
 Beacon/Shaw,2.8,-1.1,Nevada,2024-08-26,Kamala Harris,1026,50,513
 Beacon/Shaw,2.8,-1.1,North Carolina,2024-08-26,Kamala Harris,999,47,470
 Beacon/Shaw,2.8,-1.1,North Carolina,2024-08-26,Kamala Harris,999,49,490
+YouGov,3,-1.1,Pennsylvania,2024-08-23,Kamala Harris,500,43,215
+YouGov,3,-1.1,Pennsylvania,2024-08-23,Kamala Harris,500,43,215
+YouGov,3,-1.1,Wisconsin,2024-08-23,Kamala Harris,500,48,240
+YouGov,3,-1.1,Wisconsin,2024-08-23,Kamala Harris,500,45,225
+YouGov,3,-1.1,Michigan,2024-08-23,Kamala Harris,500,44,220
+YouGov,3,-1.1,Michigan,2024-08-23,Kamala Harris,500,44,220
 Emerson,2.9,-1.1,New Mexico,2024-08-22,Kamala Harris,965,53.6,517
 Emerson,2.9,-1.1,New Mexico,2024-08-22,Kamala Harris,965,51,492
+YouGov,3,-1.1,Other,2024-08-16,Kamala Harris,900,41,369
 Siena/NYT,3,-1.5,Nevada,2024-08-15,Kamala Harris,677,46,311
 Siena/NYT,3,-1.5,Nevada,2024-08-15,Kamala Harris,677,47,318
 Siena/NYT,3,-1.5,Nevada,2024-08-15,Kamala Harris,677,42,284

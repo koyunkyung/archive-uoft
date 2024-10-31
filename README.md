@@ -1,5 +1,5 @@
-# A Poll-of-Polls Forecast for the 2024 U.S. Presidential Election: Kamala Harris Emerges as a Leading Candidate with Constant Support Rates Hovering Around 50%
-## Multiple Linear Regression and Bayesian Models Accounting for Pollster and Geographical Disparities in Support Trends
+# A Poll-of-Polls Forecast for the 2024 U.S. Presidential Election: Trend Analysis of Support Rates for Harris Considering Pollster and State Disparities
+## Kamla Harris Emerges as a Leading Candidate with Constant Support Rates Hovering Around 50.03%
 
 ## Overview
 
@@ -21,6 +21,6 @@ The repo is structured as:
 
 ## Statement on LLM usage
 
-This project utilized the assistance of ChatGPT 4.0 to enhance the efficiency and accuracy of the data analysis and visualization process. Specifically, it provided guidance in aspects of the codes in R scripts, as well as in generating insights through creation of graphical visualizations. The entire chat history is available in `other/llm/usage.txt`.
+This project utilized the assistance of ChatGPT 4.0 to enhance the efficiency and accuracy of the data analysis and visualization process. Specifically, it provided guidance in aspects of the codes in R scripts, as well as in creating graphical visualizations. The entire chat history is available in `other/llm/usage.txt`.
 
 
