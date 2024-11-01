@@ -850,14 +850,18 @@ The New York Times/Siena College polling partnership, the polling organization t
 
 The organization intends to enhance transparency in how public opinion is assessed, ensuring that questions are carefully designed to represent contemporary political discussions, and that the terminology is polished through a process of iterative testing to achieve clarity. They devote extensive resources to cognitive testing to ensure question wording reflects what the public thinks [@siena_scri_2024_poll]. Their polling methodology stands out in that its strategic focus on using representative samples reflect political leanings and demographics of a region for more contextual and precise polling. Siena/NYT has its reputation for accurately predicting key battleground state outcomes during previous elections, such as Florida in 2016[@siena_nyt_perfect_partnership_2024].
 
-The limitations of Siena/NYT's methodology are the challenge of polling itself. Since polling is a "snapshot in time",  the results can fluctuate based on recent political events or campaign dynamics. Additionally, while the effort to represent a broad demographic is laudable, there are still issues with nonresponse bias in polling-particularly among the hard-to-reach voter or voters suspicious of polling organizations themselves [@pew2023polling].
+The limitations of Siena/NYT's methodology are the challenge of polling itself. Since polling is a "snapshot in time",  the results can fluctuate based on recent political events or campaign dynamics. Additionally, there are still issues with non-response bias in polling, particularly among the hard-to-reach voter or voters suspicious of polling organizations themselves [@pew2023polling].
 
 
 ## Idealized methodolgy
 
-The proposed methodology for forecasting the 2024 U.S. presidential election with a budget of $100,000 would be designed as follows. First, a stratified random sampling method will be employed that allows for the capture of the demographic elements such as age, gender, race, and education level. This could alleviate bias and make the sample more representative of the population [@pew2023polling]. The data collection process will encompass both telephone surveys and internet polling, thereby effectively engaging a diverse range of voters [@pew2023polling]. Survey respondents would include older populations via conventional methods and younger, technologically intellectual individuals through digital platforms. This multifaceted approach enhances the reliability and inclusiveness of the gathered data.
+The proposed methodology for forecasting the 2024 U.S. presidential election with a budget of $100,000 would be designed as follows. First, a stratified random sampling method will be employed that allows for the capture of the demographic elements such as age, gender, race, and education level [@pew2023polling]. We will focus on 10 battleground states including Florida, Pennsylvania, Michigan, and Arizona, each receiving a budget of $7,000. For each state, $5,000 would be allocated for telephone and online surveys, while $2,000 would be allocated for training local staff for telephone outreach and conducting data entry to maintain data quality and consistency. This targeted investment could alleviate bias and make the sample more representative of the population [@pew2023polling], enhancing the reliability and inclusiveness of the gathered data.
 
-In addition to robust sampling, the methodology incorporates weighting methods that account for groups that are underrepresented, ensuring that the outcomes are not skewed by sampling errors [@pew2023polling]. The final model would use Bayesian hierarchical modeling, which allows for more flexible modeling of uncertainty and variation across states, pollsters, and other external factors. These models, along with out-of-sample testing and cross-validation, enable accurate prediction sensitive to the dynamics of real-world changes, including political events [@pew2023polling]. The inclusion of external factors, such as major political events, debates, or sudden economic shifts, would help the model remain responsive to rapid changes in voter sentiment. 
+In addition to robust sampling, the methodology incorporates high-quality questionnaire design and testing. We would invest $15,000 in this with $5,000 on initial drafting and expert review to ensure questions are clear and unbiased. $7,000 would be spend on conducting pre-tests and pilot studeies for refinement [@driveresearch_cognitive_testing] and $3,000 would be allocated to final review and translation of the survey questions. Cognitive testing and iterative feedback loops are expected to improve the validity and accuracy of the collected data to derive reliable prediction results [@presser2004pretesting].
+
+Then, $10,000 would be assigned for data processing and weighting. Weighting methods that account for groups that are underrepresented ensure that the outcomes are not skewed by sampling errors [@pew2023polling]. Post-stratification weighting which ensures that the sample accurately represents the U.S voting population will take up $5,000 while data cleaning and consistency checks for preventing bias from erroneous entries or duplicates will take up $5,000.
+
+The final model would use Bayesian hierarchical modeling, which allows for more flexible modeling of uncertainty and variation across states, pollsters, and other external factors. These models, along with out-of-sample testing and cross-validation, enable accurate prediction sensitive to the dynamics of real-world changes, including political events [@pew2023polling]. By investing $3,000 on model setup and calibration and $2,000 on cross-validation and testing, we expect to ensure the model remains robust and provides reliable predictions under various electoral scenarios. 
 
 ### Idealized survey
 
@@ -869,23 +873,23 @@ https://forms.gle/zQ8iJyPk3HhJYrKd9.
 ### Survey demo
 
 ::: {.column width="1/5"}
-![Survey Intro](../other/idealized_survey/survey_intro.png)
+![Survey intro](../other/idealized_survey/survey_intro.png)
 :::
 
 ::: {.column width="1/5"}
-![Survey Questions 1](../other/idealized_survey/survey_q1.png)
+![Survey questions asking about demographics](../other/idealized_survey/survey_q1.png)
 :::
 
 ::: {.column width="1/5"}
-![Survey Questions 2](../other/idealized_survey/survey_q2.png)
+![Survey questions asking for voting intentions and candidate favorability](../other/idealized_survey/survey_q2.png)
 :::
 
 ::: {.column width="1/5"}
-![Survey Questions 3](../other/idealized_survey/survey_q3.png)
+![Survey questions asking for issues of interest and likelihood to vote](../other/idealized_survey/survey_q3.png)
 :::
 
 ::: {.column width="1/5"}
-![Survey Final Thanks](../other/idealized_survey/survey_outro.png)
+![Survey final thanks](../other/idealized_survey/survey_outro.png)
 :::
 :::
 
