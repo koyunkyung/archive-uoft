@@ -52,26 +52,24 @@ Our initial linear model examining the support for Harris over time suggests tha
 
 These prognostics provide much more than merely forecasting the election in question. Hinting the trajectory the US might take in matters of foreign policy, economics, and global politics, predictions enable stakeholders worldwide to take preemptive measures for the resulted changes of a newly elected government [@csis2024]. As such, this study not only contributes to the domestic political discourse but also provides a valuable tool for global actors seeking to navigate the uncertainty surrounding the 2024 US presidential election[@csis2024].
 
-The paper is structured as follows. Initially, @sec-data and @sec-model explores the data and methodology used, including filtering and modeling techniques applied to the polling data. Following that, @sec-results presents the results from the linear and Bayesian models, while the next section @sec-discussion discusses the broader implications of these findings. Finally, the paper concludes with remarks on future directions for research and applications of these models [@sec-discussion].
+The paper is structured as follows. Initially, @sec-data and @sec-model explores the data and methodology used, including filtering and modeling techniques applied to the polling data. Following that, @sec-results presents the results from the linear and Bayesian models, while the next section @sec-discussion discusses the broader implications of these findings. Finally, @sec-appendix provides an in-depth overview of the pollster methodology, outline an idealized survey methodology, and detail the modeling techniques employed in our analysis.
 
 
 # Data {#sec-data}
 
 ## Overview
 
-We use the statistical programming language R [@citeR] to analyze US presidential polling data from FiveThirtyEight [@fivethirtyeight2024], focusing on support for Kamala Harris (Note that the data was last updated on 30 Oct. 2024). The dataset includes a wide range of poll results from various national and state-level polls, with key variables such as pollster, sample size, percentage of support for Harris, and end date of the poll. Following the guidance of @tellingstories, we compiled the results of each opinion poll over a period of time and compared them taking into account the methodological peculiarities of polling by pollsters and geographical scope of the conducted polls. 
+We use the statistical programming language R [@citeR] to analyze US presidential polling data from FiveThirtyEight [@fivethirtyeight2024], focusing on support for Kamala Harris. The dataset, last updated on 30 October 2024, includes a wide range of poll results from various national and state-level polls, with key variables such as pollster, sample size, percentage of support for Harris, and end date of the poll. Following the guidance of @tellingstories, we compiled the results of each opinion poll over a period of time and compared them taking into account the methodological peculiarities of polling by pollsters and geographical scope of the conducted polls. 
 
 To ensure data quality, we filtered the dataset to include only polls that measured Kamala Harris' support, with a numeric grade of pollster 2.7 or higher for reliability. We also limited the analysis to polls conducted after July 21, 2024, when Harris officially declared her candidacy, and excluded pollsters with fewer than 30 polls to focus on those with sufficient data for robust results.
 
 In performing the analysis, we utilized several R packages. `tidyverse` [@tidyverse] was used for data manipulation and visualization and `rstanarm` [@rstanarm], `modelsummary` [@modelsummary] was respectively used for Bayesian modeling and generating model summaries. For visualizing results, `ggplot2` [@ggplot2] was used and `kableExtra` [@kableExtra] helped format tables for presentation. These packages provided a framework for efficient data processing, modeling, and reporting.
 
-(Data last updated on 30 Oct 2024.) - [!!! MODIFY AT FINAL !!!]
 
 ## Measurement
 
-[!!! MODIFY OBSV. NUMBERS AFTER DATA UPDATES !!!] - ERASE AT FINAL
 
-The original dataset sourced from FiveThirtyEight [@fivethirtyeight2024] aggregates a wide range of poll results (16817 observations, based on dataset available at Oct 30). The polls conducted by various polling organizations capture voter preferences by taking a representative sample of the electorate and asking for the voters' candidate of choice. Surveys were conducted at the state and national levels, providing the wide perspective on public feelings across the country.
+The original dataset sourced from FiveThirtyEight [@fivethirtyeight2024] aggregates a wide range of poll results, showing 16817 observations based on dataset available at October 30. The polls conducted by various polling organizations capture voter preferences by taking a representative sample of the electorate and asking for the voters' candidate of choice. Surveys were conducted at the state and national levels, providing the wide perspective on public feelings across the country.
 
 Each poll represents a predictor of an actual event, namely voter opinion at a particular moment. Nevertheless, like all survey results, the raw data is susceptible to many potential limitations including the following: sampling error, variation in polling methods, distortion because of inappropriate survey responses such as missing data or response from respondents who misunderstood the questions [@tellingstories].
 
@@ -83,10 +81,15 @@ While applying several filters to the original dataset such as restricting to th
 
 The main variable of interest that we aim to forecast is the 'pct' variable, which represents the proportion of vote or support that a candidate received in the poll. @tbl-pctraw1 and @fig-pct2 respectively shows the summary statistics and distribution of the 'pct' variable in the original dataset [@fivethirtyeight2024]. @tbl-pctfilter1 and @fig-pctfilter2 shows the summary statistics and distribution of the same variable, but in the filtered dataset that only comprises of the supporting votes for Harris from relatively high-quality polling organizations. Comparing the summary statistics for the raw data (@tbl-pctraw1) and filtered data (@tbl-pctfilter1), higher numbers were derived from data filtered only by Harris supporters. Also, @fig-pctfilter2 illustrates that a significant number of polls indicate support levels ranging from 40% to 50%, which suggests a stable yet not substantial endorsement. This proposes that Harris possesses a reliable foundational support, although her capacity to obtain a majority remains ambiguous.
 
+\newpage
+
 ```{r}
 #| label: tbl-pctraw1
 #| tbl-cap: Summary statistics for the proportion(%) of support that candidates received in the poll
 #| echo: false
+#| tbl-align: center
+#| tbl-width: 80%
+
 
 # Calculate summary statistics for the 'pct' variable
 summary_stats <- raw_elections_data %>%
@@ -109,19 +112,26 @@ summary_stats %>%
 #| label: fig-pct2
 #| fig-cap: Distribution of the proportion(%) of support that candidates received in the poll
 #| echo: false
+#| fig-align: center
+#| fig-width: 5
+#| page-break-after: true
+
 
 # Plot the distribution of 'pct' using a histogram
 ggplot(raw_elections_data, aes(x = pct)) +
   geom_histogram(binwidth = 5, fill = "blue", alpha = 0.7, color = "black") +
   theme_minimal() +
   labs(x = "Percentage of Support (pct)",
-       y = "Frequency")
+       y = "Count")
 
 ```
 ```{r}
 #| label: tbl-pctfilter1
 #| tbl-cap: Summary statistics for the proportion(%) of support that Harris received in high-quality polls
 #| echo: false
+#| tbl-align: center
+#| tbl-width: 80%
+
 
 # Calculate summary statistics for the 'pct' variable
 summary_stats <- harris_data %>%
@@ -140,17 +150,23 @@ summary_stats %>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed"), full_width = F)
 
 ```
+
+\newpage
+
 ```{r}
 #| label: fig-pctfilter2
 #| fig-cap: Distribution of the proportion(%) of support that Harris received in high-quality polls
 #| echo: false
+#| fig-align: center
+#| fig-width: 5
+#| page-break-after: true
 
 # Plot the distribution of 'pct' using a histogram
 ggplot(harris_data, aes(x = pct)) +
   geom_histogram(binwidth = 5, fill = "blue", alpha = 0.7, color = "black") +
   theme_minimal() +
   labs(x = "Percentage of Support (pct)",
-       y = "Frequency")
+       y = "Count")
 
 ```
 
@@ -159,14 +175,15 @@ ggplot(harris_data, aes(x = pct)) +
 
 ### The Date the Poll was Concluded
 
-[!!! MODIFY DATE RANGE AFTER DATA UPDATES !!!] - ERASE AT FINAL
-
-The 'end_date' variable representing the time the poll was concluded was put into account to keep track of how support for a candidate changes in time. The reported end dates in the original dataset [@fivethirtyeight2024] ranges from 27 April, 2021 to 29 October, 2024 (@tbl-date). @fig-date shows that the polling data is more concentrated on survey results conducted in the recent period.
+The 'end_date' variable representing the time the poll was concluded was put into account to keep track of how support for a candidate changes in time. The reported end dates in the original dataset [@fivethirtyeight2024] ranges from 7 April, 2021 to 29 October, 2024 (@tbl-date). @fig-date shows that the polling data is more concentrated on survey results conducted in the recent period.
 
 ```{r}
 #| label: tbl-date
-#| tbl-cap: Summary statistics for the date the poll was concluded
+#| tbl-cap: Summary statistics for the date that the poll was concluded
 #| echo: false
+#| tbl-align: center
+#| tbl-width: 80%
+
 
 # Convert 'end_date' to a proper date format
 raw_elections_dataa <- raw_elections_data %>%
@@ -186,11 +203,16 @@ summary_stats %>%
   kable_styling(bootstrap_options = c("striped", "hover", "condensed"), full_width = F)
 
 ```
+
+\newpage
+
 ```{r}
 #| label: fig-date
-#| fig-cap: Distribution of the date the poll was concluded
+#| fig-cap: Distribution of the date that the poll was concluded
 #| echo: false
-
+#| fig-align: center
+#| fig-width: 5
+#| page-break-after: true
 
 # Distribution of 'end_date'
 ggplot(filtered_data, aes(x = end_date)) +
@@ -201,14 +223,16 @@ ggplot(filtered_data, aes(x = end_date)) +
 
 ```
 
-[!!! MODIFY DATE RANGE AFTER DATA UPDATES !!!] - ERASE AT FINAL
 
-When filtering the data, not only pollster quality and candidate type but also the date variable was considered. The filtered data contains only the polling data after the declaration of Harris. So, the date variable for filtered data ranges from 23 July, 2024 to 29 October, 2024 (@tbl-date2). @fig-date2 shows that overall, polling is conducted regularly but intensifies around specific dates.
+When filtering the data, not only pollster quality and candidate type but also the date variable was considered. The filtered data contains only the polling data after the declaration of Harris. So, the date variable for filtered data in @tbl-date2 ranges from 23 July, 2024 to 29 October, 2024. @fig-date2 shows that overall, polling is conducted regularly but intensifies around specific dates.
 
 ```{r}
 #| label: tbl-date2
-#| tbl-cap: Summary statistics for the date the high-quality polls for Harris was concluded
+#| tbl-cap: Summary statistics for the date that high-quality polls for Harris was concluded
 #| echo: false
+#| tbl-align: center
+#| tbl-width: 80%
+
 
 summary_stats <- harris_data %>%
   summarize(
@@ -223,10 +247,15 @@ summary_stats %>%
 
 ```
 
+\newpage
+
 ```{r}
 #| label: fig-date2
-#| fig-cap: Distribution of the date the high-quality polls for Harris was concluded
+#| fig-cap: Distribution of the date that high-quality polls for Harris was concluded
 #| echo: false
+#| fig-align: center
+#| fig-width: 5
+#| page-break-after: true
 
 # Convert 'end_date' to a proper date format
 harris_dataa <- harris_data %>%
@@ -251,6 +280,8 @@ The 'pollster' and 'state' variable were selected to consider the effect of chan
 #| label: tbl-predictors1
 #| tbl-cap: Number of distinct polling organizations and US states where the poll was conducted
 #| echo: false
+#| tbl-align: center
+#| tbl-width: 80%
 
 summary_stats <- raw_elections_data %>%
   summarize(
@@ -269,6 +300,9 @@ summary_stats %>%
 #| label: tbl-predictors2
 #| tbl-cap: Number of distinct high-quality polling organizations and US states where more than 60 polls for Harris were conducted
 #| echo: false
+#| tbl-align: center
+#| tbl-width: 80%
+
 
 summary_stats <- harris_data %>%
   summarize(
@@ -283,12 +317,16 @@ summary_stats %>%
 
 ```
 
-The distribution of polling counts for different pollsters in @fig-pollster suggests that the analysis data is dominated by a few pollsters, particularly Siena/NYT. Depending on their polling methodology, the general results may have potential biases. A detailed analysis of the polling methodology and possible errors of the organization will be covered in @sec-data-details.
+The distribution of polling counts for different pollsters in @fig-pollster suggests that the analysis data is dominated by a few pollsters, particularly Siena/NYT. Depending on their polling methodology, the general results may have potential biases. A detailed analysis of the polling methodology and possible errors of the organization will be covered in @sec-appendix.
 
 ```{r}
 #| label: fig-pollster
 #| fig-cap: Distribution of polling organizations where high-quality polls for Harris were conducted
 #| echo: false
+#| fig-align: center
+#| fig-width: 5
+#| page-break-after: true
+
 
 # Distribution of 'pollster' (bar plot since it's categorical)
 ggplot(harris_data, aes(x = pollster)) +
@@ -306,6 +344,10 @@ ggplot(harris_data, aes(x = pollster)) +
 #| label: fig-state
 #| fig-cap: Distribution of US states where the more than 60 polls for Harris were conducted
 #| echo: false
+#| fig-align: center
+#| fig-width: 5
+#| page-break-after: true
+
 
 # Distribution of 'state' (bar plot)
 ggplot(harris_data, aes(x = reorder(state, -table(state)[state]))) +
@@ -325,6 +367,9 @@ This variable was another factor we had put into consideration to check whether 
 #| label: tbl-pollscore
 #| tbl-cap: Summary statistics for the reliability scores of pollsters
 #| echo: false
+#| tbl-align: center
+#| tbl-width: 80%
+
 
 summary_stats <- raw_elections_data %>%
   summarize(
@@ -343,10 +388,15 @@ summary_stats %>%
 
 ```
 
+\newpage
+
 ```{r}
 #| label: fig-pollscore
 #| fig-cap: Distribution of the reliability scores of pollsters
 #| echo: false
+#| fig-align: center
+#| fig-width: 5
+#| page-break-after: true
 
 # Distribution of 'pollscore' (bar plot) with simplified x-axis labels
 ggplot(raw_elections_data, aes(x = factor(pollscore))) +
@@ -363,8 +413,11 @@ After the filtering to polling data of high-quality polling organizations, we ca
 
 ```{r}
 #| label: tbl-pollscore2
-#| tbl-cap: Summary statistics for the reliability scores of high-quality pollsters used for analysis
+#| tbl-cap: Summary statistics for the reliability scores of high-quality pollsters in the analysis data
 #| echo: false
+#| tbl-align: center
+#| tbl-width: 80%
+
 
 summary_stats <- harris_data %>%
   summarize(
@@ -383,11 +436,15 @@ summary_stats %>%
 
 ```
 
+\newpage
+
 ```{r}
 #| label: fig-pollscore2
-#| fig-cap: Distribution of the reliability scores of high-quality pollsters used for analysis
+#| fig-cap: Distribution of the reliability scores of high-quality pollsters in the analysis data
 #| echo: false
-
+#| fig-align: center
+#| fig-width: 5
+#| page-break-after: true
 
 # Distribution of 'pollscore' (bar plot)
 ggplot(harris_data, aes(x = factor(pollscore))) +
@@ -398,7 +455,7 @@ ggplot(harris_data, aes(x = factor(pollscore))) +
 
 ```
 
-## Correlation Between Predictor Variables
+## Correlation between predictor variables
 
 By examining the relationships between predictor variables in the analysis dataset, we aim to identify potential biases in interpretation and model instability. This is expected to ensure a transparent understanding of the model's robustness and interpretability.
 
@@ -406,10 +463,15 @@ By examining the relationships between predictor variables in the analysis datas
 
 @fig-correlation1 shows notable polling concentrations on certain states such as Pennsylvania, Ohio, and Nevada in week 2024-37 (September 9, 2024) or 2024-38 (September 15, 2024). This suggests that these states are key battelgrounds or areas of strategic focus during the election period. Moreover, polling activities are not consistent across all weeks and there are clear peaks in polling activity in week 2024-38 (September 15, 2024), which may correspond to significant political events, debates, or media focuses. 
 
+\newpage
+
 ```{r}
 #| label: fig-correlation1
-#| fig-cap: "Polling concentration over time by state *Note:* Strategic focus of polling is directed in battleground states such as Pennsylvania and Ohio in September 15, 2024"
+#| fig-cap: "Polling concentration over time by state (*Note:* Strategic focus of polling is directed in battleground states such as Pennsylvania and Ohio in September 15, 2024)"
 #| echo: false
+#| fig-align: center
+#| page-break-after: true
+
 
 # Aggregate the number of polls by state and by week (or month)
 poll_time_state_2 <- harris_data %>%
@@ -426,7 +488,7 @@ ggplot(poll_time_state_2, aes(x = week, y = state, fill = total_polls)) +
        y = "State",
        fill = "Total Polls") +
   theme_minimal() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  theme(axis.text.x = element_text(angle = 45, hjust = 1), strip.text = element_text(size = 8))
 
 ```
 
@@ -435,10 +497,15 @@ ggplot(poll_time_state_2, aes(x = week, y = state, fill = total_polls)) +
 
 @fig-correlation2 shows that Siena/NYT, which made up the largest proportion of polls in our analysis dataset, has concentrated polling efforts in week 2024-37 (September 9, 2024) and week 2024-38 (September 15, 2024). Notably active periods, possibly around key election events, might introduce temporal bias and overemphasize methodologies of Siena/NYT in that specific time period. Emerson shows overall consistency of polling activities across several weeks indicating steady involvement, while other polling organizations show more sporadic or minimal involvement.
 
+\newpage
+
 ```{r}
 #| label: fig-correlation2
-#| fig-cap: "Polling concentration over time by pollster *Note:* Concentrated polling efforts of Siena/NYT in the first half of September, 2024 show temporal bias and potential overemphasizing of their polling methodologies around key election events."
+#| fig-cap: "Polling concentration over time by pollster (*Note:* Concentrated polling efforts of Siena/NYT are shown in the first half of September, 2024.)"
 #| echo: false
+#| fig-align: center
+#| page-break-after: true
+
 
 # Aggregate the number of polls by state and by week (or month)
 poll_time_pollster <- harris_data %>%
@@ -455,7 +522,7 @@ ggplot(poll_time_pollster, aes(x = week, y = pollster, fill = total_polls)) +
        y = "Pollster",
        fill = "Total Polls") +
   theme_minimal() +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  theme(axis.text.x = element_text(angle = 45, hjust = 1), strip.text = element_text(size = 8))
 
 ```
 
@@ -464,10 +531,14 @@ ggplot(poll_time_pollster, aes(x = week, y = pollster, fill = total_polls)) +
 
 @fig-correlation3 shows that Siena/NYT has the strongest state-level presence in key battleground states like Michigan and Arizona. Others like AtlasIntel and Beacon/Shaw has minimal polling coverage in targeted states such as Nevada and Georgia. This variation in coverage could influence the overall analysis in that some states might receive disproportionately more attention from certain pollsters.
 
+\newpage
+
 ```{r}
 #| label: fig-correlation3
-#| fig-cap: "Polling activity by pollster and state *Note:* Siena/NYT has strongest state-level polling coverage in key battleground states"
+#| fig-cap: "Polling activity by pollster and state (*Note:* Siena/NYT has strongest state-level polling coverage in key battleground states)"
 #| echo: false
+#| page-break-after: true
+
 
 # Step 1: Filter out NAs from pollster column and summarize data by state and pollster
 pollster_state_data <- harris_data %>%
@@ -477,18 +548,18 @@ pollster_state_data <- harris_data %>%
 
 # Step 2: Plot the faceted map using plot_usmap
 plot_usmap(data = pollster_state_data, values = "total_polls", regions = "states") +
-  facet_wrap(~ pollster, ncol = 2) +  # Create a map for each pollster
+  facet_wrap(~ pollster, ncol = 4) +  # Create a map for each pollster
   scale_fill_distiller(palette = "Blues", direction = 1, na.value = "gray90") +  # Use blue color palette
   labs(fill = "Total Polls") +
   theme_void() +  # Remove axes and gridlines
-  theme(strip.text = element_text(size = 12))  # Customize facet labels
+  theme(strip.text = element_text(size = 9))  # Customize facet labels
 
 ```
 
 
 # Model {#sec-model}
 
-The goal of our modelling strategy is to estimate Kamala Harris's support percentage in the 2024 US election polls, accounting for potential variations over time, as well as across different pollsters and states. The model balances complexity with interpretability, incorporating both linear and Bayesian frameworks to capture patterns in the data. Background details and diagnostics are included in [Appendix -@sec-model-details].
+Our modelling strategy estimates Kamala Harris's support percentage in the 2024 US election polls, accounting for potential variations over time including pollster and state differences. The model balances complexity with interpretability, using both linear and Bayesian frameworks to capture patterns in the data. We turned from the initial linear model to a Bayesian model for robust predictions considering the variables' uncertainties. The Bayesian approach, which incorporates both prior beliefs and observed data to make predictions, allowed us to capture the variances among pollsters and states more accurately and responsively. Further background details and diagnostics are included in [Appendix -@sec-model-details].
 
 ## Model set-up
 
@@ -566,15 +637,21 @@ The main assumption in these models is that the pollster and state effects can b
 
 # Results {#sec-results}
 
-## Results from the relation between the prediction variable and outcome variable of the analysis data
+## Results from examining the analysis data
 
 @fig-resultplot1 shows an initial increase in support for Harris since her declaration to join the electoral race, peaking around mid-September. However, this initial momentum stabilized with minor decrease in support as the election gets closer. Moreover, the scattered data points around the summary line show high variance between individual polls.
 
+\newpage
+
 ```{r}
 #| label: fig-resultplot1
-#| fig-cap: "Polling votes for Harris over time *Note:* The date starts from after Harris officially announced her campaign for 2024 U.S. presidential election on July 21, 2024."
+#| fig-cap: "Polling votes for Harris over time (*Note:* The date starts from after Harris officially announced her campaign for 2024 U.S. presidential election on July 21, 2024.)"
 #| echo: false
 #| warning: false
+#| fig-align: center
+#| fig-width: 5
+#| page-break-after: true
+
 
 base_plot <- ggplot(harris_data, aes(x = end_date, y = pct)) +
   theme_classic() +
@@ -586,13 +663,18 @@ base_plot +
   geom_smooth()
 ```
 
-When accounting for the pollster difference, @fig-resultplot2 and @fig-resultplot3 show variations in Harris' support levels that are obscured in the aggregated view of @fig-resultplot1. Siena/NYT (pink) shows relatively stable polling results for Harris, with fewer extreme values and a slight downward trend in October. On the other hand, Emerson (greem) shows more fluctuation throughout the period with a wider spread of polling values. 
+When accounting for the pollster difference, @fig-resultplot2 and @fig-resultplot3 show variations in Harris' support levels that are obscured in the aggregated view of @fig-resultplot1. Siena/NYT (pink) shows relatively stable polling results for Harris, with fewer extreme values and a slight downward trend in October. On the other hand, Emerson (green) shows more fluctuation throughout the period with a wider spread of polling values. 
 
 ```{r}
 #| label: fig-resultplot2
-#| fig-cap: "Polling votes for Harris over time by pollster *Note:* The date starts from after Harris officially announced her campaign for 2024 U.S. presidential election on July 21, 2024. Only filtered pollsters with high-quality polling questions are shown in the following."
+#| fig-cap: "Polling votes for Harris over time by pollster (*Note:* The date starts from after Harris officially announced her campaign for 2024 U.S. presidential election on July 21, 2024. Only filtered pollsters with high-quality polling questions are shown in the following.)"
 #| echo: false
 #| warning: false
+#| message: false
+#| fig-align: center
+#| fig-width: 5
+#| page-break-after: true
+
 
 # Color by pollster
 base_plot +
@@ -603,10 +685,12 @@ base_plot +
 
 ```{r}
 #| label: fig-resultplot3
-#| fig-cap: "Polling votes for Harris over time by pollster (facets) *Note:* The date starts from after Harris officially announced her campaign for 2024 U.S. presidential election on July 21, 2024. Only filtered pollsters with high-quality polling questions are shown in the following."
+#| fig-cap: "Polling votes for Harris over time by pollster (facets) (*Note:* The date starts from after Harris officially announced her campaign for 2024 U.S. presidential election on July 21, 2024. Only filtered pollsters with high-quality polling questions are shown in the following.)"
 #| echo: false
 #| warning: false
-
+#| fig-align: center
+#| fig-width: 5
+#| page-break-after: true
 
 # Facet by pollster
 base_plot +
@@ -615,16 +699,21 @@ base_plot +
   facet_wrap(vars(pollster))
 ```
 
+\newpage
+
 When accounting for the state difference, @fig-resultplot4 and @fig-resultplot5 show variations in Harris' support levels. Critical battleground states like Pennsylvania and Michigan show distinct trends from the national analysis in @fig-resultplot1. Pennsylvania shows relatively stable trends slightly above the national average while Michigan shows fluctuations over time.
 
 ```{r}
 #| label: fig-resultplot4
-#| fig-cap: "Polling votes for Harris over time by state *Note:* The date starts from after Harris officially announced her campaign for 2024 U.S. presidential election on July 21, 2024. Only filtered pollsters with high-quality polling questions are shown in the following."
+#| fig-cap: "Polling votes for Harris over time by state (*Note:* The date starts from after Harris officially announced her campaign for 2024 U.S. presidential election on July 21, 2024. Only filtered pollsters with high-quality polling questions are shown in the following.)"
 #| echo: false
-# Color by pollster
 #| warning: false
+#| message: false
+#| fig-align: center
+#| fig-width: 5
+#| page-break-after: true
 
-
+# Color by pollster
 base_plot +
   geom_point(aes(color = state)) +
   geom_smooth() + 
@@ -636,7 +725,9 @@ base_plot +
 #| fig-cap: "Polling votes for Harris over time by state (facets) *Note:* The date starts from after Harris officially announced her campaign for 2024 U.S. presidential election on July 21, 2024. Only filtered pollsters with high-quality polling questions are shown in the following."
 #| echo: false
 #| warning: false
-
+#| fig-align: center
+#| fig-width: 5
+#| page-break-after: true
 
 # Facet by state
 base_plot +
@@ -645,10 +736,14 @@ base_plot +
   facet_wrap(vars(state))
 ```
 
+\newpage
+
 ## Results from the prediction model
 
-Prediction results derived from our model frameworks are summarized in @tbl-modelresults1 and @tbl-modelresults2. In the linear models (@tbl-modelresults1)
-, higher $R^2$ and lower WAIC, RMSE values in the second column show that the inclusion of pollster effects improves accuracy and reliability of the prediction model. In the Bayesian models (@tbl-modelresults2), higher Log-Likelihood and lower ELPD, WAIC values in the fourth column shows that including both pollster and state effects enhances model performance.
+
+Prediction results derived from our model frameworks are summarized in @tbl-modelresults1 and @tbl-modelresults2. In the linear models (@tbl-modelresults1), higher $R^2$ and lower WAIC, RMSE values in the second column show that the inclusion of pollster effects improves accuracy and reliability of the prediction model. In the Bayesian models (@tbl-modelresults2), higher Log-Likelihood and lower ELPD, WAIC values in the fourth column shows that including both pollster and state effects enhances model performance.
+
+\
 
 ```{r}
 #| echo: false
@@ -670,12 +765,16 @@ bayesian_model_2 <-
 
 ```
 
+
 ```{r}
 #| echo: false
 #| eval: true
 #| label: tbl-modelresults1
 #| tbl-cap: "Linear models of support percentages for Harris based on date and pollster"
 #| warning: false
+#| tbl-width: 80% 
+#| page-break-after: true
+#| page-break-before: true
 
 modelsummary(
   list(
@@ -687,12 +786,19 @@ modelsummary(
 
 ```
 
+\newpage
+
 ```{r}
 #| echo: false
 #| eval: true
 #| label: tbl-modelresults2
 #| tbl-cap: "Bayesian models of support percentages for Harris based on pollster and state"
 #| warning: false
+#| tbl-align: center
+#| tbl-width: 80% 
+#| page-break-after: true
+#| page-break-before: true
+
 
 modelsummary(
   list(
@@ -728,19 +834,17 @@ The stability of polling trends in Pennsylvania suggests a consistent voter base
 
 ## Weaknesses and next steps
 
-While our model provides a foundation to understand Harris' polling support, further refinements are necessary to enhance its accuracy and applicability. For instance, future studies could focus on the incorporation of voter demographics, such as age, gender, and education. Showing which segments of the population are driving changes in support, this can give further explanation to how certain policies or campaign events of candidates affect overall support for a candidate. In addition, interaction terms between pollster and state can be included in the model, considering that some states might receive disproportionately more attention from certain pollsters as shown in @fig-correlation3. This can give further explanation to how pollsters and regional dynamics affect overall support for a candidate.
+While our model provides a foundation to understand Harris' polling support, further refinements are necessary to enhance its accuracy and applicability. For instance, future studies could focus on the incorporation of voter demographics, such as age, gender, and education. Showing which segments of the population are driving changes in support, this can give further explanation to how certain policies or campaign events of candidates affect overall support for a candidate [@brown2024candidate]. In addition, interaction terms between pollster and state can be included in the model, considering that some states might receive disproportionately more attention from certain pollsters as shown in @fig-correlation3. This can give further explanation to how pollsters and regional dynamics affect overall support for a candidate [@pew2020electionpolls].
 
-This study has its constraints in that sampling error and systematic biases inevitably occur in the process of measuring social phenomenon with data. In particular, due to the nature of polling surveys, non-responses or misunderstanding of the survey questions result in missing data or outliers. Considering the possibility of prediction errors, we should take caution in interpreting the analysis and prediction results. By conducting more in-depth research of the domain knowledge and constructing appropriate variables to put into account, it would help derive accurate conclusions rather than just acknowledging the numbers given itself. 
+This study has its constraints in that sampling error and systematic biases inevitably occur in the process of measuring social phenomenon with data. In particular, due to the nature of polling surveys, non-responses or misunderstanding of the survey questions result in missing data or outliers [@pew2020electionpolls]. Considering the possibility of prediction errors, we should take caution in interpreting the analysis and prediction results. By conducting more in-depth research of the domain knowledge and constructing appropriate variables to put into account, it would help derive accurate conclusions rather than just acknowledging the numbers given itself [@geeksforgeeks2023domainknowledge]. 
 
 \newpage
 
 \appendix
 
-# Appendix
+# Appendix {#sec-appendix}
 
-# Additional data details {#sec-data-details}
-
-## Pollster Methodology Overview and Evaluation
+## Pollster methodology overview and evaluation
 
 The New York Times/Siena College polling partnership, the polling organization that accounted for the majority of polls in our analysis (@fig-pollster), conducts polls tailored for specific elections, such as state or national races [@nyt_siena_2020_methodology]. Their sample size typically includes 600 to 1000 likely voters per poll, with oversampling in battleground states to capture regional nuances [@nyt_siena_2020_methodology]. The methodology uses random-digit dialing (RDD) for landlines and mobile phones to ensure representative sample coverage across demographics. In addition, online surveys are administered to complement phone-based responses, ensuring broader accessibility [@nyt_siena_2020_methodology]. The stratified random sampling approach is employed, where the population is divided into strata (based on demographic variables like race, education, and geography), and a random sample is drawn from each stratum [@tellingstories]. This allows for precision in reflecting the political leanings and key demographic shifts in specific regions.
 
@@ -749,19 +853,20 @@ The organization intends to enhance transparency in how public opinion is assess
 The limitations of Siena/NYT's methodology are the challenge of polling itself. Since polling is a "snapshot in time",  the results can fluctuate based on recent political events or campaign dynamics. Additionally, while the effort to represent a broad demographic is laudable, there are still issues with nonresponse bias in polling-particularly among the hard-to-reach voter or voters suspicious of polling organizations themselves [@pew2023polling].
 
 
-## Idealized Methodolgy
+## Idealized methodolgy
 
 The proposed methodology for forecasting the 2024 U.S. presidential election with a budget of $100,000 would be designed as follows. First, a stratified random sampling method will be employed that allows for the capture of the demographic elements such as age, gender, race, and education level. This could alleviate bias and make the sample more representative of the population [@pew2023polling]. The data collection process will encompass both telephone surveys and internet polling, thereby effectively engaging a diverse range of voters [@pew2023polling]. Survey respondents would include older populations via conventional methods and younger, technologically intellectual individuals through digital platforms. This multifaceted approach enhances the reliability and inclusiveness of the gathered data.
 
 In addition to robust sampling, the methodology incorporates weighting methods that account for groups that are underrepresented, ensuring that the outcomes are not skewed by sampling errors [@pew2023polling]. The final model would use Bayesian hierarchical modeling, which allows for more flexible modeling of uncertainty and variation across states, pollsters, and other external factors. These models, along with out-of-sample testing and cross-validation, enable accurate prediction sensitive to the dynamics of real-world changes, including political events [@pew2023polling]. The inclusion of external factors, such as major political events, debates, or sudden economic shifts, would help the model remain responsive to rapid changes in voter sentiment. 
 
-## Idealized Survey
+### Idealized survey
 
-The proposed survey questionnarie design is provided in the following link:
+The proposed survey questionnarie design is in the following link:
+\
 https://forms.gle/zQ8iJyPk3HhJYrKd9.
 
 ::: {.layout}
-## Survey Demo
+### Survey demo
 
 ::: {.column width="1/5"}
 ![Survey Intro](../other/idealized_survey/survey_intro.png)
@@ -785,9 +890,9 @@ https://forms.gle/zQ8iJyPk3HhJYrKd9.
 :::
 
 
-# Model details {#sec-model-details}
+## Model details {#sec-model-details}
 
-## Posterior predictive check
+### Posterior predictive check
 
 In the first posterior predictive check (@fig-ppcheck-1), we compare the observed data with replicated data generated from the posterior distribution. This shows that the model is able to replicate the overall distribution of the observed data, with the replicated curves (light blue) closely following the true data (dark blue line). This indicates that the model fits the data well in terms of capturing the main pattern or trend [@stan2023posteriorchecks].
 
@@ -802,6 +907,10 @@ In the second plot (@fig-ppcheck-2), the replicated data which had both the poll
 #| layout-ncol: 2
 #| fig-cap: "Examining how the Bayesian model fits, and is affected by, the data"
 #| fig-subcap: ["Posterior prediction check"]
+#| fig-align: center
+#| fig-width: 5
+#| page-break-after: true
+
 
 pp_check(bayesian_model_1) +
   theme_classic() +
@@ -812,7 +921,7 @@ pp_check(bayesian_model_2) +
   theme(legend.position = "bottom")
 ```
 
-## Diagnostics
+### Diagnostics
 
 @fig-stanareyouokay-1 is a trace plot. The sampled values for posterior distribution of intercept parameter across iterations of the MCMC algorithm shows good convergence [@stan_mcmc_traces]. The lines for the parameter appear to be stable and fluctuating around a central value without any clear trends or patterns. This suggests that the MCMC algorithm has likely converged, and the posterior samples are representative of the target distribution.
 
@@ -827,7 +936,9 @@ pp_check(bayesian_model_2) +
 #| fig-cap: "Checking the convergence of the MCMC algorithm"
 #| fig-subcap: ["Trace plot", "Rhat plot"]
 #| layout-ncol: 2
-
+#| fig-align: center
+#| fig-width: 5
+#| page-break-after: true
 
 
 plot(bayesian_model_1, pars = "(Intercept)", prob = 0.95)
