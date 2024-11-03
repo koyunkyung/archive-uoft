@@ -1,12 +1,12 @@
 ---
-title: "A Poll-of-Polls Forecast for the 2024 U.S. Presidential Election: Analysis of Support Trends for Harris Accounting for Pollster and State Disparities"
-subtitle: "Kamla Harris Emerges as a Leading Candidate with Constant Support Rates Hovering Around 50.03%"
+title: "A Poll-of-Polls Forecast for the 2024 U.S. Presidential Election: Analyzing Support Trends for Harris by Pollster and State"
+subtitle: "Kamala Harris Leads with Stable Support Around 48%"
 author: 
   - Yunkyung Ko
 thanks: "Code and data are available at: [https://github.com/koyunkyung/us_election_2024](https://github.com/koyunkyung/us_election_2024)."
 date: today
 date-format: long
-abstract: "In the anticipation of the 2024 US presidential election, this paper intends to provide a trend analysis of the support rates for Harris accounting for pollster and state specific factors. Supportive polls for Harris remained relatively constant around 50.03%. However, some polling organizations and battleground states such as Siena/NYT and Michigan, showed variations from the average national results. Our objective is to propose a reliable electoral prediction ny not only analyzing the summary statistics and correlations of date, pollster, and state variables, but also by constructing prediction models using a linear and a Bayesian model approach."
+abstract: "In the anticipation of the 2024 U.S. presidential election, this paper analyzes trends in Harris's support, focusing on pollster and state-specific factors. Harris’s support has remained steady around 48%, though key pollsters like Siena/NYT and battleground states such as Michigan show notable deviations. Our goal is to propose a reliable electoral prediction by examining correlations among date, pollster, and state variables and developing predictions through linear and Bayesian models."
 format: pdf
 number-sections: true
 bibliography: references.bib
@@ -44,15 +44,11 @@ harris_data <- read_csv(here::here("data/02-analysis_data/harris_elections_data.
 
 # Introduction
 
-The US presidential election is an event that receives a lot of international attention due to its far-reaching implications beyond the country's borders. The effects of US elections are not only related to economy and international relations around the world, but also link to social and environmental issues such as climate change [@euromonitor2024]. In the anticipation of the 2024 US electoral competition, this paper is aimed at predicting possible outcomes of the election by analyzing the level of support that Kamala Harris will gain.
+The 2024 U.S. presidential election receives a lot of international attention due to its far-reaching implications, affecting global economy, foreign policy, and social issues like climate change [@euromonitor2024]. This paper aims to predict possible outcomes of the election by analyzing Kamala Harris's support in the polling data with a linear regression and a Bayesian approach.
 
-We forecast the support of Kamala Harris based on the polling results at the national and state levels, and apply a linear regression and a Bayesian approach. The main parameter of interest is the proportion of vote or support that Harris received in surveys, which is traced over time. By considering the effect of changes in poll-making organizations and geographical distinctions, our objective is to correct for variation across different voter bases with the pooling the polls approach [@poolingpolls]. 
+Our estimand is Harris's support rate in polls, tracked over time and adjusted for pollster and state specific variations. Using a "pooling the polls" approach, we aim to correct for variations across different voter bases [@poolingpolls]. Initial linear models show Harris's support rate remains stable at around 48% over time, though with large variability as seen in the spread of points around the fitted line. Some pollsters or states such as Siena/NYT and Michigan consistently reported higher or lower support for Harris compared to others, proposing the importance of accounting for specific polling contexts.
 
-Our initial linear model examining the support for Harris over time suggests that the rate of support remained relatively stable around 50.03%, with no significant increase or decrease. However large variability was detected, as seen in the spread of points around the fitted line. Consequently, pollster-specific effects and state-level random effects were added to the model but resulted in even higher variations. Some pollsters or states consistently reported higher or lower support for Harris compared to others, proposing the significance of considering distinct pollster and state environment when interpreting electoral polling results.
-
-These prognostics provide much more than merely forecasting the election in question. Hinting the trajectory the US might take in matters of foreign policy, economics, and global politics, predictions enable stakeholders worldwide to take preemptive measures for the resulted changes of a newly elected government [@csis2024]. As such, this study not only contributes to the domestic political discourse but also provides a valuable tool for global actors seeking to navigate the uncertainty surrounding the 2024 US presidential election[@csis2024].
-
-The paper is structured as follows. Initially, @sec-data and @sec-model explores the data and methodology used, including filtering and modeling techniques applied to the polling data. Following that, @sec-results presents the results from the linear and Bayesian models, while the next section @sec-discussion discusses the broader implications of these findings. Finally, @sec-appendix provides an in-depth overview of the pollster methodology, outline an idealized survey methodology, and detail the modeling techniques employed in our analysis.
+Beyond election forecasting, this analysis signals global stakeholders on potential shifts in the U.S. policy and strategy [@csis2024]. As such, this study not only contributes to the domestic political discourse but also provides a valuable tool for global actors seeking to navigate the uncertainty surrounding the 2024 U.S. presidential election [@csis2024]. The paper is organized as follows: @sec-data and @sec-model detail the data and methodology used, including filtering and modeling techniques applied to the polling data. @sec-results presents findings from the linear and Bayesian models, while @sec-discussion interprets broader implications. Finally, @sec-appendix covers pollster methodology and ideal survey practices.
 
 
 # Data {#sec-data}
@@ -77,15 +73,15 @@ While applying several filters to the original dataset such as restricting to th
 
 ## Outcome variable
 
-### The Proportion(%) of Support that a Candidate Received in the Poll 
+### The Proportion (%) of Support that a Candidate Received in the Poll 
 
-The main variable of interest that we aim to forecast is the 'pct' variable, which represents the proportion of vote or support that a candidate received in the poll. @tbl-pctraw1 and @fig-pct2 respectively shows the summary statistics and distribution of the 'pct' variable in the original dataset [@fivethirtyeight2024]. @tbl-pctfilter1 and @fig-pctfilter2 shows the summary statistics and distribution of the same variable, but in the filtered dataset that only comprises of the supporting votes for Harris from relatively high-quality polling organizations. Comparing the summary statistics for the raw data (@tbl-pctraw1) and filtered data (@tbl-pctfilter1), higher numbers were derived from data filtered only by Harris supporters. Also, @fig-pctfilter2 illustrates that a significant number of polls indicate support levels ranging from 40% to 50%, which suggests a stable yet not substantial endorsement. This proposes that Harris possesses a reliable foundational support, although her capacity to obtain a majority remains ambiguous.
+The main variable of interest that we aim to forecast is the 'pct' variable, which represents the proportion of vote or support that a candidate received in the poll. @tbl-pctraw1 and @fig-pct2 respectively shows the summary statistics and distribution of the 'pct' variable in the original dataset [@fivethirtyeight2024]. @tbl-pctfilter1 and @fig-pctfilter2 shows the summary statistics and distribution of the same variable, but in the filtered dataset that only comprises of the supporting votes for Harris from relatively high-quality polling organizations. Comparing the summary statistics for the raw data (@tbl-pctraw1) and filtered data (@tbl-pctfilter1), higher numbers were derived from data filtered only by Harris supporters. Also, @fig-pctfilter2 illustrates that a significant number of polls indicate support levels ranging from 45% to 50%, which suggests a stable yet not substantial endorsement. This proposes that Harris possesses a reliable foundational support, although her capacity to obtain a majority remains ambiguous.
 
 \newpage
 
 ```{r}
 #| label: tbl-pctraw1
-#| tbl-cap: Summary statistics for the proportion(%) of support that candidates received in the poll
+#| tbl-cap: Summary statistics for the proportion (%) of support that candidates received in the poll
 #| echo: false
 #| tbl-align: center
 #| tbl-width: 80%
@@ -110,7 +106,7 @@ summary_stats %>%
 ```
 ```{r}
 #| label: fig-pct2
-#| fig-cap: Distribution of the proportion(%) of support that candidates received in the poll
+#| fig-cap: Distribution of the proportion (%) of support that candidates received in the poll
 #| echo: false
 #| fig-align: center
 #| fig-width: 5
@@ -119,7 +115,7 @@ summary_stats %>%
 
 # Plot the distribution of 'pct' using a histogram
 ggplot(raw_elections_data, aes(x = pct)) +
-  geom_histogram(binwidth = 5, fill = "blue", alpha = 0.7, color = "black") +
+  geom_histogram(binwidth = 3, fill = "blue", alpha = 0.7, color = "black") +
   theme_minimal() +
   labs(x = "Percentage of Support (pct)",
        y = "Count")
@@ -127,7 +123,7 @@ ggplot(raw_elections_data, aes(x = pct)) +
 ```
 ```{r}
 #| label: tbl-pctfilter1
-#| tbl-cap: Summary statistics for the proportion(%) of support that Harris received in high-quality polls
+#| tbl-cap: Summary statistics for the proportion (%) of support that Harris received in high-quality polls
 #| echo: false
 #| tbl-align: center
 #| tbl-width: 80%
@@ -155,7 +151,7 @@ summary_stats %>%
 
 ```{r}
 #| label: fig-pctfilter2
-#| fig-cap: Distribution of the proportion(%) of support that Harris received in high-quality polls
+#| fig-cap: Distribution of the proportion (%) of support that Harris received in high-quality polls
 #| echo: false
 #| fig-align: center
 #| fig-width: 5
@@ -163,7 +159,7 @@ summary_stats %>%
 
 # Plot the distribution of 'pct' using a histogram
 ggplot(harris_data, aes(x = pct)) +
-  geom_histogram(binwidth = 5, fill = "blue", alpha = 0.7, color = "black") +
+  geom_histogram(binwidth = 2, fill = "blue", alpha = 0.7, color = "black") +
   theme_minimal() +
   labs(x = "Percentage of Support (pct)",
        y = "Count")

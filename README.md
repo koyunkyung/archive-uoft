@@ -1,5 +1,5 @@
-# A Poll-of-Polls Forecast for the 2024 U.S. Presidential Election: Trend Analysis of Support Rates for Harris Considering Pollster and State Disparities
-## Kamla Harris Emerges as a Leading Candidate with Constant Support Rates Hovering Around 50.03%
+# A Poll-of-Polls Forecast for the 2024 U.S. Presidential Election: Analyzing Support Trends for Harris by Pollster and State
+## Kamala Harris Leads with Stable Support Around 48%
 
 ## Overview
 
