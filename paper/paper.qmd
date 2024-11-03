@@ -26,6 +26,7 @@ library(readr)
 library(janitor)
 library(lubridate)
 library(broom)
+library(broom.mixed)
 library(modelsummary)
 library(rstanarm)
 library(splines)
@@ -36,6 +37,7 @@ library(gridExtra)
 library(here)
 library(usmap)  # For the map of US states
 library(viridis)  # For a color palette
+library(cowplot)
 
 raw_elections_data <- read_csv(here::here("data/01-raw_data/raw_elections_data.csv"))
 harris_data <- read_csv(here::here("data/02-analysis_data/harris_elections_data.csv"))
@@ -644,6 +646,7 @@ The main assumption in these models is that the pollster and state effects can b
 #| fig-cap: "Polling votes for Harris over time (*Note:* The date starts from after Harris officially announced her campaign for 2024 U.S. presidential election on July 21, 2024.)"
 #| echo: false
 #| warning: false
+#| message: false
 #| fig-align: center
 #| fig-width: 5
 #| page-break-after: true
@@ -655,7 +658,7 @@ base_plot <- ggplot(harris_data, aes(x = end_date, y = pct)) +
 
 # Plots poll estimates and overall smoothing
 base_plot +
-  geom_point() +
+  geom_point(alpha = 0.45) +
   geom_smooth()
 ```
 
@@ -674,7 +677,7 @@ When accounting for the pollster difference, @fig-resultplot2 and @fig-resultplo
 
 # Color by pollster
 base_plot +
-  geom_point(aes(color = pollster)) +
+  geom_point(aes(color = pollster), alpha = 0.45) +
   geom_smooth() + 
   theme(legend.position = "bottom")
 ```
@@ -718,7 +721,7 @@ base_plot +
 
 ```{r}
 #| label: fig-resultplot5
-#| fig-cap: "Polling votes for Harris over time by state (facets) *Note:* The date starts from after Harris officially announced her campaign for 2024 U.S. presidential election on July 21, 2024. Only filtered pollsters with high-quality polling questions are shown in the following."
+#| fig-cap: "Polling votes for Harris over time by state (facets) (*Note:* The date starts from after Harris officially announced her campaign for 2024 U.S. presidential election on July 21, 2024. Only filtered pollsters with high-quality polling questions are shown in the following.)"
 #| echo: false
 #| warning: false
 #| fig-align: center
@@ -803,6 +806,125 @@ modelsummary(
   ),
   statistic = "mad",
   fmt = 2)
+
+```
+
+
+@fig-modelgraph1 and @fig-modelgraph2 show the trends in the percentage of supportive polls for Harris predicted by linear models, respectively representing a time-series analysis and consideration of pollster differences. Moreover, @fig-modelgraph3 and @fig-modelgraph4 show the supportive trends predicted by Bayesian models accounting for pollster and state differences. Each model, from the simple linear regression to the more complex Bayesian models, seem to reflect a relatively consistent support pattern over time. This alignment of underlying support trends across model shows the credibility of the observed overall support trend.
+
+```{r}
+#| echo: false
+#| warning: false
+#| message: false
+#| label: fig-modelgraph1
+#| fig-cap: "Predicted percentage of supportive polls for Harris in the linear model by date"
+#| fig-align: center
+#| fig-width: 5
+#| page-break-after: true
+
+
+# Generate predictions and plot for Model 1 (pct ~ end_date)
+harris_data$pred_date <- predict(model_date, newdata = harris_data)
+
+ggplot(harris_data, aes(x = end_date, y = pct)) +
+  geom_point(color = "black", alpha = 0.6) +
+  geom_line(aes(y = pred_date), color = "blue") +
+  labs(
+    x = "Date",
+    y = "Predicted percentage of supportive polls"
+  ) +
+  theme_minimal()
+```
+
+
+
+```{r}
+#| echo: false
+#| warning: false
+#| message: false
+#| label: fig-modelgraph2
+#| fig-cap: "Predicted percentage of supportive polls for Harris in the linear model by date and pollster (*Note:* The blue summary line calculates the mean of the predictions across all dates and pollsters.)"
+#| fig-align: center
+#| fig-width: 5
+#| page-break-after: true
+
+
+# Generate predictions for Model 2, but ignore the individual pollster grouping in the plot
+# Calculate the mean predictions across all pollsters for each end_date
+harris_data$pred_date_pollster <- predict(model_date_pollster, newdata = harris_data)
+
+# Calculate the mean of the predictions across all dates and pollsters
+overall_mean_pred <- mean(harris_data$pred_date_pollster, na.rm = TRUE)
+
+# Plot the observed data points and a single straight summary line at the overall mean prediction
+ggplot(harris_data, aes(x = end_date, y = pct)) +
+  geom_point(aes(color = pollster), alpha = 0.6) +  # Observed data with colors by pollster
+  geom_hline(yintercept = overall_mean_pred, color = "blue") +
+  labs(
+    x = "Date",
+    y = "Predicted percentage of supportive polls"
+  ) +
+  theme_minimal()
+
+```
+
+
+
+```{r}
+#| echo: false
+#| warning: false
+#| message: false
+#| label: fig-modelgraph3
+#| fig-cap: "Predicted percentage of supportive polls for Harris in the Bayesian model with random intercept for `pollster` variable (*Note:* In order to avoid the overfitting problem, overall mean of prediction was separately calculated in creating the summary line.)"
+#| fig-align: center
+#| fig-width: 5
+#| page-break-after: true
+
+
+# Generate predictions for Bayesian Model 1
+harris_data$bayesian_pred_1 <- posterior_predict(bayesian_model_1, newdata = harris_data) |> apply(2, mean)
+
+# Calculate the overall mean prediction
+overall_mean_pred <- mean(harris_data$bayesian_pred_1 / harris_data$sample_size * 100, na.rm = TRUE)
+
+# Plot the observed data points and a single straight line at the overall mean prediction
+ggplot(harris_data, aes(x = end_date, y = num_harris / sample_size * 100)) +
+  geom_point(color = "black", alpha = 0.6) +
+  geom_hline(yintercept = overall_mean_pred, color = "blue") +
+  labs(
+   x = "Date",
+   y = "Predicted percentage of supportive polls"
+  ) +
+  theme_minimal()
+
+```
+
+```{r}
+#| echo: false
+#| warning: false
+#| message: false
+#| label: fig-modelgraph4
+#| fig-cap: "Predicted percentage of supportive polls for Harris in the Bayesian model with random intercept for `pollster` and `state` variable (*Note:* In order to avoid the overfitting problem, overall mean of prediction was separately calculated in creating the summary line.)"
+#| fig-align: center
+#| fig-width: 5
+#| page-break-after: true
+
+
+# Generate predictions for Bayesian Model 2
+harris_data$bayesian_pred_2 <- posterior_predict(bayesian_model_2, newdata = harris_data) |> apply(2, mean)
+
+# Calculate the overall mean prediction
+overall_mean_pred_2 <- mean(harris_data$bayesian_pred_2 / harris_data$sample_size * 100, na.rm = TRUE)
+
+# Plot the observed data points and a single straight line at the overall mean prediction
+ggplot(harris_data, aes(x = end_date, y = num_harris / sample_size * 100)) +
+  geom_point(color = "black", alpha = 0.6) +
+  geom_hline(yintercept = overall_mean_pred_2, color = "blue") +
+  labs(
+   x = "Date",
+   y = "Predicted percentage of supportive polls"
+  ) +
+  theme_minimal()
 
 ```
 

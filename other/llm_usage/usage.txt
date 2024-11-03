@@ -413,3 +413,235 @@ Questionnaire Design and Testing: $15,000
 Data Processing and Weighting: $10,000
 Modeling and Analysis: $5,000
 This distribution ensures that most of the budget is directed toward collecting high-quality data from the most electorally significant states, while also investing in comprehensive survey design, weighting, and robust modeling. By concentrating resources on both data collection and methodological rigor, this idealized methodology provides a robust framework for generating accurate and context-sensitive electoral predictions.
+
+
+LLM: ChatGPT-4.
+Date: 3 November 2024
+
+
+User
+I want to add some graphs of the model estimates for both the linear and Bayesian models. provide me with appropriate R codes to do this. I want to make the graph clear and also aesthetic.
+
+ChatGPT
+Here are some R code snippets to create aesthetic, clear graphs of model estimates for both the linear and Bayesian models. These plots use ggplot2 to ensure readability and a clean visual presentation.
+1. Linear Model Estimates Plot
+This code visualizes the support percentages for Harris over time by pollster, highlighting the linear models' fitted values.
+r
+Copy code
+# Load necessary libraries
+library(ggplot2)
+library(dplyr)
+library(broom)
+
+# Extract estimates from linear models
+linear_estimates <- bind_rows(
+  augment(model_date) %>% mutate(Model = "Date Only"),
+  augment(model_date_pollster) %>% mutate(Model = "Date + Pollster")
+)
+# Plot linear model estimates
+ggplot(linear_estimates, aes(x = .fitted, y = .resid, color = Model)) +
+  geom_point(alpha = 0.6) +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(
+    title = "Residuals vs Fitted Values for Linear Models",
+    x = "Fitted Values",
+    y = "Residuals",
+    color = "Model"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "top")
+2. Bayesian Model Estimates Plot
+This code visualizes the estimates from the Bayesian models. It plots support percentages over time for different states and pollsters.
+r
+Copy code
+# Assuming bayesian_model_1 and bayesian_model_2 contain posterior draws
+library(ggdist)
+library(tidybayes)
+
+# Extract posterior samples
+bayesian_estimates <- bind_rows(
+  as_draws_df(bayesian_model_1) %>% mutate(Model = "Pollster Only"),
+  as_draws_df(bayesian_model_2) %>% mutate(Model = "Pollster + State")
+)
+# Plot Bayesian model estimates with credible intervals
+ggplot(bayesian_estimates, aes(x = Model, y = .value, color = Model)) +
+  stat_pointinterval(aes(y = .value), .width = 0.95, point_interval = "median_qi") +
+  labs(
+    title = "Model Estimates with 95% Credible Intervals",
+    x = "Model",
+    y = "Support Percentage",
+    color = "Model"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "top")
+3. Time Series Plot of Model Predictions
+This time series plot shows the fitted values of both the linear and Bayesian models over time.
+r
+Copy code
+# Create a combined dataset for predictions over time
+predictions_over_time <- bind_rows(
+  data.frame(Date = linear_estimates$.fitted, Value = linear_estimates$.resid, Model = linear_estimates$Model),
+  data.frame(Date = bayesian_estimates$.value, Value = bayesian_estimates$.value, Model = bayesian_estimates$Model)
+)
+# Plot predictions over time
+ggplot(predictions_over_time, aes(x = Date, y = Value, color = Model)) +
+  geom_line() +
+  geom_point(alpha = 0.6) +
+  labs(
+    title = "Model Predictions Over Time",
+    x = "Date",
+    y = "Support Percentage",
+    color = "Model"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "top")
+These visualizations provide a clear comparison of model performances and insights into their estimates across different variables and over time.
+
+
+User
+how can I add the graph of model estimates? write the appropriate R codes for me.
+The following is how the model looks like.
+#### Read data ####
+harris_data <- read_csv("data/02-analysis_data/harris_elections_data.csv")
+### Model data ####
+# Model 1: pct as a function of date
+model_date <- stan_glm(
+  formula = pct ~ end_date,
+  data = harris_data,
+  family = gaussian(),
+  prior = normal(location = 0, scale = 2.5, autoscale = TRUE),
+  prior_intercept = normal(location = 0, scale = 2.5, autoscale = TRUE),
+  prior_aux = exponential(rate = 1, autoscale = TRUE),
+  seed = 853
+)
+# Model 2: pct as a function of date and pollster
+model_date_pollster <- stan_glm(
+  formula = pct ~ end_date + pollster,
+  data = harris_data,
+  family = gaussian(),
+  prior = normal(location = 0, scale = 2.5, autoscale = TRUE),
+  prior_intercept = normal(location = 0, scale = 2.5, autoscale = TRUE),
+  prior_aux = exponential(rate = 1, autoscale = TRUE),
+  seed = 853
+)
+# Bayesian Model 1: random intercept for pollster
+# Change 'pollster' and 'state' to factor variables
+harris_data <- harris_data |>
+  mutate(
+    pollster = factor(pollster),
+    state = factor(state)
+  )
+# Specify priors
+priors <- normal(0, 2.5, autoscale = TRUE)
+model_formula_1 <- cbind(num_harris, sample_size - num_harris) ~ (1 | pollster)
+bayesian_model_1 <- stan_glmer(
+  formula = model_formula_1,
+  data = harris_data,
+  family = binomial(link = "logit"),
+  prior = priors,
+  prior_intercept = priors,
+  seed = 123,
+  cores = 4,
+  adapt_delta = 0.95
+)
+# Bayesian Model 2: random intercepts for pollster and state
+model_formula_2 <- cbind(num_harris, sample_size - num_harris) ~ (1 | pollster) + (1 | state)
+bayesian_model_2 <- stan_glmer(
+  formula = model_formula_2,
+  data = harris_data,
+  family = binomial(link = "logit"),
+  prior = priors,
+  prior_intercept = priors,
+  seed = 123,
+  cores = 4,
+  adapt_delta = 0.95
+)
+#### Save model ####
+saveRDS(
+  model_date,
+  file = "models/model_date.rds"
+)
+saveRDS(
+  model_date_pollster,
+  file = "models/model_date_pollster.rds"
+)
+saveRDS(
+  bayesian_model_1,
+  file = "models/bayesian_model_1.rds"
+)
+saveRDS(
+  bayesian_model_2,
+  file = "models/bayesian_model_2.rds"
+)
+
+ChatGPT
+To add graphs of the model estimates, you can use ggplot2 to visualize the predicted values against the actual data. Here’s how you could do it for each model.
+Step 1: Extract Predictions
+To plot the model estimates, you first need to generate predictions from the models using posterior_predict (for Bayesian models) or predict (for non-Bayesian models). Then, add the predictions to the original data.
+Step 2: Plot Predictions
+Use ggplot2 to create plots comparing predicted values against observed values. Here’s how you could do it for each model.
+Code
+r
+Copy code
+# Load required libraries
+library(ggplot2)
+# Generate predictions and plot for Model 1 (pct ~ end_date)
+harris_data$pred_date <- predict(model_date, newdata = harris_data)
+ggplot(harris_data, aes(x = end_date, y = pct)) +
+  geom_point(color = "blue", alpha = 0.6) +
+  geom_line(aes(y = pred_date), color = "red", linetype = "dashed") +
+  labs(
+    title = "Model 1: Predicted Percentage of Supportive Polls by Date",
+    x = "End Date",
+    y = "Percentage of Supportive Polls"
+  ) +
+  theme_minimal()
+# Generate predictions and plot for Model 2 (pct ~ end_date + pollster)
+harris_data$pred_date_pollster <- predict(model_date_pollster, newdata = harris_data)
+ggplot(harris_data, aes(x = end_date, y = pct, color = pollster)) +
+  geom_point(alpha = 0.6) +
+  geom_line(aes(y = pred_date_pollster), linetype = "dashed") +
+  labs(
+    title = "Model 2: Predicted Percentage of Supportive Polls by Date and Pollster",
+    x = "End Date",
+    y = "Percentage of Supportive Polls"
+  ) +
+  theme_minimal()
+# Generate predictions for Bayesian Model 1 and plot (random intercept for pollster)
+harris_data$bayesian_pred_1 <- posterior_predict(bayesian_model_1, newdata = harris_data) |> apply(2, mean)
+ggplot(harris_data, aes(x = end_date, y = num_harris / sample_size)) +
+  geom_point(color = "blue", alpha = 0.6) +
+  geom_line(aes(y = bayesian_pred_1 / sample_size), color = "red", linetype = "dashed") +
+  labs(
+    title = "Bayesian Model 1: Predicted Percentage of Supportive Polls with Random Intercept for Pollster",
+    x = "End Date",
+    y = "Percentage of Supportive Polls"
+  ) +
+  theme_minimal()
+# Generate predictions for Bayesian Model 2 and plot (random intercepts for pollster and state)
+harris_data$bayesian_pred_2 <- posterior_predict(bayesian_model_2, newdata = harris_data) |> apply(2, mean)
+ggplot(harris_data, aes(x = end_date, y = num_harris / sample_size)) +
+  geom_point(color = "blue", alpha = 0.6) +
+  geom_line(aes(y = bayesian_pred_2 / sample_size), color = "red", linetype = "dashed") +
+  labs(
+    title = "Bayesian Model 2: Predicted Percentage of Supportive Polls with Random Intercepts for Pollster and State",
+    x = "End Date",
+    y = "Percentage of Supportive Polls"
+  ) +
+  theme_minimal()
+Explanation
+geom_point: Plots the actual data points.
+geom_line: Plots the predicted values. Dashed lines represent the model’s predicted trend.
+posterior_predict and predict: Generates predicted values based on each model.
+This code will create four plots, one for each model, showing how the predictions align with the actual data.
+
+
+
+
+
+
+
+
+
+
+
