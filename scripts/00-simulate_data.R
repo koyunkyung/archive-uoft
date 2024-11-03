@@ -1,7 +1,7 @@
 #### Preamble ####
 # Purpose: Simulates a dataset of US election polling data
 # Author: Yunkyung Ko
-# Date: 19 October 2024
+# Date: 3 November 2024
 # Contact: yunkyung.ko@mail.utoronto.ca
 # License: MIT
 # Pre-requisites: The `tidyverse` package must be installed

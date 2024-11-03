@@ -1,7 +1,7 @@
 #### Preamble ####
 # Purpose: Downloads and saves the data from the FiveThirtyEight's 2024 US Presidential Election Polls (National)
 # Author: Yunkyung Ko
-# Date: 12 October 2024
+# Date: 3 November 2024
 # Contact: yunkyung.ko@mail.utoronto.ca
 # License: MIT
 # Pre-requisites: None

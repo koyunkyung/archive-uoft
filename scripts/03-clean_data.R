@@ -1,7 +1,7 @@
 #### Preamble ####
 # Purpose: Cleans the raw elections data and filters high-quality polls data
 # Author: Yunkyung Ko
-# Date: 19 October 2024
+# Date: 3 November 2024
 # Contact: yunkyung.ko@mail.utoronto.ca
 # License: MIT
 # Pre-requisites: Need to have downloaded the data.

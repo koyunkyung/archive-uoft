@@ -1,7 +1,7 @@
 #### Preamble ####
 # Purpose: Tests the structure and validity of the simulated US presidential election polls data. In addition, plot the data to check the overall expected outcomes.
 # Author: Yunkyung Ko
-# Date: 19 October 2024
+# Date: 3 November 2024
 # Contact: yunkyung.ko@mail.utoronto.ca
 # License: MIT
 # Pre-requisites:
