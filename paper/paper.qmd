@@ -161,7 +161,7 @@ summary_stats %>%
 
 # Plot the distribution of 'pct' using a histogram
 ggplot(harris_data, aes(x = pct)) +
-  geom_histogram(binwidth = 2, fill = "blue", alpha = 0.7, color = "black") +
+  geom_histogram(binwidth = 1.5, fill = "blue", alpha = 0.7, color = "black") +
   theme_minimal() +
   labs(x = "Percentage of Support (pct)",
        y = "Count")
@@ -357,101 +357,6 @@ ggplot(harris_data, aes(x = reorder(state, -table(state)[state]))) +
 
 ```
 
-### Pollscore Measuring the Validity of Polling Questions 
-
-This variable was another factor we had put into consideration to check whether the validity of the polling questions affects the polling results. The 'pollscore' variable represents the score or reliability of the pollster in question. The numeric values are the error and bias that can be attributed to the pollster, which means negative numbers are better. @tbl-pollscore and @fig-pollscore suggests that while the majority of the polls are moderately to highly qualitative in the original dataset, a fraction of the polls with low-quality or no scores could add noise or uncertainty to the analysis.
-
-```{r}
-#| label: tbl-pollscore
-#| tbl-cap: Summary statistics for the reliability scores of pollsters
-#| echo: false
-#| tbl-align: center
-#| tbl-width: 80%
-
-
-summary_stats <- raw_elections_data %>%
-  summarize(
-    mean = round(mean(pollscore, na.rm = TRUE),2),
-    median = round(median(pollscore, na.rm = TRUE),2),
-    min = round(min(pollscore, na.rm = TRUE),2),
-    max = round(max(pollscore, na.rm = TRUE),2),
-    sd = round(sd(pollscore, na.rm = TRUE),2),
-    n = n()
-  )
-
-# Display the summary statistics in a nicely formatted table
-summary_stats %>%
-  kable() %>%
-  kable_styling(bootstrap_options = c("striped", "hover", "condensed"), full_width = F)
-
-```
-
-\newpage
-
-```{r}
-#| label: fig-pollscore
-#| fig-cap: Distribution of the reliability scores of pollsters
-#| echo: false
-#| fig-align: center
-#| fig-width: 5
-#| page-break-after: true
-
-# Distribution of 'pollscore' (bar plot) with simplified x-axis labels
-ggplot(raw_elections_data, aes(x = factor(pollscore))) +
-  geom_bar(fill = "skyblue", alpha = 0.7, color = "black") +
-  theme_minimal() +
-  scale_x_discrete(breaks = c(-1.5, -1, -0.5, 0, 0.5, 1, 1.5)) +  # Simplified labels at 0.5 intervals
-  labs(x = "Pollscore",
-       y = "Count")
-
-
-```
-
-After the filtering to polling data of high-quality polling organizations, we can find that the overall value and standard deviation of pollscores went down in @tbl-pollscore2. This implies that the polling data narrowed down to the responses from more reliable survey questions. @fig-pollscore2 also indicates that the data cleaning process effectively excluded less reliable sources, which can enhance the robustness of subsequent analyses.
-
-```{r}
-#| label: tbl-pollscore2
-#| tbl-cap: Summary statistics for the reliability scores of high-quality pollsters in the analysis data
-#| echo: false
-#| tbl-align: center
-#| tbl-width: 80%
-
-
-summary_stats <- harris_data %>%
-  summarize(
-    mean = round(mean(pollscore, na.rm = TRUE),2),
-    median = round(median(pollscore, na.rm = TRUE),2),
-    min = round(min(pollscore, na.rm = TRUE),2),
-    max = round(max(pollscore, na.rm = TRUE),2),
-    sd = round(sd(pollscore, na.rm = TRUE),2),
-    n = n()
-  )
-
-# Display the summary statistics in a nicely formatted table
-summary_stats %>%
-  kable() %>%
-  kable_styling(bootstrap_options = c("striped", "hover", "condensed"), full_width = F)
-
-```
-
-\newpage
-
-```{r}
-#| label: fig-pollscore2
-#| fig-cap: Distribution of the reliability scores of high-quality pollsters in the analysis data
-#| echo: false
-#| fig-align: center
-#| fig-width: 5
-#| page-break-after: true
-
-# Distribution of 'pollscore' (bar plot)
-ggplot(harris_data, aes(x = factor(pollscore))) +
-  geom_bar(fill = "skyblue", alpha = 0.7, color = "black", width = 0.5) +
-  theme_minimal() +
-  labs(x = "Pollscore",
-       y = "Count")
-
-```
 
 ## Correlation between predictor variables
 
