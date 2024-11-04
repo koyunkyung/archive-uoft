@@ -69,9 +69,11 @@ In performing the analysis, we utilized several R packages. `tidyverse` [@tidyve
 
 The original dataset sourced from FiveThirtyEight [@fivethirtyeight2024] aggregates a wide range of poll results, showing 16817 observations based on dataset available at October 30. The polls conducted by various polling organizations capture voter preferences by taking a representative sample of the electorate and asking for the voters' candidate of choice. Surveys were conducted at the state and national levels, providing the wide perspective on public feelings across the country.
 
-Each poll represents a predictor of an actual event, namely voter opinion at a particular moment. Nevertheless, like all survey results, the raw data is susceptible to many potential limitations including the following: sampling error, variation in polling methods, distortion because of inappropriate survey responses such as missing data or response from respondents who misunderstood the questions [@tellingstories].
+In converting an individual's complex set of opinions into "plausibly measurable" [@tellingstories] numbers, each poll attempts to capture and simplify voters' choice in a straightforward way. Polls capture a momentary snapshot of opinion, but this process is inevitably influenced by factors such as question phrasing, the timing of the poll, and contextual events. A person may have mixed or conflicting feelings about candidates, and the process of capturing these preferences in a single response imposes much error [@tellingstories].
 
-While applying several filters to the original dataset such as restricting to those with a numeric grade of 2.7 or higher or pollsters with more than 30 polls improves data reliability, certain limitations still exist. Selection bias and sampling error remains as a concern, since polls always represent only part of the population. Differences in the way different organizations conducted their polling might introduce more inconsistencies. Finally, by focusing our attention on post-declaration polls only, we exclude earlier trends that could add more insight into how Harris' support has evolved over time. 
+The outcome variable, which is intended to reflect overall support levels, is constructed from respondents' stated candidate preferences. As part of the data refinement process to enhance the reliability of predictions, we restricted our analysis to polls with a numeric quality grade of 2.7 or higher and to pollsters with over 30 polls in the dataset. We set a minimum threshold of 2.7 for the numeric grade to focus on the top 30% of the dataset, ensuring a sufficient sample size of 5,612 observations. Additionally, we included only pollsters with at least 30 polls, reasoning that a higher number of polls from a given pollster would enhance the reliability and validity of the aggregated data.
+
+While efforts to filter and refine the dataset mitigate some limitations, they cannot entirely eliminate the challenges inherent in measuring multifaceted concept like voter preference. Limitations including sampling error, response bias, and inconsistencies in polling methods remain. Some responses may also be distorted due to misunderstandings or incomplete answers, as respondents might interpret questions differently depending on context [@tellingstories]. This measurement process is essentially an estimation, translating complex human sentiments into quantifiable data, subject to various limitations.
 
 ## Outcome variable
 
@@ -462,7 +464,7 @@ plot_usmap(data = pollster_state_data, values = "total_polls", regions = "states
 
 # Model {#sec-model}
 
-Our modelling strategy estimates Kamala Harris's support percentage in the 2024 US election polls, accounting for potential variations over time including pollster and state differences. The model balances complexity with interpretability, using both linear and Bayesian frameworks to capture patterns in the data. We turned from the initial linear model to a Bayesian model for robust predictions considering the variables' uncertainties. The Bayesian approach, which incorporates both prior beliefs and observed data to make predictions, allowed us to capture the variances among pollsters and states more accurately and responsively. Further background details and diagnostics are included in [Appendix -@sec-model-details].
+Our modelling strategy estimates Kamala Harris's support percentage in the 2024 US election polls, accounting for potential variations over time including pollster and state differences. The model balances complexity with interpretability, using both linear and Bayesian frameworks to capture patterns in the data. We turned from the initial linear model to a Bayesian model for robust predictions considering the variables' uncertainties. The Bayesian approach, which incorporates both prior beliefs and observed data to make predictions, allowed us to capture the variances among pollsters and states more accurately and responsively. Further background details and diagnostics are included in @sec-model-details.
 
 ## Model set-up
 
@@ -532,11 +534,11 @@ The Bayesian models are fit using `rstanarm` in R. The priors used are weakly in
 
 Different pollsters and states induce variations in polling results, as pollsters may have distinct methodologies and states represent diverse voter bases. Incorporating random effects for both pollsters and states allows us to improve the robustness of the model.
 
-These models are run through the rstanarm package [@rstanarm] in R  [@citeR], which makes Bayesian modeling available through the use of Stan's strong inference engine. To validate the models, RMSE and WAIC have been made use of to check the goodness of fit; Bayesian models with reduced RMSE and WAIC outperform linear models. We use weakly informative priors; for example, $\beta_0 \sim \text{Normal}(0, 10)$ and $\sigma \sim \text{Exponential}(1)$. This reflects our initial uncertainty but prevents overfitting. The priors were chosen conservatively to ensure that the model remains consistent.
+These models are run through the rstanarm package [@rstanarm] in R [@citeR]. RMSE and WAIC were used to check for the goodness of fit of the model; Bayesian models with reduced RMSE and WAIC outperform linear models. We use weakly informative priors; for example, $\beta_0 \sim \text{Normal}(0, 10)$ and $\sigma \sim \text{Exponential}(1)$. This reflects our initial uncertainty but prevents overfitting. The priors were chosen conservatively to ensure that the model remains consistent.
 
-Model diagnostics, including posterior predictive checks and convergence diagnostics, were carried out to ensure the reliability of the results. The Bayesian models converged successfully, as indicated by $\hat{R} = 1$ for all parameters.
+Model diagnostics, including posterior predictive checks and convergence diagnostics, were carried out to ensure the reliability of the results. The Bayesian models converged successfully, as indicated by $\hat{R} = 1$ for all parameters. Further details about model diagnostics are included in @sec-model-details.
 
-The main assumption in these models is that the pollster and state effects can be treated as random. This assumes that the effects are normally distributed across pollsters and states, which may not always be accurate. Additionally, the model assumes that polling data is representative of the actual electorate, an assumption that can be violated if polls are biased or have non-random sampling issues. Despite these limitations, the hierarchical structure allows us to capture important variability, making the model suitable for predicting Harris's support. Future improvements could involve incorporating time-varying effects or exploring interactions between pollsters and states.
+The main assumption in these models is that the pollster and state effects can be treated as random. This assumes that the effects are normally distributed across pollsters and states, which may not always be accurate. Additionally, the model assumes that polling data is representative of the actual electorate, an assumption that can be violated if polls are biased or have non-random sampling issues. Despite these limitations, the hierarchical structure allows us to capture important variability, making the model suitable for predicting Harris's support. Future improvements could involve incorporating time-varying effects or interaction terms between pollsters and states.
 
 # Results {#sec-results}
 
@@ -647,7 +649,6 @@ base_plot +
 
 Prediction results derived from our model frameworks are summarized in @tbl-modelresults1 and @tbl-modelresults2. In the linear models (@tbl-modelresults1), higher $R^2$ and lower WAIC, RMSE values in the second column show that the inclusion of pollster effects improves accuracy and reliability of the prediction model. In the Bayesian models (@tbl-modelresults2), higher Log-Likelihood and lower ELPD, WAIC values in the fourth column shows that including both pollster and state effects enhances model performance.
 
-\
 
 ```{r}
 #| echo: false
@@ -676,7 +677,8 @@ bayesian_model_2 <-
 #| label: tbl-modelresults1
 #| tbl-cap: "Linear models of support percentages for Harris based on date and pollster"
 #| warning: false
-#| tbl-width: 80% 
+#| tbl-width: 60% 
+#| tbl-height: 55%
 #| page-break-after: true
 #| page-break-before: true
 
@@ -690,7 +692,6 @@ modelsummary(
 
 ```
 
-\newpage
 
 ```{r}
 #| echo: false
@@ -741,7 +742,7 @@ ggplot(harris_data, aes(x = end_date, y = pct)) +
   theme_minimal()
 ```
 
-
+\newpage
 
 ```{r}
 #| echo: false
@@ -752,7 +753,6 @@ ggplot(harris_data, aes(x = end_date, y = pct)) +
 #| fig-align: center
 #| fig-width: 5
 #| page-break-after: true
-
 
 # Generate predictions for Model 2, but ignore the individual pollster grouping in the plot
 # Calculate the mean predictions across all pollsters for each end_date
@@ -785,7 +785,6 @@ ggplot(harris_data, aes(x = end_date, y = pct)) +
 #| fig-width: 5
 #| page-break-after: true
 
-
 # Generate predictions for Bayesian Model 1
 harris_data$bayesian_pred_1 <- posterior_predict(bayesian_model_1, newdata = harris_data) |> apply(2, mean)
 
@@ -814,7 +813,6 @@ ggplot(harris_data, aes(x = end_date, y = num_harris / sample_size * 100)) +
 #| fig-width: 5
 #| page-break-after: true
 
-
 # Generate predictions for Bayesian Model 2
 harris_data$bayesian_pred_2 <- posterior_predict(bayesian_model_2, newdata = harris_data) |> apply(2, mean)
 
@@ -833,6 +831,9 @@ ggplot(harris_data, aes(x = end_date, y = num_harris / sample_size * 100)) +
 
 ```
 
+
+
+\newpage
 
 # Discussion {#sec-discussion}
 
@@ -860,6 +861,7 @@ The stability of polling trends in Pennsylvania suggests a consistent voter base
 While our model provides a foundation to understand Harris' polling support, further refinements are necessary to enhance its accuracy and applicability. For instance, future studies could focus on the incorporation of voter demographics, such as age, gender, and education. Showing which segments of the population are driving changes in support, this can give further explanation to how certain policies or campaign events of candidates affect overall support for a candidate [@brown2024candidate]. In addition, interaction terms between pollster and state can be included in the model, considering that some states might receive disproportionately more attention from certain pollsters as shown in @fig-correlation3. This can give further explanation to how pollsters and regional dynamics affect overall support for a candidate [@pew2020electionpolls].
 
 This study has its constraints in that sampling error and systematic biases inevitably occur in the process of measuring social phenomenon with data. In particular, due to the nature of polling surveys, non-responses or misunderstanding of the survey questions result in missing data or outliers [@pew2020electionpolls]. Considering the possibility of prediction errors, we should take caution in interpreting the analysis and prediction results. By conducting more in-depth research of the domain knowledge and constructing appropriate variables to put into account, it would help derive accurate conclusions rather than just acknowledging the numbers given itself [@geeksforgeeks2023domainknowledge]. 
+
 
 \newpage
 
@@ -890,30 +892,43 @@ The final model would use Bayesian hierarchical modeling, which allows for more 
 
 The proposed survey questionnarie design is in the following link:
 \
-https://forms.gle/zQ8iJyPk3HhJYrKd9.
+https://forms.gle/vehDvpDNDGZ8WCn47
 
-::: {.layout}
+::: {.container}
 ### Survey demo
 
-::: {.column width="1/5"}
-![Survey intro](../other/idealized_survey/survey_intro.png)
+::: {.column width="30%"}
+![Survey Intro](../other/idealized_survey/survey_intro.png)
 :::
 
-::: {.column width="1/5"}
-![Survey questions asking about demographics](../other/idealized_survey/survey_q1.png)
+::: {.column width="30%"}
+![Questions asking for vote eligibility - citizenship, age](../other/idealized_survey/eligibility_1.png)
 :::
 
-::: {.column width="1/5"}
-![Survey questions asking for voting intentions and candidate favorability](../other/idealized_survey/survey_q2.png)
+::: {.column width="30%"}
+![Questions asking for vote eligibility - voter status and registration state](../other/idealized_survey/eligibility_2.png)
 :::
 
-::: {.column width="1/5"}
-![Survey questions asking for issues of interest and likelihood to vote](../other/idealized_survey/survey_q3.png)
+
+::: {.column width="100%"}
+::: {.columns}
+::: {.column width="33%"}
+![Demographics Questions](../other/idealized_survey/survey_q1.png)
+:::
+::: {.column width="33%"}
+![Voting Intentions and Candidate Favorability](../other/idealized_survey/survey_q2.png)
+:::
+::: {.column width="33%"}
+![Issues of Interest and Likelihood to Vote](../other/idealized_survey/survey_q3.png)
+:::
+:::
 :::
 
-::: {.column width="1/5"}
-![Survey final thanks](../other/idealized_survey/survey_outro.png)
+
+::: {.column width="30%"}
+![Survey Final Thanks](../other/idealized_survey/survey_outro.png)
 :::
+
 :::
 
 
