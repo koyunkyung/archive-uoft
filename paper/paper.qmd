@@ -2,12 +2,14 @@
 title: "Price Comparison of Common Fruits Across Major Vendors"
 subtitle: "An Analysis Revealing Loblaws as the Highest Priced Vendor Among Apples, Oranges, Mangoes, and Pears"
 author: 
-  - First author
-  - Another author
+  - Yunkyung Ko
+  - Yawen Tan
+  - Shanjie Jiao
+  - XIzi Sun
 thanks: "Code and data are available at: [https://github.com/koyunkyung/canadian_grocery](https://github.com/koyunkyung/canadian_grocery)."
 date: today
 date-format: long
-abstract: "First sentence. Second sentence. Third sentence. Fourth sentence."
+abstract: "This study examines the price differences of four common fruits—apples, oranges, mangoes, and pears—across three major Canadian grocery vendors: Loblaws, NoFrills, and Voila. By analyzing the average prices of these fruits, we aim to identify price patterns and assess which vendor tends to offer higher or lower prices. Our results show that Loblaws generally has the highest prices, while Voila offers the lowest. This suggests variations in pricing strategies tied to each vendor's market positioning. Additionally, the study explores analytical considerations, including the distinction between correlation and causation, the impact of missing data, and sources of potential bias such as selection, measurement, and confounding biases. These factors are critical in understanding the observed pricing differences and ensuring the robustness of the analysis. This research provides insights for consumers making budget-conscious shopping decisions and highlights methodological challenges in analyzing observational data."
 format: pdf
 number-sections: true
 bibliography: references.bib
