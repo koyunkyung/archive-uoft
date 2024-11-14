@@ -1,10 +1,10 @@
 ---
-title: "My title"
-subtitle: "My subtitle if needed"
+title: "Price Comparison of Common Fruits Across Major Vendors"
+subtitle: "An Analysis Revealing Loblaws as the Highest Priced Vendor Among Apples, Oranges, Mangoes, and Pears"
 author: 
   - First author
   - Another author
-thanks: "Code and data are available at: [https://github.com/RohanAlexander/starter_folder](https://github.com/RohanAlexander/starter_folder)."
+thanks: "Code and data are available at: [https://github.com/koyunkyung/canadian_grocery](https://github.com/koyunkyung/canadian_grocery)."
 date: today
 date-format: long
 abstract: "First sentence. Second sentence. Third sentence. Fourth sentence."
@@ -13,50 +13,27 @@ number-sections: true
 bibliography: references.bib
 ---
 
-```{r}
-#| include: false
-#| warning: false
-#| message: false
-
-library(tidyverse)
-library(palmerpenguins)
-```
-
-
 # Introduction
 
-Overview paragraph
-
-Estimand paragraph
-
-Results paragraph
-
-Why it matters paragraph
-
-Telegraphing paragraph: The remainder of this paper is structured as follows. @sec-data....
-
-
-
-
+This study investigates price differences for four common fruits—apples, oranges, mangoes, and pears—across three major vendors: Loblaws, NoFrills, and Voila. By analyzing the average prices for each fruit type at each vendor, we aim to identify price patterns and determine which vendor consistently has the highest prices. This analysis provides insight into each vendor’s pricing strategy and helps consumers make informed decisions based on their preferences and budget. Our findings indicate that Loblaws generally has the highest average prices for these fruits among the vendors studied.
+In this paper, we also address several important analytical considerations to strengthen our findings. First, we examine correlation vs. causation in @sec-discussion1 to clarify that observed price differences among vendors may correlate with various factors, but further analysis would be needed to establish causation. Second, in @sec-discussion2, we discuss the impact of missing data due to the fact that different vendors offer a varying selection of fruit varieties, which affects the completeness of the dataset. Finally, in @sec-discussion3 we identify potential sources of bias—such as selection bias, measurement bias, and confounding factors—that may influence our results and interpretations.
 
 
 # Data {#sec-data}
 
 ## Overview
 
-We use the statistical programming language SQL [@citeR]
-
-.... Our data [@shelter].... Following @tellingstories, we consider...
-
-Overview text
+The dataset was analyzed using R [@citeR] and SQL [@sqlite], and use Tidyverse [@citeTidyverse], Knitr [@citeKnitr], ggplot2[@citeGgplot2] and Dplyr [@citeDplyr]. Data are extract from Hammer Dataset [@hammerdataset]. The dataset provides detailed information on the average prices of four types of fruits—apples, mangoes, pears, and oranges—across three vendors: Loblaws, NoFrills, and Voila. It includes columns for the vendor name, the average price, and the fruit type. Each fruit is represented by multiple entries from each vendor, allowing for comprehensive comparisons of price distributions. In addition to the average price, the dataset contains observation counts for each fruit and vendor, which indicate that apples are the most frequently recorded fruit, followed by pears, while mangoes and oranges have fewer observations, possibly reflecting factors like consumer demand or seasonality. Vendor representation is fairly balanced, with Voila having a slight edge in the number of observations compared to Loblaws and NoFrills, supporting reliable comparative analysis. The dataset structure thus enables an analysis of price levels and distributions across different fruits and vendors, with potential insights into market trends and vendor-specific pricing strategies.
 
 ## Measurement
 	
-Some paragraphs about how we go from a phenomena in the world to an entry in the dataset.
+This dataset, while useful for analyzing price distribution, is a constructed representation of purchasing behavior and may not fully capture the complexities of real-world consumer actions. Since the data does not include actual transaction records or contextual factors influencing purchases (such as seasonality, brand loyalty, or regional demand), it may lack critical elements that drive genuine purchasing decisions. Consequently, insights derived from this dataset should be interpreted with caution, acknowledging that it represents an approximation rather than a comprehensive model of consumer behavior.
 
 ## Outcome variables
 
 ### Price Levels
+
+@fig-price reveals that the majority of products are priced below $10, indicating a concentration of lower-priced items in this dataset. A smaller number of items fall in the higher price ranges, with few products priced above $20, suggesting that high-priced items are outliers rather than the norm. This distribution suggests a market trend towards affordability or a focus on budget-friendly options for the products included in the analysis.
 
 ```{r}
 #| label: fig-price
@@ -170,15 +147,15 @@ ggplot(dataset, aes(x = vendor, y = avg_price, fill = fruit, group = fruit)) +
 
 # Discussion
 
-## Correlation vs. Causation
+## Correlation vs. Causation {#sec-discussion1}
 
 When analyzing the pricing of the same fruit in different supermarkets, it is very important to distinguish Correlation and Causation for understanding the root cause of price difference. We have observed that the prices of Loblaws apples, pears, orange and mango are always higher than those of other supermarkets (such as NoFrills and Voila), and the price of each fruit in Voila is always lower than that in other stores, which shows that there is a correlation between supermarket and fruit pricing. This correlation may be related to the market positioning, operating costs and supply chain management of supermarkets. For example, Loblaws is positioned in the high-end market and can provide better products and services to middle-class customers, so its pricing is higher. Voila mainly serves groups with limited budgets, so the price is lower. In addition, factors such as geographical location, rent and employee salary may lead to differences in operating costs, which in turn may affect pricing strategies. For example, Loblaws is located in the city center, the rent is high, and the salary of employees is relatively high because of the high service level. In supply chain management, for example, the procurement channels of different supermarkets and the efficiency of supply chain may lead to cost differences and affect the final selling price. In addition, to determine whether these factors really lead to price differences, further data and analysis are needed, such as market positioning research, cost structure analysis and supply chain evaluation. Through these in-depth analysis, we can understand the causal relationship of price difference more accurately.
 
-## Missing Data
+## Missing Data {#sec-discussion2}
 
 In this dataset, missing data occurs because different supermarkets offer varying selections of fruit varieties. For example, some supermarkets may carry a wide range of apple varieties, while others only stock a few. As a result, when analyzing data across all supermarkets, information on certain apple varieties may be incomplete, with specific types available only from certain vendors. Similar patterns may apply to other types of fruit, leading to gaps in the dataset. This missing data reflects differences in product offerings across vendors, and it's essential to be aware of and consider this incompleteness when conducting further analysis.
 
-## Sources of Bias
+## Sources of Bias {#sec-discussion3}
 In this dataset, we study the price differences and potential changes of 4 fruits between different supermarkets. The price differences are due to the different positioning of each supermarket, Loblaw, NoFrills, and Voila.
 
 ### Selection Bias
