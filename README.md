@@ -1,5 +1,5 @@
-# Exploring Fruit Price Trends Across Vendors
-## Loblaw Has the Highest Pricing Trends
+# Price Comparison of Common Fruits Across Major Vendors
+## An Analysis Revealing Loblaws as the Highest Priced Vendor Among Apples, Oranges, Mangoes, and Pears
 
 ## Overview
 
