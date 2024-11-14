@@ -5,7 +5,7 @@ author:
   - Yunkyung Ko
   - Yawen Tan
   - Shanjie Jiao
-  - XIzi Sun
+  - Xizi Sun
 thanks: "Code and data are available at: [https://github.com/koyunkyung/canadian_grocery](https://github.com/koyunkyung/canadian_grocery)."
 date: today
 date-format: long
@@ -27,19 +27,9 @@ In this paper, we also address several important analytical considerations to st
 
 The dataset was analyzed using R [@citeR] and SQL [@sqlite], and use Tidyverse [@citeTidyverse], Knitr [@citeKnitr], ggplot2[@citeGgplot2] and Dplyr [@citeDplyr]. Data are extract from Hammer Dataset [@hammerdataset]. The dataset provides detailed information on the average prices of four types of fruits—apples, mangoes, pears, and oranges—across three vendors: Loblaws, NoFrills, and Voila. It includes columns for the vendor name, the average price, and the fruit type. Each fruit is represented by multiple entries from each vendor, allowing for comprehensive comparisons of price distributions. In addition to the average price, the dataset contains observation counts for each fruit and vendor, which indicate that apples are the most frequently recorded fruit, followed by pears, while mangoes and oranges have fewer observations, possibly reflecting factors like consumer demand or seasonality. Vendor representation is fairly balanced, with Voila having a slight edge in the number of observations compared to Loblaws and NoFrills, supporting reliable comparative analysis. The dataset structure thus enables an analysis of price levels and distributions across different fruits and vendors, with potential insights into market trends and vendor-specific pricing strategies.
 
-## Measurement
-	
-This dataset, while useful for analyzing price distribution, is a constructed representation of purchasing behavior and may not fully capture the complexities of real-world consumer actions. Since the data does not include actual transaction records or contextual factors influencing purchases (such as seasonality, brand loyalty, or regional demand), it may lack critical elements that drive genuine purchasing decisions. Consequently, insights derived from this dataset should be interpreted with caution, acknowledging that it represents an approximation rather than a comprehensive model of consumer behavior.
-
-## Outcome variables
-
-### Price Levels
-
-@fig-price reveals that the majority of products are priced below $10, indicating a concentration of lower-priced items in this dataset. A smaller number of items fall in the higher price ranges, with few products priced above $20, suggesting that high-priced items are outliers rather than the norm. This distribution suggests a market trend towards affordability or a focus on budget-friendly options for the products included in the analysis.
-
 ```{r}
-#| label: fig-price
-#| fig-cap: Price level distributions across all observations used in the analysis
+#| label: tbl-data
+#| tbl-cap: First 6 entries of Analysis Dataset
 #| echo: false
 #| warning: false
 #| message: false
@@ -62,6 +52,32 @@ vendor_avg_orange$fruit <- "orange"
 
 dataset <- rbind(vendor_avg_apple, vendor_avg_mango, vendor_avg_pear, vendor_avg_orange)
 datao <- rbind(apple, mango, pear, orange)
+
+
+# Create table
+# Round the average price to two decimal places
+dataset$avg_price <- round(dataset$avg_price, 2)
+head_data <- head(dataset,6)
+knitr::kable(head_data, format = "simple", col.names = c('Vendor', 'Average Price', 'Fruit'))
+
+```
+
+## Measurement
+	
+This dataset, while useful for analyzing price distribution, is a constructed representation of purchasing behavior and may not fully capture the complexities of real-world consumer actions. Since the data does not include actual transaction records or contextual factors influencing purchases (such as seasonality, brand loyalty, or regional demand), it may lack critical elements that drive genuine purchasing decisions. Consequently, insights derived from this dataset should be interpreted with caution, acknowledging that it represents an approximation rather than a comprehensive model of consumer behavior.
+
+## Outcome variables
+
+### Price Levels
+
+@fig-price reveals that the majority of products are priced below $10, indicating a concentration of lower-priced items in this dataset. A smaller number of items fall in the higher price ranges, with few products priced above $20, suggesting that high-priced items are outliers rather than the norm. This distribution suggests a market trend towards affordability or a focus on budget-friendly options for the products included in the analysis.
+
+```{r}
+#| label: fig-price
+#| fig-cap: Price level distributions across all observations used in the analysis
+#| echo: false
+#| warning: false
+#| message: false
 
 # Plot the distribution of prices with a histogram
 ggplot(datao, aes(x = avg_price)) +
