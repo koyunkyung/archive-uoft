@@ -1,7 +1,7 @@
 #### Preamble ####
 # Purpose: Tests the structure and validity of the simulated infant health dataset. Shows expected results of the logistic regression model with simulated data.
 # Author: Yunkyung Ko
-# Date: 17 November 2024
+# Date: 18 November 2024
 # Contact: yunkyung.ko@mail.utoronto.ca
 # License: MIT
 # Pre-requisites: 
@@ -12,7 +12,6 @@
 
 #### Workspace setup ####
 library(tidyverse)
-
 sim_data <- read_csv("data/00-simulated_data/simulated_data.csv")
 
 # Test if the data was successfully loaded
@@ -24,24 +23,22 @@ if (exists("sim_data")) {
 
 
 #### Test dataset structure ####
-
-# Check if the dataset has 584 rows
-if (nrow(sim_data) == 584) {
-  message("Test Passed: The dataset has 584 rows.")
+# Check if the dataset has 671 rows
+if (nrow(sim_data) == 671) {
+  message("Test Passed: The dataset has 671 rows.")
 } else {
-  stop("Test Failed: The dataset does not have 584 rows.")
+  stop("Test Failed: The dataset does not have 671 rows.")
 }
 
-# Check if the dataset has 11 columns
-if (ncol(sim_data) == 11) {
-  message("Test Passed: The dataset has 11 columns.")
+# Check if the dataset has 7 columns
+if (ncol(sim_data) == 7) {
+  message("Test Passed: The dataset has 7 columns.")
 } else {
-  stop("Test Failed: The dataset does not have 11 columns.")
+  stop("Test Failed: The dataset does not have 7 columns.")
 }
 
 
 #### Test for missing values ####
-
 # Check if there are any missing values in the dataset
 if (all(!is.na(sim_data))) {
   message("Test Passed: The dataset contains no missing values.")
@@ -51,69 +48,22 @@ if (all(!is.na(sim_data))) {
 
 
 #### Test for outliers (unknown or unreported values) ####
-
-# Define expected outlier codes for each variable
-outlier_codes <- list(
-  mom_noinfec = 9,
-  med_previs = 99,
-  inft_weight = 9999,
-  inft_gest = 99,
-  no_abnorm = 9,
-  no_congen = 9
-)
-
-# Check for outliers in each variable
-outlier_results <- lapply(names(outlier_codes), function(var) {
-  if (var %in% colnames(sim_data)) {
-    if (any(sim_data[[var]] == outlier_codes[[var]], na.rm = TRUE)) {
-      return(paste("Test Failed: The variable", var, "contains outliers (value:", outlier_codes[[var]], ")."))
-    } else {
-      return(paste("Test Passed: The variable", var, "contains no outliers."))
-    }
+# Check if apgar5 contains any outlier values
+if ("apgar5" %in% colnames(sim_data)) {
+  if (any(sim_data$apgar5 == 99, na.rm = TRUE)) {
+    print(paste("Test Failed: The variable apgar5 contains outliers (value:", outlier_code, ")."))
+  } else if (all(sim_data$apgar5 >= 0 & sim_data$apgar5 <= 10, na.rm = TRUE)) {
+    print("Test Passed: The variable apgar5 contains no outliers and is within the range 0 to 10.")
   } else {
-    return(paste("Test Failed: The variable", var, "is not in the dataset."))
+    print("Test Failed: The variable apgar5 contains values outside the range 0 to 10.")
   }
-})
+} else {
+  print("Test Failed: The variable apgar5 is not in the dataset.")
+}
 
-
-#### Test if values fall within defined ranges ####
-
-# Define the expected ranges for each variable
-expected_ranges <- list(
-  dem_momage = c(18, 45),    # Mother Age: 18-45
-  dem_dadage = c(18, 60),    # Father Age: 18-60
-  mom_bmi = c(18, 40),       # BMI: 18-40
-  med_previs = c(1, 30),     # Prenatal Visits: 1-30
-  inft_weight = c(1000, 4500), # Birth Weight: 1000-4500
-  inft_gest = c(22, 42)    # Gestation: 22-42 weeks
-)
-
-# Initialize a list to store test results
-range_results <- lapply(names(expected_ranges), function(var) {
-  if (var %in% colnames(sim_data)) {
-    # Check if all values are within the defined range
-    range <- expected_ranges[[var]]
-    if (all(sim_data[[var]] >= range[1] & sim_data[[var]] <= range[2], na.rm = TRUE)) {
-      return(paste("Test Passed: All values of", var, "are within the range", range[1], "to", range[2], "."))
-    } else {
-      return(paste("Test Failed: The variable", var, "has values outside the range", range[1], "to", range[2], "."))
-    }
-  } else {
-    return(paste("Test Failed: The variable", var, "is not in the dataset."))
-  }
-})
-
-
-# Print range test results
-cat(paste(range_results, collapse = "\n"), "\n")
-# Print outlier test results
-cat(paste(outlier_results, collapse = "\n"), "\n")
-
-
-
+#### Test for the type of variables ####
 # Define binary variables
-binary_variables <- c("mom_notobaco", "mom_noinfec", "med_wic", "no_abnorm", "no_congen")
-
+binary_variables <- c("indc", "augmt", "ster", "antb", "chor", "anes")
 # Test binary variables
 binary_test_results <- lapply(binary_variables, function(var) {
   if (var %in% colnames(sim_data)) {
@@ -127,147 +77,246 @@ binary_test_results <- lapply(binary_variables, function(var) {
     return(paste("Test Failed: The variable", var, "is not in the dataset."))
   }
 })
-
 # Print binary variable test results
 cat(paste(binary_test_results, collapse = "\n"), "\n")
 
+# Test if the 'apgar5' variable is numeric
+if ("apgar5" %in% colnames(sim_data)) {
+  # Check if the variable is numeric
+  if (is.numeric(sim_data[["apgar5"]])) {
+    print(paste("Test Passed: The variable", "apgar5", "is numeric."))
+  } else {
+    print(paste("Test Failed: The variable", "apgar5", "is not numeric."))
+  }
+} else {
+  print(paste("Test Failed: The variable", "apgar5", "is not in the dataset."))
+}
 
 
-### Test for expected results of the linear regression model with simulation data ###
 
-library(broom)  # For extracting model summaries
-library(pROC)   # For ROC curve and AUC
 
-logit_model1 <- glm(no_abnorm ~ dem_momage + dem_dadage + mom_bmi + mom_notobaco + 
-                     mom_noinfec + med_previs + med_wic + inft_weight + inft_gest,
-                   data = sim_data, family = binomial)
+### Test for expected results with simulation data ###
+library(ggplot2)
+library(dplyr)
+library(reshape2)
 
-logit_model2 <- glm(no_congen ~ dem_momage + dem_dadage + mom_bmi + mom_notobaco + 
-                      mom_noinfec + med_previs + med_wic + inft_weight + inft_gest,
-                    data = sim_data, family = binomial)
+# create the variable for counting the number of treatment the infant received during delivery and labor
+sim_data <- sim_data %>%
+  mutate(
+    drug_count = rowSums(select(., c(indc, augmt, ster, antb, chor, anes)) == 1, na.rm = TRUE)
+  )
 
-# Extract Odds Ratios and Confidence Intervals
-odds_ratios1 <- tidy(logit_model1) %>%
-  mutate(odds_ratio = exp(estimate),
-         lower_ci = exp(estimate - 1.96 * std.error),
-         upper_ci = exp(estimate + 1.96 * std.error)) %>%
-  filter(term != "(Intercept)")  # Exclude the intercept
+# Graph 1: Relationship between Number of Drugs Used and APGAR Score
+num_drugs <- ggplot(sim_data, aes(x = drug_count, y = apgar5)) +
+  geom_point(shape = 4, color = "blue", size = 2, alpha = 0.8) +  # Add blue X-shaped points
+  geom_smooth(method = "lm", color = "red", fill = "red", alpha = 0.2) + # Add trend line and CI
+  labs(
+    title = "Relationship between Number of Treatments During Labor/Delivery\nand the Infant's Health Status",
+    x = "Number of Treatments (Drug Usage) During Labor and Delivery",
+    y = "Five-Minute APGAR Score"
+  ) +
+  scale_y_continuous(limits = c(0, 10), breaks = 0:10) +  # Ensure y-axis ranges from 0 to 10
+  theme_minimal() +
+  theme(
+    plot.background = element_rect(fill = "white"),  # Set overall background to white
+    plot.title = element_text(hjust = 0.5, face = "bold", size = 14),  # Center and bold title
+    axis.text = element_text(size = 12),  # Increase axis text size
+    axis.title = element_text(size = 13)  # Increase axis title size
+  )
+# Save the plot in .png file
+ggsave(filename = "data/00-simulated_data/simulated_results/num_drugs.png", plot = num_drugs, width = 8, height = 6, dpi = 300)
 
-odds_ratios2 <- tidy(logit_model2) %>%
-  mutate(odds_ratio = exp(estimate),
-         lower_ci = exp(estimate - 1.96 * std.error),
-         upper_ci = exp(estimate + 1.96 * std.error)) %>%
-  filter(term != "(Intercept)")  # Exclude the intercept
+# Graph 2: Heatmap for Characteristics of Labor/Delivery and APGAR Scores
+# Reshape data for the heatmap
+heatmap_data <- sim_data %>%
+  pivot_longer(
+    cols = c(indc, augmt, ster, antb, chor, anes), 
+    names_to = "Drug_Usage", 
+    values_to = "Usage"
+  ) %>%
+  filter(Usage == 1) %>%  # Keep rows where drug usage is "Yes" (1)
+  group_by(Drug_Usage, apgar5) %>%
+  summarise(Count = n(), .groups = "drop") %>%
+  pivot_wider(names_from = apgar5, values_from = Count, values_fill = 0)
 
-#### Odds Ratio Bar Chart ####
+# Convert the reshaped data back to long format for ggplot
+heatmap_long <- heatmap_data %>%
+  pivot_longer(-Drug_Usage, names_to = "APGAR5", values_to = "Count") %>%
+  mutate(APGAR5 = as.numeric(APGAR5))
 
-# Define custom labels for predictor variables
+# Create heatmap
+# Create a mapping of custom labels for drug usage categories
 custom_labels <- c(
-  "dem_momage" = "Mom Age",
-  "dem_dadage" = "Dad Age",
-  "mom_bmi" = "Mom BMI",
-  "mom_notobaco" = "No Tobacco",
-  "mom_noinfec" = "No Infections",
-  "med_previs" = "Prenatal Visits",
-  "med_wic" = "WIC",
-  "inft_weight" = "Birth Weight",
-  "inft_gest" = "Gestation Period"
+  indc = "Induction of Labor",
+  augmt = "Augmentation of Labor",
+  ster = "Steroids",
+  antb = "Antibiotics",
+  chor = "Chorioamnionitis",
+  anes = "Anesthesia"
+)
+treat_scores <- ggplot(heatmap_long, aes(x = APGAR5, y = Drug_Usage, fill = Count)) +
+  geom_tile(color = "white") +
+  scale_fill_gradient(low = "lightblue", high = "blue", name = "Count of Yes Responses") +
+  scale_y_discrete(labels = custom_labels) +  # Apply custom labels to y-axis (Drug Usage Categories)
+  labs(
+    title = "Heatmap: Drug Usage Characteristics and APGAR Scores",
+    x = "APGAR5 Score (0 to 10)",
+    y = "Treatments Categories During Delivery and Labor"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(
+    plot.background = element_rect(fill = "white"),
+    axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1),  # Angle and align x-axis text
+    axis.text.y = element_text(size = 12),  # Increase y-axis text size
+    plot.title = element_text(hjust = 0.5, size = 16, face = "bold"),  # Center and format title
+    plot.margin = margin(10, 10, 10, 10)  # Add spacing around the plot
+  )
+# Save the plot to a .png file
+ggsave(
+  filename = "data/00-simulated_data/simulated_results/treat_scores.png",
+  plot = treat_scores,
+  width = 10,  # Increase width for better label spacing
+  height = 8,  # Increase height for better readability
+  dpi = 300
 )
 
-# Create the bar chart
-odds_ratio_plot1 <- odds_ratios1 %>%
-  ggplot(aes(x = reorder(term, odds_ratio), y = odds_ratio)) +
-  geom_bar(stat = "identity", fill = "skyblue", color = "grey", width = 0.6) +
-  geom_errorbar(aes(ymin = lower_ci, ymax = upper_ci), width = 0.2, color = "blue") +
-  geom_hline(yintercept = 1, linetype = "dashed", color = "blue") +
-  coord_flip() +
-  labs(title = "Odds Ratio Bar Chart for Abnormal Conditions of Infants",
-       x = "Predictor Variables",
-       y = "Odds Ratio (95% CI)") +
-  scale_x_discrete(labels = custom_labels) +
-  theme_minimal() +  # Use minimal theme
+
+# Graph 3: APGAR Score Distribution for Drug Usage
+# Induction of Labor
+# Filter data for Induction of Labor (indc == 1)
+indc_data <- sim_data %>% filter(indc == 1)
+# Plot APGAR5 score distribution for Induction of Labor
+indc_scores <- ggplot(indc_data, aes(x = apgar5)) +
+  geom_histogram(aes(y = after_stat(count)), binwidth = 1, color = "grey", fill = "skyblue", alpha = 0.7) +
+  geom_density(aes(y = after_stat(count)), color = "black", size = 1, adjust = 1) +
+  labs(
+    title = "APGAR5 Score Distribution for Usage of Induction of Labor",
+    x = "Five-Minute APGAR Score",
+    y = "Count of Responses"
+  ) +
+  theme_minimal() +
   theme(
-    panel.background = element_rect(fill = "white"),  # Background color of the plot area
-    plot.background = element_rect(fill = "white"),   # Background color of the entire plot
-    panel.grid.major = element_line(color = "grey80"), # Major grid lines
-    panel.grid.minor = element_line(color = "grey90")  # Minor grid lines
-  )
+    plot.background = element_rect(fill = "white"),
+    axis.text.x = element_text(hjust = 1, vjust = 1),  # Angle and align x-axis text
+    axis.text.y = element_text(size = 12),  # Increase y-axis text size
+    plot.title = element_text(hjust = 0.5, size = 16, face = "bold"),  # Center and format title
+    plot.margin = margin(10, 10, 10, 10))  # Add spacing around the plot
+# Save the plot in .png file
+ggsave(filename = "data/00-simulated_data/simulated_results/indc_scores.png", plot = indc_scores, width = 8, height = 6, dpi = 300)
 
-odds_ratio_plot2 <- odds_ratios2 %>%
-  ggplot(aes(x = reorder(term, odds_ratio), y = odds_ratio)) +
-  geom_bar(stat = "identity", fill = "skyblue", color = "grey", width = 0.6) +
-  geom_errorbar(aes(ymin = lower_ci, ymax = upper_ci), width = 0.2, color = "blue") +
-  geom_hline(yintercept = 1, linetype = "dashed", color = "blue") +
-  coord_flip() +
-  labs(title = "Odds Ratio Bar Chart for Congenial Anomalies of Infants",
-       x = "Predictor Variables",
-       y = "Odds Ratio (95% CI)") +
-  scale_x_discrete(labels = custom_labels) +
-  theme_minimal() +  # Use minimal theme
+
+# Augmentation of Labor
+# Filter data for Augmentation of Labor
+augmt_data <- sim_data %>% filter(augmt == 1)
+# Plot APGAR5 score distribution for Augmentation of Labor
+augmt_scores <- ggplot(augmt_data, aes(x = apgar5)) +
+  geom_histogram(aes(y = after_stat(count)), binwidth = 1, color = "grey", fill = "skyblue", alpha = 0.7) +
+  geom_density(aes(y = after_stat(count)), color = "black", size = 1, adjust = 1) +
+  labs(
+    title = "APGAR5 Score Distribution for Usage of Augmentation of Labor",
+    x = "Five-Minute APGAR Score",
+    y = "Count of Responses"
+  ) +
+  theme_minimal() +
   theme(
-    panel.background = element_rect(fill = "white"),  # Background color of the plot area
-    plot.background = element_rect(fill = "white"),   # Background color of the entire plot
-    panel.grid.major = element_line(color = "grey80"), # Major grid lines
-    panel.grid.minor = element_line(color = "grey90")  # Minor grid lines
-  )
-
-# Save Odds Ratio Bar Chart as PNG
-ggsave("data/00-simulated_data/simulated_results/odds_ratio_abnorm.png", odds_ratio_plot1, width = 8, height = 6)
-ggsave("data/00-simulated_data/simulated_results/odds_ratio_congen.png", odds_ratio_plot2, width = 8, height = 6)
+    plot.background = element_rect(fill = "white"),
+    axis.text.x = element_text(hjust = 1, vjust = 1),  # Angle and align x-axis text
+    axis.text.y = element_text(size = 12),  # Increase y-axis text size
+    plot.title = element_text(hjust = 0.5, size = 16, face = "bold"),  # Center and format title
+    plot.margin = margin(10, 10, 10, 10))  # Add spacing around the plot
+# Save the plot in .png file
+ggsave(filename = "data/00-simulated_data/simulated_results/augmt_scores.png", plot = augmt_scores, width = 8, height = 6, dpi = 300)
 
 
-#### ROC Curve ####
-# Predict probabilities for the outcome variable
-sim_data$predicted_abnorm <- predict(logit_model1, newdata = sim_data, type = "response")
-sim_data$predicted_congen <- predict(logit_model2, newdata = sim_data, type = "response")
-
-# Generate ROC curve and calculate AUC
-roc_curve1 <- roc(sim_data$no_abnorm, sim_data$predicted_abnorm)
-roc_curve2 <- roc(sim_data$no_congen, sim_data$predicted_congen)
-
-# Create the ROC plot
-roc_data1 <- data.frame(tpr = roc_curve1$sensitivities, fpr = 1 - roc_curve1$specificities)
-roc_data2 <- data.frame(tpr = roc_curve2$sensitivities, fpr = 1 - roc_curve2$specificities)
-
-roc_plot1 <- ggplot(roc_data1, aes(x = fpr, y = tpr)) +
-  geom_line(color = "blue", size = 1) +
-  geom_abline(linetype = "dashed", color = "red") +
-  labs(title = "ROC Curve for Abnormal Conditions of Infants",
-       x = "False Positive Rate",
-       y = "True Positive Rate") +
-  theme_minimal() +  # Use minimal theme
+# Steroids
+# Filter data for Steroids
+ster_data <- sim_data %>% filter(ster == 1)
+# Plot APGAR5 score distribution for Steroids
+ster_scores <- ggplot(ster_data, aes(x = apgar5)) +
+  geom_histogram(aes(y = after_stat(count)), binwidth = 1, color = "grey", fill = "skyblue", alpha = 0.7) +
+  geom_density(aes(y = after_stat(count)), color = "black", size = 1, adjust = 1) +
+  labs(
+    title = "APGAR5 Score Distribution for Usage of Steroids",
+    x = "Five-Minute APGAR Score",
+    y = "Count of Responses"
+  ) +
+  theme_minimal()  +
   theme(
-    panel.background = element_rect(fill = "white"),  # Background color of the plot area
-    plot.background = element_rect(fill = "white"),   # Background color of the entire plot
-    panel.grid.major = element_line(color = "grey80"), # Major grid lines
-    panel.grid.minor = element_line(color = "grey90")  # Minor grid lines
-  )
+    plot.background = element_rect(fill = "white"),
+    axis.text.x = element_text(hjust = 1, vjust = 1),  # Angle and align x-axis text
+    axis.text.y = element_text(size = 12),  # Increase y-axis text size
+    plot.title = element_text(hjust = 0.5, size = 16, face = "bold"),  # Center and format title
+    plot.margin = margin(10, 10, 10, 10))  # Add spacing around the plot
+# Save the plot in .png file
+ggsave(filename = "data/00-simulated_data/simulated_results/ster_scores.png", plot = ster_scores, width = 8, height = 6, dpi = 300)
 
-roc_plot2 <- ggplot(roc_data2, aes(x = fpr, y = tpr)) +
-  geom_line(color = "blue", size = 1) +
-  geom_abline(linetype = "dashed", color = "red") +
-  labs(title = "ROC Curve for Congenial Anomalies of Infants",
-       x = "False Positive Rate",
-       y = "True Positive Rate") +
-  theme_minimal() +  # Use minimal theme
+
+# Antibiotics
+# Filter data for Antibiotics
+antb_data <- sim_data %>% filter(antb == 1)
+# Plot APGAR5 score distribution for Antibiotics
+antb_scores <- ggplot(antb_data, aes(x = apgar5)) +
+  geom_histogram(aes(y = after_stat(count)), binwidth = 1, color = "grey", fill = "skyblue", alpha = 0.7) +
+  geom_density(aes(y = after_stat(count)), color = "black", size = 1, adjust = 1) +
+  labs(
+    title = "APGAR5 Score Distribution for Usage of Antibiotics",
+    x = "Five-Minute APGAR Score",
+    y = "Count of Responses"
+  ) +
+  theme_minimal()  +
   theme(
-    panel.background = element_rect(fill = "white"),  # Background color of the plot area
-    plot.background = element_rect(fill = "white"),   # Background color of the entire plot
-    panel.grid.major = element_line(color = "grey80"), # Major grid lines
-    panel.grid.minor = element_line(color = "grey90")  # Minor grid lines
-  )
+    plot.background = element_rect(fill = "white"),
+    axis.text.x = element_text(hjust = 1, vjust = 1),  # Angle and align x-axis text
+    axis.text.y = element_text(size = 12),  # Increase y-axis text size
+    plot.title = element_text(hjust = 0.5, size = 16, face = "bold"),  # Center and format title
+    plot.margin = margin(10, 10, 10, 10))  # Add spacing around the plot
+# Save the plot in .png file
+ggsave(filename = "data/00-simulated_data/simulated_results/antb_scores.png", plot = antb_scores, width = 8, height = 6, dpi = 300)
 
-# Save ROC Curve as PNG
-ggsave("data/00-simulated_data/simulated_results/roc_abnorm.png", roc_plot1, width = 8, height = 6)
-ggsave("data/00-simulated_data/simulated_results/roc_congen.png", roc_plot2, width = 8, height = 6)
 
-#### Save AUC Value ####
-auc_abnorm <- round(auc(roc_curve1), 2)
-auc_congen <- round(auc(roc_curve2), 2)
+# Chorioamnionitis
+# Filter data for Chorioamnionitis
+chor_data <- sim_data %>% filter(chor == 1)
+# Plot APGAR5 score distribution for Chorioamnionitis
+chor_scores <- ggplot(chor_data, aes(x = apgar5)) +
+  geom_histogram(aes(y = after_stat(count)), binwidth = 1, color = "grey", fill = "skyblue", alpha = 0.7) +
+  geom_density(aes(y = after_stat(count)), color = "black", size = 1, adjust = 1) +
+  labs(
+    title = "APGAR5 Score Distribution for Usage of Chorioamnionitis",
+    x = "Five-Minute APGAR Score",
+    y = "Count of Responses"
+  ) +
+  theme_minimal()  +
+  theme(
+    plot.background = element_rect(fill = "white"),
+    axis.text.x = element_text(hjust = 1, vjust = 1),  # Angle and align x-axis text
+    axis.text.y = element_text(size = 12),  # Increase y-axis text size
+    plot.title = element_text(hjust = 0.5, size = 16, face = "bold"),  # Center and format title
+    plot.margin = margin(10, 10, 10, 10))  # Add spacing around the plot
+# Save the plot in .png file
+ggsave(filename = "data/00-simulated_data/simulated_results/chor_scores.png", plot = chor_scores, width = 8, height = 6, dpi = 300)
 
-cat("AUC:", auc_abnorm, "\n")
-cat("AUC:", auc_congen, "\n")
 
-# Save AUC value to a text file
-writeLines(paste("AUC:", auc_abnorm), "data/00-simulated_data/simulated_results/auc_abnorm.txt")
-writeLines(paste("AUC:", auc_congen), "data/00-simulated_data/simulated_results/auc_congen.txt")
+
+
+# Anesthesia
+# Filter data for Anesthesia
+anes_data <- sim_data %>% filter(anes == 1)
+# Plot APGAR5 score distribution for Anesthesia
+anes_scores <- ggplot(anes_data, aes(x = apgar5)) +
+  geom_histogram(aes(y = after_stat(count)), binwidth = 1, color = "grey", fill = "skyblue", alpha = 0.7) +
+  geom_density(aes(y = after_stat(count)), color = "black", size = 1, adjust = 1) +
+  labs(
+    title = "APGAR5 Score Distribution for Usage of Anesthesia",
+    x = "Five-Minute APGAR Score",
+    y = "Count of Responses"
+  ) +
+  theme_minimal()  +
+  theme(
+    plot.background = element_rect(fill = "white"),
+    axis.text.x = element_text(hjust = 1, vjust = 1),  # Angle and align x-axis text
+    axis.text.y = element_text(size = 12),  # Increase y-axis text size
+    plot.title = element_text(hjust = 0.5, size = 16, face = "bold"),  # Center and format title
+    plot.margin = margin(10, 10, 10, 10))  # Add spacing around the plot
+# Save the plot in .png file
+ggsave(filename = "data/00-simulated_data/simulated_results/anes_scores.png", plot = anes_scores, width = 8, height = 6, dpi = 300)
