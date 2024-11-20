@@ -1,4 +1,4 @@
-# How Labor and Delivery Drug Usage Affects Infant Health: A Predictive Analysis of APGAR5 Scores
+# How Drug Usage During Labor and Delivery Affects Infant Health: A Predictive Analysis of APGAR5 Scores
 ## !!! MAIN RESULTS !!!
 
 ## Overview
