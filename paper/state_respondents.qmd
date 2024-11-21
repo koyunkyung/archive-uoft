@@ -1,5 +1,5 @@
 ---
-title: "Estimating the Number of Doctoral Degree Holders in the U.S.: A Comparative Analysis Using Laplace Ratio Estimators"
+title: "Estimating the Number of Doctoral Degree Holders in the US: A Comparative Analysis Using Laplace Ratio Estimators"
 subtitle: "Discrepancy Between Estimated and Actual Total Respondents Show Regional Variations in Educational Attainment"
 author: 
   - Yunkyung Ko
