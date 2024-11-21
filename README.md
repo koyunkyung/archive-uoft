@@ -1,5 +1,5 @@
 # Estimating the Number of Doctoral Degree Holders in the US: A Comparative Analysis Using Laplace Ratio Estimators
-## Discrepancy Between Estimated and Actual Totals Show Regional Variations in Educational Attainment
+## Discrepancy Between Estimated and Actual Total Respondents Show Regional Variations in Educational Attainment
 
 ## Overview
 
