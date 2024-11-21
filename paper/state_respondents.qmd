@@ -1,0 +1,161 @@
+---
+title: "Estimating the Number of Doctoral Degree Holders in the U.S.: A Comparative Analysis Using 2022 ACS Data and Laplace Ratio Estimators"
+subtitle: "Kamala Harris Leads with Stable Support Around 48%"
+author: 
+  - Yunkyung Ko
+  - YingKe He
+  - Richard Guo
+  - Ruikang Wang
+  - Ziheng Zhong
+thanks: "Code and data are available at: [https://github.com/koyunkyung/state_respondents](https://github.com/koyunkyung/state_respondents)."
+date: today
+date-format: long
+abstract: ""
+format: pdf
+number-sections: true
+bibliography: references.bib
+toc: true
+toc-title: "Table of Contents"
+toc-depth: 2
+toc-location: left
+---
+
+```{r}
+#| include: false
+#| warning: false
+#| message: false
+
+library(dplyr)
+library(knitr)
+library(tidyverse)
+library(kableExtra)
+library(ggplot2)
+```
+
+# Method of Obtaining the Data
+
+To retrieve data from IPUMS USA, we first login to the IPUMS website and selected "IPUMS USA." From there, we clicked "Get Data" and chose the "2022 ACS" sample under the "SELECT SAMPLE" section. To obtain state-level data, we selected "HOUSEHOLD" \> "GEOGRAPHIC" and added the "STATEICP" variable to the data cart. For individual-level data, we went to the "PERSON" section and included the "EDUC" variable. After reviewing the cart, we clicked "CREATE DATA EXTRACT" and set the "DATA FORMAT" to "csv." Finally, we submitted the extract and then downloaded and saved the file locally (e.g., "usa_00001.csv") for use in R.
+
+```{r}
+#| echo: false
+#| include: false
+#| warning: false
+#| message: false
+
+# Load the IPUMS data
+ipums_data <- read.csv("../usa_00001.csv")
+# Filter for doctoral degree holders
+doctoral_data <- ipums_data %>% filter(EDUCD == 116)
+```
+
+Next, we count the respondents with doctoral degrees grouped by states.
+
+```{r}
+#| label: tbl-pctraw1
+#| tbl-cap: The distribution of respondents with doctoral degrees across states with different STATEICPs (**Note:** The table is being displayed with only the first part shown to optimize space.)
+#| echo: false
+
+
+# Count respondents with doctoral degrees by state
+doctoral_count <- doctoral_data %>%
+  group_by(STATEICP) %>%
+  summarise(doctoral = n())
+
+# Modify column names before passing to kable
+colnames(doctoral_count) <- c("State", "Respondents with Doctoral Degree")
+
+# Display the table with custom column labels
+kable(head(doctoral_count)) %>%
+  kable_styling(full_width = FALSE, font_size = 10) %>%
+  column_spec(1:2, width = "2cm")
+
+
+```
+
+# Brief Overview of the Ratio Estimators Approach
+
+The ratio estimator is a statistical method used to estimate population totals or averages by utilizing known sample ratios. It operates by calculating the ratio of a specific characteristic (in this paper, the number of individuals holding doctoral degrees) relative to the total population in a known sample (the state of California). This ratio is then applied to other regions or groups, based on the assumption that the relationship between the characteristic and the population remains consistent across different areas. This method is particularly effective when complete population data is unavailable, but sample data provides a reliable basis for inferring proportional relationships that can be generalized.
+
+# Estimates and the Actual Number of Respondents
+
+When assuming that California has 391,171 respondents across all educational levels, we can calculate the ratio for California. The Laplace ratio method works well when the relationship between the characteristic of interest, such as the proportion of doctoral degree holders, and the population is consistent across all units. In the example above, the ratio for California is 0.01619752. However, if this ratio is not representative of other states due to unobserved factors, the estimates derived from the method can become biased. This bias occurs when regional differences disrupt the assumption of proportionality, leading to inaccurate estimates. Factors like varying educational systems, socioeconomic conditions, or migration patterns between states can cause these distortions.
+
+```{r}
+#| echo: false
+
+
+# Assuming State is correctly renamed, and column for doctoral degree count is "Respondents with Doctoral Degree"
+california_total_respondents <- 391171
+california_doctoral_respondents <- doctoral_count %>%
+  filter(State == 71) %>%
+  pull(`Respondents with Doctoral Degree`)
+
+california_doctoral_respondents
+
+
+
+```
+
+Using the ratio estimator approach might estimate the total number of respondents for each state as follows. Assuming the ratio holds for all states, we can estimate the total respondents for every state.
+
+The table below presents an overview of the distribution of respondents with doctoral degrees across different states in the U.S., which is crucial for the understanding of regional educational attainment trends. The first column, STATEICP, refers to the unique state or territory codes provided by the IPUMS system, where each number corresponds to a specific state. The second column, doctoral_respondents, provides the number of respondents with doctoral degrees (filtered by EDUCD == 116) in each state. For example, state code 1 shows 600 respondents with doctoral degrees, while state code 3 shows a significantly higher number with 2014 respondents. Other state codes show varying counts of respondents, such as 165 for state code 2, 244 for state code 4, and so on.
+
+```{r}
+#| label: tbl-pctraw2
+#| tbl-cap: The distribution of respondents with doctoral degrees across states with different STATEICPs (**Note:** The table is being displayed with only the first part shown to optimize space.)
+#| echo: false
+
+# Assuming california_ratio is already defined and available in your environment
+doctoral_count <- doctoral_count %>%
+  mutate(estimated_total = `Respondents with Doctoral Degree` / california_ratio)
+
+# Check the updated dataframe
+head(doctoral_count)
+
+```
+
+The process of comparing it with the actual data of respondents is as follows.The table below provides a comparison between the estimated total respondents, derived using the ratio estimator method, and the actual total respondents for each state. The doctoral_respondents column represents the number of individuals with doctoral degrees in each state, while the estimated_total_respondents column shows the projected total population for each state, calculated by applying the California ratio (0.01619752) to the number of doctoral respondents in each state. The actual_total_respondents column reflects the true population count for each state, which was directly obtained from the data. This allows for a comparison between the estimated and actual figures. In state code 1, the actual number of respondents is 37,369, slightly higher than the estimate of 37,042. For state code 3, the actual total is 73,077, significantly lower than the estimate of 124,340. These differences illustrate the potential inaccuracies that can arise from using a ratio estimator when the relationship between the doctoral respondents and the total population is not consistent across states. This highlights the importance of accounting for regional variations in such analyses.
+
+```{r}
+#| echo: false
+#| tbl-cap: comparison of the estimated and actual total respondents 
+
+actual_total_count <- ipums_data %>%
+  group_by(STATEICP) %>%
+  summarise(actual_total = n())
+
+doctoral_count <- doctoral_count %>%
+  left_join(actual_total_count, by = "STATEICP")
+
+kable(head(doctoral_count))  %>%
+  kable_styling(full_width = FALSE, font_size = 10) %>%
+  column_spec(1:4, width = "2cm")
+```
+
+```{r}
+#| warning: false
+#| message: false
+#| echo: false
+#| label: fig-compare
+#| fig-cap: comparison of estimated and total respondents
+#| fig-height: 9
+
+# Load library
+library(ggplot2)
+library(reshape2)
+ 
+# Further process the data
+data_melted <- melt(doctoral_count, id.vars = "STATEICP", measure.vars = c("estimated_total", "actual_total"))
+ 
+# Generate chart
+ggplot(data_melted, aes(x = factor(data_melted$STATEICP), y = value, fill = variable)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  labs(x = "State Code", y = "Number of Respondents", fill = "Respondent Type",
+       title = "Comparison of Estimated and Actual Total Respondents") +
+  theme_minimal() +
+  coord_flip()
+```
+
+# Explanation of Why They are Different
+
+A simple explanation for why the estimated number of respondents and actual number of respondents differ is that the naive assumption that all states share the same doctorate-respondent to total respondent ratio is false. The ratio estimator assumes that the proportion of respondents with doctoral degrees in California is representative of the proportion in other states. However, educational attainment can vary significantly due to differences in demographics, economic opportunities, and educational infrastructure across states. This variance leads to discrepancies between the estimated and actual counts. When the data used for estimation is based on a sample rather than a complete population census, random sampling variability introduces uncertainty into the calculated ratio, which in turn affects the accuracy of the estimates. This variability can lead to deviations between the sample-based ratio and the true population ratio, impacting the reliability of the estimation.
