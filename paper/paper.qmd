@@ -1,16 +1,19 @@
 ---
-title: "My title"
-subtitle: "My subtitle if needed"
+title: "How Drug Usage During Labor and Delivery Affects Infant Health: A Predictive Analysis of APGAR5 Scores"
+subtitle: "!!! MAIN RESULTS !!!"
 author: 
-  - First author
-  - Another author
-thanks: "Code and data are available at: [https://github.com/RohanAlexander/starter_folder](https://github.com/RohanAlexander/starter_folder)."
+  - Yunkyung Ko
+thanks: "Code and data are available at: [https://github.com/koyunkyung/infant_health](https://github.com/koyunkyung/infant_health)."
 date: today
 date-format: long
 abstract: "First sentence. Second sentence. Third sentence. Fourth sentence."
 format: pdf
 number-sections: true
 bibliography: references.bib
+toc: true
+toc-title: "Table of Contents"
+toc-depth: 2
+toc-location: left
 ---
 
 ```{r}
@@ -19,7 +22,16 @@ bibliography: references.bib
 #| message: false
 
 library(tidyverse)
-library(palmerpenguins)
+library(data.table)
+library(arrow)
+library(scales)
+library(dplyr)
+library(knitr)
+
+raw_data <- fread("../data/01-raw_data/infant_data.csv" , showProgress = FALSE)
+analysis_data <- read_csv("../data/02-analysis_data/infant_health.csv")
+balanced_data <- read_csv("../data/02-analysis_data/infant_balanced.csv")
+
 ```
 
 
@@ -37,9 +49,6 @@ Telegraphing paragraph: The remainder of this paper is structured as follows. @s
 
 
 
-
-
-
 # Data {#sec-data}
 
 ## Overview
@@ -54,61 +63,766 @@ Some paragraphs about how we go from a phenomena in the world to an entry in the
 
 ## Outcome variables
 
-Add graphs, tables and text. Use sub-sub-headings for each outcome variable or update the subheading to be singular.
+### Apgar Score: a measure the infant's chance of surviving the first year of life
 
+The Apgar score is a measure of the need for resuscitation [@natality2023] to the infant, which is the act of bringing someone back to life or waking them [@cambridgeResuscitation]. It is a test given to newborns soon after birth (5 minutes) to check 'Appearance(skin color)', 'Pulse(heart rate)', 'Grimace response(reflexes)', 'Activity(muscle tone)', 'Respiration(breathing rate and effort)' [@kidsHealthApgar]. Each is rated on a scale of 0 to 2, with 2 being the best score [@kidsHealthApgar]. Apgar scores range from 0 to 10, with a score of 7 or higher indicating that the neonate is in good to excellent physical condition [@natality2023].
 
+@fig-apgar1 shows that the majority of infants in the raw dataset achieve a high APGAR5 score, clustering around 9 and 10. Very few observations exist for lower scores, reflecting rare instances of significant distress at birth. Even after filtering the dataset by selecting the relevant variables for analysis and removing the NA values, @fig-apgar2 shows that the observations are overly clustered around high APGAR5 scores.
 
-Some of our data is of penguins (@fig-bills), from @palmerpenguins.
 
 ```{r}
-#| label: fig-bills
-#| fig-cap: Bills of penguins
-#| echo: false
-
-ggplot(penguins, aes(x = island, fill = species)) +
-  geom_bar(alpha = 0.8) +
-  scale_fill_manual(values = c("darkorange","purple","cyan4"),
-                    guide = "none") +
-  theme_minimal() +
-  facet_wrap(~species, ncol = 1) +
-  coord_flip()
-```
-
-Talk more about it.
-
-And also planes (@fig-planes). (You can change the height and width, but don't worry about doing that until you have finished every other aspect of the paper - Quarto will try to make it look nice and the defaults usually work well once you have enough text.)
-
-```{r}
-#| label: fig-planes
-#| fig-cap: Relationship between wing length and width
+#| label: fig-apgar1
+#| fig-cap: "The distribution of APGAR5 scores across the entire observation in the original dataset **Note:** Unknown or unreported observations were excluded so that the distribution could be clearly visualized"
 #| echo: false
 #| warning: false
 #| message: false
 
-analysis_data <- read_csv(here::here("data/02-analysis_data/analysis_data.csv"))
+# Remove rows where 'apgar5' equals 99
+filtered_data <- raw_data %>%
+  filter(apgar5 != 99)
 
-analysis_data |> 
-  ggplot(aes(x = width, y = length)) +
-  geom_point(alpha = 0.8) +
-  theme_minimal() +
-  labs(x = "Wing width (mm)",
-       y = "Wing length (mm)")
+# Histogram for 'apgar5'
+filtered_data |>
+  ggplot(aes(x = apgar5)) +
+  geom_histogram(aes(y = after_stat(count)), 
+    binwidth = 1, 
+    color = "grey", 
+    fill = "skyblue", 
+    alpha = 0.7) + 
+  
+  # Add labels
+  labs(x = "APGAR5 Score",
+       y = "Count of Observations") +
+  
+  # Format y-axis numbers with commas
+  scale_y_continuous(labels = comma) +
+  
+  # Apply a clean theme
+  theme_minimal()
+  
+
 ```
 
-Talk way more about it. 
+
+```{r}
+#| label: fig-apgar2
+#| fig-cap: The distribution of APGAR5 scores across the filtered observation in analysis dataset, which selected the relevant variables and removed the NA values
+#| echo: false
+#| warning: false
+#| message: false
+
+
+# Histogram for 'apgar5'
+analysis_data |>
+  ggplot(aes(x = apgar5)) +
+  geom_histogram(aes(y = after_stat(count)), 
+    binwidth = 1, 
+    color = "grey", 
+    fill = "skyblue", 
+    alpha = 0.7) + 
+  # Add labels
+  labs(x = "APGAR5 Score",
+       y = "Count of Observations") +
+  # Format y-axis numbers with commas
+  scale_y_continuous(labels = comma) +
+  # Apply a clean theme
+  theme_minimal()
+  
+
+```
+
+To ensure a balanced analysis and accurately assess the effects of drug treatment during delivery and labor, the data was refined to achieve a more even distribution of observations across APGAR5 scores. Based on the lowest observation count of 2,065 in the original distribution, the number of observations for each APGAR5 score was set to 2,000 as shown in @fig-apgar3. Random sampling was used to ensure a fair distribution across all score levels.
+
+```{r}
+#| label: fig-apgar3
+#| fig-cap: The distribution of APGAR5 scores across the filtered observation in analysis dataset
+#| echo: false
+#| warning: false
+#| message: false
+
+# Generate a table for APGAR5 score distribution
+apgar_table <- balanced_data %>%
+  group_by(apgar5) %>%  # Group by APGAR5 score
+  summarise(
+    Count = n()  # Count of observations
+  ) %>%
+  arrange(apgar5)  # Ensure rows are ordered by APGAR5 score
+
+# Transpose the table for horizontal display
+apgar_table_transposed <- t(as.matrix(apgar_table$Count))  # Transpose only the counts
+colnames(apgar_table_transposed) <- apgar_table$apgar5  # Set APGAR5 scores as column names
+rownames(apgar_table_transposed) <- "Count"  # Set the row name
+
+# Convert to a data frame for display
+apgar_table_transposed_df <- as.data.frame(apgar_table_transposed)
+
+# Display the transposed table using kable
+knitr::kable(
+  apgar_table_transposed_df)
+
+
+```
 
 ## Predictor variables
 
-Add graphs, tables and text.
+All of the predictor variables used in the analysis are classified into the same category, which is the 'characteristics of labor and delivery'. This item, which contains 6 separate checkboxes that the respondent can choose from, allows for the reporting of more than one characteristic and includes a choice of "None of the above"[@natality2023].  
 
-Use sub-sub-headings for each outcome variable and feel free to combine a few into one if they go together naturally.
+### Number of Treatments Used During Delivery and Labor
+
+@fig-numtreat shows that the majority of observations involve 0 to 2 treatments during labor and delivery, with a steep decline in counts for 3 or more treatments. Most births reported in this dataset occur with minimal medical intervention, and higher number of treatments are relatively rare. 
+
+```{r}
+#| label: fig-numtreat
+#| fig-cap: The distribution of observations across different number of treatments used during delivery and labor
+#| echo: false
+#| warning: false
+#| message: false
+
+
+anal_data <- balanced_data %>%
+  mutate(
+    drug_count = rowSums(select(., c(indc, augmt, ster, antb, chor, anes)) == 1, na.rm = TRUE)
+  )
+
+# Calculate observation counts for each drug_count
+drug_count_summary <- anal_data %>%
+  group_by(drug_count) %>%
+  summarise(observation_count = n())  # Count observations for each drug_count
+
+# Plot the counts with all x-axis values displayed
+ggplot(drug_count_summary, aes(x = drug_count, y = observation_count)) +
+  geom_bar(stat = "identity", fill = "darkgreen", color = "grey") +  # Bar plot
+  geom_text(aes(label = comma(observation_count)), vjust = -0.5, size = 4, color = "black") +  # Add counts above bars
+  labs(
+    x = "Number of Treatments Used During Labor and Delivery",
+    y = "Observation Count"
+  ) +
+  scale_y_continuous(labels = comma) +  # Format numbers on the y-axis
+  scale_x_continuous(breaks = seq(min(drug_count_summary$drug_count), max(drug_count_summary$drug_count), by = 1)) +  # Ensure all x-axis values are shown
+  theme_minimal() +
+  theme(
+    axis.text = element_text(size = 12),
+    axis.title = element_text(size = 13)
+  )
+
+
+```
+
+
+### Type of Treatments Used During Delivery and Labor
+
+```{r}
+#| label: fig-typetreat
+#| fig-cap: The distribution of observations across different type of treatments used during delivery and labor
+#| echo: false
+#| warning: false
+#| message: false
+
+# Define custom labels and order for Treatment_Type
+custom_labels <- c(
+  "indc" = "Induction",
+  "augmt" = "Augmentation",
+  "ster" = "Steroids",
+  "antb" = "Antibiotics",
+  "chor" = "Chorioamnionitis",
+  "anes" = "Anesthesia"
+)
+# Reshape data to long format for treatment types
+treatment_summary <- balanced_data %>%
+  select(indc, augmt, ster, antb, chor, anes) %>%  # Select treatment columns
+  pivot_longer(
+    cols = everything(),  # Reshape all columns to long format
+    names_to = "Treatment_Type",  # Column for treatment type
+    values_to = "Value"  # Column for values (0 or 1)
+  ) %>%
+  filter(Value == 1) %>%  # Keep rows where treatment is used
+  group_by(Treatment_Type) %>%
+  summarise(Count = n(), .groups = "drop") %>%  # Count observations for each treatment type
+  mutate(
+    Treatment_Type = factor(Treatment_Type, levels = names(custom_labels), labels = custom_labels)  # Apply custom labels and order
+  )
+
+# Plot the distribution of observations for each treatment
+ggplot(treatment_summary, aes(x = Treatment_Type, y = Count, fill = Treatment_Type)) +
+  geom_bar(stat = "identity", fill = "darkgreen", color = "grey") +  # Bar plot
+  geom_text(aes(label = comma(Count)), vjust = -0.5, size = 4, color = "black") +  # Add counts above bars
+  labs(
+    x = "Treatment Type",
+    y = "Observation Count"
+  ) +
+  scale_y_continuous(labels = comma) +  # Format y-axis labels with commas
+  theme_minimal() +
+  theme(
+    axis.text = element_text(size = 10),
+    axis.title = element_text(size = 10),
+    legend.position = "none"  # Remove legend for cleaner look
+  )
+```
+
+### Induction of labor
+
+
+```{r}
+#| label: fig-indc1
+#| fig-cap: The distribution of observations in the raw dataset based on whether the infant received induction of labor or not
+#| echo: false
+#| warning: false
+#| message: false
+
+# Prepare the data
+ld_indl_summary1 <- raw_data %>%
+  group_by(ld_indl) %>%
+  summarise(Count = n(), .groups = "drop") %>%
+  mutate(
+    ld_indl = ifelse(ld_indl == "Y", "Yes", ifelse(ld_indl == "N", "No", "Unknown")),  # Label groups
+    ld_indl = factor(ld_indl, levels = c("Yes", "No", "Unknown"))  # Specify factor levels for order
+  )
+
+# Plot the bar graph
+ggplot(ld_indl_summary1, aes(x = ld_indl, y = Count)) +
+  geom_bar(stat = "identity", fill = "#a9dfbf", color = "grey") +  # Bar plot
+  geom_text(aes(label = comma(Count)), vjust = -0.5, size = 4, color = "black") +  # Add counts above bars
+  labs(
+    x = "Induction of Labor",
+    y = "Observation Count"
+  ) +
+  scale_y_continuous(limits = c(0, max(ld_indl_summary1$Count) + 1000), expand = c(0, 0)) +
+  scale_y_continuous(labels = comma) +  # Format y-axis labels with commas
+  theme_minimal() +
+  theme(
+    axis.text = element_text(size = 11),
+    axis.title = element_text(size = 13)
+  )
+
+```
+```{r}
+#| label: fig-indc2
+#| fig-cap: The distribution of observations in the analysis dataset on whether the infant received induction of labor or not,
+#| echo: false
+#| warning: false
+#| message: false
+
+# Prepare the data
+ld_indl_summary2 <- balanced_data %>%
+  group_by(indc) %>%
+  summarise(Count = n(), .groups = "drop") %>%
+  mutate(
+    ld_indl = ifelse(indc == 1, "Yes", ifelse(indc == 0 , "No", "Unknown")),  # Label groups
+    ld_indl = factor(ld_indl, levels = c("Yes", "No", "Unknown"))  # Specify factor levels for order
+  )
+
+# Plot the bar graph
+ggplot(ld_indl_summary2, aes(x = ld_indl, y = Count)) +
+  geom_bar(stat = "identity", fill = "#a9dfbf", color = "grey") +  # Bar plot
+  geom_text(aes(label = comma(Count)), vjust = -0.5, size = 4, color = "black") +  # Add counts above bars
+  labs(
+    x = "Induction of Labor",
+    y = "Observation Count"
+  ) +
+  scale_y_continuous(limits = c(0, max(ld_indl_summary2$Count) + 1000), expand = c(0, 0)) +
+  scale_y_continuous(labels = comma) +  # Format y-axis labels with commas
+  theme_minimal() +
+  theme(
+    axis.text = element_text(size = 11),
+    axis.title = element_text(size = 13)
+  )
+
+
+```
+
+### Augmentation of labor
+
+
+```{r}
+#| label: fig-augmt1
+#| fig-cap: The distribution observations in the raw dataset based on whether the infant received augmentation of labor or not
+#| echo: false
+#| warning: false
+#| message: false
+
+# Prepare the data
+ld_augm_summary1 <- raw_data %>%
+  group_by(ld_augm) %>%
+  summarise(Count = n(), .groups = "drop") %>%
+  mutate(
+    ld_augm = ifelse(ld_augm == "Y", "Yes", ifelse(ld_augm == "N", "No", "Unknown")),  # Label groups
+    ld_augm = factor(ld_augm, levels = c("Yes", "No", "Unknown"))  # Specify factor levels for order
+  )
+
+# Plot the bar graph
+ggplot(ld_augm_summary1, aes(x = ld_augm, y = Count)) +
+  geom_bar(stat = "identity", fill = "#a9dfbf", color = "grey") +  # Bar plot
+  geom_text(aes(label = comma(Count)), vjust = -0.5, size = 4, color = "black") +  # Add counts above bars
+  labs(
+    x = "Augmentation of Labor",
+    y = "Observation Count"
+  ) +
+  scale_y_continuous(limits = c(0, max(ld_augm_summary1$Count) + 1000), expand = c(0, 0)) +
+  scale_y_continuous(labels = comma) +  # Format y-axis labels with commas
+  theme_minimal() +
+  theme(
+    axis.text = element_text(size = 11),
+    axis.title = element_text(size = 13)
+  )
+
+```
+```{r}
+#| label: fig-augmt2
+#| fig-cap: The distribution observations in the analysis datset on whether the infant received augmentation of labor or not
+#| echo: false
+#| warning: false
+#| message: false
+
+# Prepare the data
+ld_augm_summary2 <- balanced_data %>%
+  group_by(augmt) %>%
+  summarise(Count = n(), .groups = "drop") %>%
+  mutate(
+    ld_augm = ifelse(augmt == 1, "Yes", ifelse(augmt == 0 , "No", "Unknown")),  # Label groups
+    ld_augm = factor(ld_augm, levels = c("Yes", "No", "Unknown"))  # Specify factor levels for order
+  )
+
+# Plot the bar graph
+ggplot(ld_augm_summary2, aes(x = ld_augm, y = Count)) +
+  geom_bar(stat = "identity", fill = "#a9dfbf", color = "grey") +  # Bar plot
+  geom_text(aes(label = comma(Count)), vjust = -0.5, size = 4, color = "black") +  # Add counts above bars
+  labs(
+    x = "Augmentation of Labor",
+    y = "Observation Count"
+  ) +
+  scale_y_continuous(limits = c(0, max(ld_augm_summary2$Count) + 1000), expand = c(0, 0)) +
+  scale_y_continuous(labels = comma) +  # Format y-axis labels with commas
+  theme_minimal() +
+  theme(
+    axis.text = element_text(size = 11),
+    axis.title = element_text(size = 13)
+  )
+
+
+
+```
+
+
+### Steroids (glucocorticoids) for fetal lung maturation received by the mother before delivery
+
+```{r}
+#| label: fig-ster1
+#| fig-cap: The distribution observations in the raw dataset based on whether the infant received steroid treatments or not
+#| echo: false
+#| warning: false
+#| message: false
+
+# Prepare the data
+ld_ster_summary1 <- raw_data %>%
+  group_by(ld_ster) %>%
+  summarise(Count = n(), .groups = "drop") %>%
+  mutate(
+    ld_ster = ifelse(ld_ster == "Y", "Yes", ifelse(ld_ster == "N", "No", "Unknown")),  # Label groups
+    ld_ster = factor(ld_ster, levels = c("Yes", "No", "Unknown"))  # Specify factor levels for order
+  )
+
+# Plot the bar graph
+ggplot(ld_ster_summary1, aes(x = ld_ster, y = Count)) +
+  geom_bar(stat = "identity", fill = "#a9dfbf", color = "grey") +  # Bar plot
+  geom_text(aes(label = comma(Count)), vjust = -0.5, size = 4, color = "black") +  # Add counts above bars
+  labs(
+    x = "Steroids Usage",
+    y = "Observation Count"
+  ) +
+  scale_y_continuous(limits = c(0, max(ld_ster_summary1$Count) + 1000), expand = c(0, 0)) +
+  scale_y_continuous(labels = comma) +  # Format y-axis labels with commas
+  theme_minimal() +
+  theme(
+    axis.text = element_text(size = 11),
+    axis.title = element_text(size = 13)
+  )
+
+```
+```{r}
+#| label: fig-ster2
+#| fig-cap: The distribution observations in the analysis datset on whether the infant received steroid treatments or not
+#| echo: false
+#| warning: false
+#| message: false
+
+# Prepare the data
+ld_ster_summary2 <- balanced_data %>%
+  group_by(ster) %>%
+  summarise(Count = n(), .groups = "drop") %>%
+  mutate(
+    ld_ster = ifelse(ster == 1, "Yes", ifelse(ster == 0 , "No", "Unknown")),  # Label groups
+    ld_ster = factor(ld_ster, levels = c("Yes", "No", "Unknown"))  # Specify factor levels for order
+  )
+
+# Plot the bar graph
+ggplot(ld_ster_summary2, aes(x = ld_ster, y = Count)) +
+  geom_bar(stat = "identity", fill = "#a9dfbf", color = "grey") +  # Bar plot
+  geom_text(aes(label = comma(Count)), vjust = -0.5, size = 4, color = "black") +  # Add counts above bars
+  labs(
+    x = "Steroids Usage",
+    y = "Observation Count"
+  ) +
+  scale_y_continuous(limits = c(0, max(ld_ster_summary2$Count) + 1000), expand = c(0, 0)) +
+  scale_y_continuous(labels = comma) +  # Format y-axis labels with commas
+  theme_minimal() +
+  theme(
+    axis.text = element_text(size = 11),
+    axis.title = element_text(size = 13)
+  )
 
 
 
 
+```
+
+
+### Antibiotics received by the mother during delivery
+
+```{r}
+#| label: fig-antb1
+#| fig-cap: The distribution observations in the raw dataset based on whether the infant received antibiotic treatments or not
+#| echo: false
+#| warning: false
+#| message: false
+
+# Prepare the data
+ld_antb_summary1 <- raw_data %>%
+  group_by(ld_antb) %>%
+  summarise(Count = n(), .groups = "drop") %>%
+  mutate(
+    ld_antb = ifelse(ld_antb == "Y", "Yes", ifelse(ld_antb == "N", "No", "Unknown")),  # Label groups
+    ld_antb = factor(ld_antb, levels = c("Yes", "No", "Unknown"))  # Specify factor levels for order
+  )
+
+# Plot the bar graph
+ggplot(ld_antb_summary1, aes(x = ld_antb, y = Count)) +
+  geom_bar(stat = "identity", fill = "#a9dfbf", color = "grey") +  # Bar plot
+  geom_text(aes(label = comma(Count)), vjust = -0.5, size = 4, color = "black") +  # Add counts above bars
+  labs(
+    x = "Antibiotics Usage",
+    y = "Observation Count"
+  ) +
+  scale_y_continuous(limits = c(0, max(ld_antb_summary1$Count) + 1000), expand = c(0, 0)) +
+  scale_y_continuous(labels = comma) +  # Format y-axis labels with commas
+  theme_minimal() +
+  theme(
+    axis.text = element_text(size = 11),
+    axis.title = element_text(size = 13)
+  )
+
+```
+
+
+```{r}
+#| label: fig-antb2
+#| fig-cap: The distribution observations in the analysis datset on whether the infant received antibiotic treatments or not
+#| echo: false
+#| warning: false
+#| message: false
+
+# Prepare the data
+ld_antb_summary2 <- balanced_data %>%
+  group_by(antb) %>%
+  summarise(Count = n(), .groups = "drop") %>%
+  mutate(
+    ld_antb = ifelse(antb == 1, "Yes", ifelse(antb == 0 , "No", "Unknown")),  # Label groups
+    ld_antb = factor(ld_antb, levels = c("Yes", "No", "Unknown"))  # Specify factor levels for order
+  )
+
+# Plot the bar graph
+ggplot(ld_antb_summary2, aes(x = ld_antb, y = Count)) +
+  geom_bar(stat = "identity", fill = "#a9dfbf", color = "grey") +  # Bar plot
+  geom_text(aes(label = comma(Count)), vjust = -0.5, size = 4, color = "black") +  # Add counts above bars
+  labs(
+    x = "Antibiotics Usage",
+    y = "Observation Count"
+  ) +
+  scale_y_continuous(limits = c(0, max(ld_antb_summary2$Count) + 1000), expand = c(0, 0)) +
+  scale_y_continuous(labels = comma) +  # Format y-axis labels with commas
+  theme_minimal() +
+  theme(
+    axis.text = element_text(size = 11),
+    axis.title = element_text(size = 13)
+  )
 
 
 
+
+```
+
+### Clinical chorioamnionitis diagnosed during labor or maternal temperature over 38 degrees celcius (100.4 degrees fahrenheit)
+
+```{r}
+#| label: fig-chor1
+#| fig-cap: The distribution observations in the raw dataset based on whether the infant received chorioamnionitis treatments or not
+#| echo: false
+#| warning: false
+#| message: false
+
+# Prepare the data
+ld_chor_summary1 <- raw_data %>%
+  group_by(ld_chor) %>%
+  summarise(Count = n(), .groups = "drop") %>%
+  mutate(
+    ld_chor = ifelse(ld_chor == "Y", "Yes", ifelse(ld_chor == "N", "No", "Unknown")),  # Label groups
+    ld_chor = factor(ld_chor, levels = c("Yes", "No", "Unknown"))  # Specify factor levels for order
+  )
+
+# Plot the bar graph
+ggplot(ld_chor_summary1, aes(x = ld_chor, y = Count)) +
+  geom_bar(stat = "identity", fill = "#a9dfbf", color = "grey") +  # Bar plot
+  geom_text(aes(label = comma(Count)), vjust = -0.5, size = 4, color = "black") +  # Add counts above bars
+  labs(
+    x = "Chorioamnionitis Usage",
+    y = "Observation Count"
+  ) +
+  scale_y_continuous(limits = c(0, max(ld_chor_summary1$Count) + 1000), expand = c(0, 0)) +
+  scale_y_continuous(labels = comma) +  # Format y-axis labels with commas
+  theme_minimal() +
+  theme(
+    axis.text = element_text(size = 11),
+    axis.title = element_text(size = 13)
+  )
+
+```
+```{r}
+#| label: fig-chor2
+#| fig-cap: The distribution observations in the analysis datset on whether the infant received chorioamnionitis treatments or not
+#| echo: false
+#| warning: false
+#| message: false
+
+# Prepare the data
+ld_chor_summary2 <- balanced_data %>%
+  group_by(chor) %>%
+  summarise(Count = n(), .groups = "drop") %>%
+  mutate(
+    ld_chor = ifelse(chor == 1, "Yes", ifelse(chor == 0 , "No", "Unknown")),  # Label groups
+    ld_chor = factor(ld_chor, levels = c("Yes", "No", "Unknown"))  # Specify factor levels for order
+  )
+
+# Plot the bar graph
+ggplot(ld_chor_summary2, aes(x = ld_chor, y = Count)) +
+  geom_bar(stat = "identity", fill = "#a9dfbf", color = "grey") +  # Bar plot
+  geom_text(aes(label = comma(Count)), vjust = -0.5, size = 4, color = "black") +  # Add counts above bars
+  labs(
+    x = "Chorioamnionitis Usage",
+    y = "Observation Count"
+  ) +
+  scale_y_continuous(limits = c(0, max(ld_chor_summary2$Count) + 1000), expand = c(0, 0)) +
+  scale_y_continuous(labels = comma) +  # Format y-axis labels with commas
+  theme_minimal() +
+  theme(
+    axis.text = element_text(size = 11),
+    axis.title = element_text(size = 13)
+  )
+
+
+
+
+```
+
+### Epidural or spinal anesthesia during labor
+
+```{r}
+#| label: fig-anes1
+#| fig-cap: The distribution observations in the raw dataset based on whether the infant received anesthesia treatments or not
+#| echo: false
+#| warning: false
+#| message: false
+
+# Prepare the data
+ld_anes_summary1 <- raw_data %>%
+  group_by(ld_anes) %>%
+  summarise(Count = n(), .groups = "drop") %>%
+  mutate(
+    ld_anes = ifelse(ld_anes == "Y", "Yes", ifelse(ld_anes == "N", "No", "Unknown")),  # Label groups
+    ld_anes = factor(ld_anes, levels = c("Yes", "No", "Unknown"))  # Specify factor levels for order
+  )
+
+# Plot the bar graph
+ggplot(ld_anes_summary1, aes(x = ld_anes, y = Count)) +
+  geom_bar(stat = "identity", fill = "#a9dfbf", color = "grey") +  # Bar plot
+  geom_text(aes(label = comma(Count)), vjust = -0.5, size = 4, color = "black") +  # Add counts above bars
+  labs(
+    x = "Anesthesia Usage",
+    y = "Observation Count"
+  ) +
+  scale_y_continuous(limits = c(0, max(ld_anes_summary1$Count) + 1000), expand = c(0, 0)) +
+  scale_y_continuous(labels = comma) +  # Format y-axis labels with commas
+  theme_minimal() +
+  theme(
+    axis.text = element_text(size = 11),
+    axis.title = element_text(size = 13)
+  )
+
+```
+
+```{r}
+#| label: fig-anes2
+#| fig-cap: The distribution observations in the analysis datset on whether the infant received anesthesia treatments or not
+#| echo: false
+#| warning: false
+#| message: false
+
+# Prepare the data
+ld_anes_summary2 <- balanced_data %>%
+  group_by(anes) %>%
+  summarise(Count = n(), .groups = "drop") %>%
+  mutate(
+    ld_anes = ifelse(anes == 1, "Yes", ifelse(anes == 0 , "No", "Unknown")),  # Label groups
+    ld_anes = factor(ld_anes, levels = c("Yes", "No", "Unknown"))  # Specify factor levels for order
+  )
+
+# Plot the bar graph
+ggplot(ld_anes_summary2, aes(x = ld_anes, y = Count)) +
+  geom_bar(stat = "identity", fill = "#a9dfbf", color = "grey") +  # Bar plot
+  geom_text(aes(label = comma(Count)), vjust = -0.5, size = 4, color = "black") +  # Add counts above bars
+  labs(
+    x = "Anesthesia Usage",
+    y = "Observation Count"
+  ) +
+  scale_y_continuous(limits = c(0, max(ld_anes_summary2$Count) + 1000), expand = c(0, 0)) +
+  scale_y_continuous(labels = comma) +  # Format y-axis labels with commas
+  theme_minimal() +
+  theme(
+    axis.text = element_text(size = 11),
+    axis.title = element_text(size = 13)
+  )
+
+
+
+```
+
+
+## Correlation between predictor variables
+
+### Induction of Labor and Augmentation of Labor
+
+```{r}
+#| label: fig-corr1
+#| fig-cap: Mosaic plot showing the correlation between induction and augmentation of labor
+#| echo: false
+#| warning: false
+#| message: false
+
+# Load necessary library
+library(vcd)
+
+# Create a contingency table for "Induction of Labor" and "Augmentation of Labor"
+contingency_table <- xtabs(~ indc + augmt, data = balanced_data)
+
+# Perform chi-squared test to get expected frequencies
+chi_test <- chisq.test(contingency_table)
+expected <- chi_test$expected  # Expected frequencies
+residuals <- (contingency_table - expected) / sqrt(expected)  # Compute residuals
+
+# Define a custom shading function manually
+custom_shading <- function(residuals) {
+  breaks <- c(-Inf, -2, 0, 2, Inf)  # Breaks for shading categories
+  colors <- c("#E8F5E9", "#C8E6C9", "#A5D6A7", "#388E3C")  # Light to dark green
+  as.character(cut(residuals, breaks = breaks, labels = colors, include.lowest = TRUE))
+}
+
+# Assign shading to each cell in the contingency table
+color_map <- matrix(custom_shading(as.vector(residuals)), 
+                    nrow = nrow(contingency_table), 
+                    ncol = ncol(contingency_table))
+
+# Create the mosaic plot with custom colors
+mosaic(
+  contingency_table,
+  gp = gpar(fill = color_map),  # Apply the color map
+  labeling_args = list(
+    set_varnames = c(indc = "Induction of Labor", augmt = "Augmentation of Labor")  # Custom axis labels
+  ))
+
+```
+
+### Usage of Steroids and Antibiotics
+
+```{r}
+#| label: fig-corr2
+#| fig-cap: Mosaic plot showing the correlation between usage of steroids and antibiotics
+#| echo: false
+#| warning: false
+#| message: false
+
+# Load necessary library
+library(vcd)
+
+# Create a contingency table for "Induction of Labor" and "Augmentation of Labor"
+contingency_table <- xtabs(~ ster + antb, data = balanced_data)
+
+# Perform chi-squared test to get expected frequencies
+chi_test <- chisq.test(contingency_table)
+expected <- chi_test$expected  # Expected frequencies
+residuals <- (contingency_table - expected) / sqrt(expected)  # Compute residuals
+
+# Define a custom shading function manually
+custom_shading <- function(residuals) {
+  breaks <- c(-Inf, -2, 0, 2, Inf)  # Breaks for shading categories
+  colors <- c("#E8F5E9", "#C8E6C9", "#A5D6A7", "#388E3C")  # Light to dark green
+  as.character(cut(residuals, breaks = breaks, labels = colors, include.lowest = TRUE))
+}
+
+# Assign shading to each cell in the contingency table
+color_map <- matrix(custom_shading(as.vector(residuals)), 
+                    nrow = nrow(contingency_table), 
+                    ncol = ncol(contingency_table))
+
+# Create the mosaic plot with custom colors
+mosaic(
+  contingency_table,
+  gp = gpar(fill = color_map),  # Apply the color map
+  labeling_args = list(
+    set_varnames = c(ster = "Steroids", antb = "Antibiotics")  # Custom axis labels
+  ))
+
+```
+
+
+### Usage of Chorioamnionitis and Antibiotics
+
+```{r}
+#| label: fig-corr3
+#| fig-cap: Mosaic plot showing the correlation between usage of chorioamnionitis and antibiotics
+#| echo: false
+#| warning: false
+#| message: false
+
+# Load necessary library
+library(vcd)
+
+# Create a contingency table for "Induction of Labor" and "Augmentation of Labor"
+contingency_table <- xtabs(~ chor + antb, data = balanced_data)
+
+# Perform chi-squared test to get expected frequencies
+chi_test <- chisq.test(contingency_table)
+expected <- chi_test$expected  # Expected frequencies
+residuals <- (contingency_table - expected) / sqrt(expected)  # Compute residuals
+
+# Define a custom shading function manually
+custom_shading <- function(residuals) {
+  breaks <- c(-Inf, -2, 0, 2, Inf)  # Breaks for shading categories
+  colors <- c("#E8F5E9", "#C8E6C9", "#A5D6A7", "#388E3C")  # Light to dark green
+  as.character(cut(residuals, breaks = breaks, labels = colors, include.lowest = TRUE))
+}
+
+# Assign shading to each cell in the contingency table
+color_map <- matrix(custom_shading(as.vector(residuals)), 
+                    nrow = nrow(contingency_table), 
+                    ncol = ncol(contingency_table))
+
+# Create the mosaic plot with custom colors
+mosaic(
+  contingency_table,
+  gp = gpar(fill = color_map),  # Apply the color map
+  labeling_args = list(
+    set_varnames = c(chor = "Chorioamnionitis", antb = "Antibiotics")  # Custom axis labels
+  ))
+
+```
 
 # Model
 
@@ -141,35 +855,347 @@ We can use maths by including latex between dollar signs, for instance $\theta$.
 
 # Results
 
-Our results are summarized in @tbl-modelresults.
+## Results from examining the analysis dataset
 
 ```{r}
+#| label: fig-result1
+#| fig-cap: The mean of APGAR5 scores by the number of treatments recieved during labor and delivery
 #| echo: false
-#| eval: true
 #| warning: false
 #| message: false
 
-library(rstanarm)
+anal_data <- balanced_data %>%
+  mutate(
+    drug_count = rowSums(select(., c(indc, augmt, ster, antb, chor, anes)) == 1, na.rm = TRUE)
+  )
 
-first_model <-
-  readRDS(file = here::here("models/first_model.rds"))
+summary_data <- anal_data %>%
+  group_by(drug_count) %>%
+  summarise(
+    mean_apgar5 = mean(apgar5),
+    sd_apgar5 = sd(apgar5)
+  )
+
+ggplot(summary_data, aes(x = factor(drug_count), y = mean_apgar5)) +
+  geom_bar(
+    stat = "identity",
+    width = 0.5,  # Adjust width for thinner bars
+    fill = "skyblue",
+    color = "black",
+    alpha = 0.7
+  ) +
+  geom_errorbar(
+    aes(ymin = mean_apgar5 - sd_apgar5, ymax = mean_apgar5 + sd_apgar5),
+    width = 0.2,  # Width of error bars remains the same
+    color = "blue"
+  ) +
+  geom_text(
+    aes(label = round(mean_apgar5, 1)),
+    vjust = -0.5,
+    size = 4,
+    color = "black"
+  ) +
+  labs(
+    x = "Number of Treatments During Labor and Delivery",
+    y = "Mean of APGAR5 Score"
+  ) +
+  scale_y_continuous(
+    limits = c(0, max(summary_data$mean_apgar5 + summary_data$sd_apgar5) + 1),
+    breaks = seq(0, 10, by = 1)
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text = element_text(size = 12),
+    axis.title = element_text(size = 13)
+  )
+
 ```
 
 ```{r}
+#| label: fig-result2
+#| fig-cap: Heatmap of the overall correlation between treatments administered during delivery and APGAR5 scores
 #| echo: false
-#| eval: true
-#| label: tbl-modelresults
-#| tbl-cap: "Explanatory models of flight time based on wing width and wing length"
 #| warning: false
+#| message: false
 
-modelsummary::modelsummary(
-  list(
-    "First model" = first_model
-  ),
-  statistic = "mad",
-  fmt = 2
+heatmap_data <- balanced_data %>%
+  pivot_longer(
+    cols = c(indc, augmt, ster, antb, chor, anes), 
+    names_to = "Drug_Usage", 
+    values_to = "Usage"
+  ) %>%
+  filter(Usage == 1) %>%  # Keep rows where drug usage is "Yes" (1)
+  group_by(Drug_Usage, apgar5) %>%
+  summarise(Count = n(), .groups = "drop") %>%
+  pivot_wider(names_from = apgar5, values_from = Count, values_fill = 0)
+
+# Convert the reshaped data back to long format for ggplot
+heatmap_long <- heatmap_data %>%
+  pivot_longer(-Drug_Usage, names_to = "APGAR5", values_to = "Count") %>%
+  mutate(APGAR5 = as.numeric(APGAR5))
+
+# Create heatmap
+# Create a mapping of custom labels for drug usage categories
+custom_labels <- c(
+  indc = "Induction",
+  augmt = "Augmentation",
+  ster = "Steroids",
+  antb = "Antibiotics",
+  chor = "Chorioamnionitis",
+  anes = "Anesthesia"
 )
+ggplot(heatmap_long, aes(x = APGAR5, y = Drug_Usage, fill = Count)) +
+  geom_tile(color = "white") +
+  scale_fill_gradient(
+    low = "skyblue", 
+    high = "blue", 
+    name = "Count of Yes Responses", 
+    guide = guide_colorbar(
+      name = "Yes Responses",
+      barwidth = 1,  # Adjust the width of the legend
+      barheight = 6  # Adjust the height of the legend
+    )
+  ) +
+  scale_x_continuous(breaks = 0:10) +  # Show all integers from 0 to 10
+  scale_y_discrete(labels = custom_labels) +  # Apply custom labels to y-axis (Drug Usage Categories)
+  labs(
+    x = "Five-Minute APGAR Score",
+    y = "Treatments During Labor and Delivery"
+  ) +
+  theme_minimal(base_size = 10) +
+  theme(
+    axis.text.x = element_text(hjust = 1, vjust = 1),  # Angle and align x-axis text
+    axis.text.y = element_text(size = 9),  # Increase y-axis text size
+    legend.text = element_text(size = 7),  # Reduce legend text size
+    legend.title = element_text(size = 7),  # Reduce legend title size
+  )
+
 ```
+
+
+```{r}
+#| label: fig-indcscore
+#| fig-cap: APGAR5 score distribution for the usage of induction labor
+#| echo: false
+#| warning: false
+#| message: false
+
+# Filter data for Induction of Labor (indc == 1)
+indc_data <- balanced_data %>% filter(indc == 1)
+
+# Compute the counts for each APGAR5 score
+indc_data_summary <- indc_data %>%
+  group_by(apgar5) %>%
+  summarise(Count = n(), .groups = "drop")
+
+# Plot the bar chart with a trendline
+ggplot(indc_data_summary, aes(x = apgar5, y = Count)) +
+  geom_col(color = "black", fill = "skyblue", alpha = 0.7) +  # Bar chart
+  geom_line(aes(y = Count), color = "red", size = 1.2) +       # Add trendline
+  geom_point(color = "red", size = 3) +                        # Highlight points
+  labs(
+    x = "Five-Minute APGAR Score",
+    y = "Observation Count"
+  ) +
+  theme_minimal() +
+  scale_x_continuous(breaks = 0:10) +
+  scale_y_continuous(limits = c(0, max(indc_data_summary$Count) + 100), expand = c(0, 0)) +
+  theme(
+    axis.text.x = element_text(hjust = 1, vjust = 1),
+    axis.text.y = element_text(size = 12)
+  )
+
+```
+
+```{r}
+#| label: fig-augmtscore
+#| fig-cap: APGAR5 score distribution for the usage of augmentation labor
+#| echo: false
+#| warning: false
+#| message: false
+
+# Filter data for Augmentation of Labor (augmt == 1)
+augmt_data <- balanced_data %>% filter(augmt == 1)
+
+# Compute the counts for each APGAR5 score
+augmt_data_summary <- augmt_data %>%
+  group_by(apgar5) %>%
+  summarise(Count = n(), .groups = "drop")
+
+# Plot the bar chart with a trendline
+ggplot(augmt_data_summary, aes(x = apgar5, y = Count)) +
+  geom_col(color = "black", fill = "skyblue", alpha = 0.7) +  # Bar chart
+  geom_line(aes(y = Count), color = "red", size = 1.2) +       # Add trendline
+  geom_point(color = "red", size = 3) +                        # Highlight points
+  labs(
+    x = "Five-Minute APGAR Score",
+    y = "Observation Count"
+  ) +
+  theme_minimal() +
+  scale_x_continuous(breaks = 0:10) +
+  scale_y_continuous(limits = c(0, max(augmt_data_summary$Count) + 100), expand = c(0, 0)) +
+  theme(
+    axis.text.x = element_text(hjust = 1, vjust = 1),
+    axis.text.y = element_text(size = 12)
+  )
+
+```
+
+```{r}
+#| label: fig-sterscore
+#| fig-cap: APGAR5 score distribution for the usage of steroids
+#| echo: false
+#| warning: false
+#| message: false
+
+# Filter data for Steroids (ster == 1)
+ster_data <- balanced_data %>% filter(ster == 1)
+
+# Compute the counts for each APGAR5 score
+ster_data_summary <- ster_data %>%
+  group_by(apgar5) %>%
+  summarise(Count = n(), .groups = "drop")
+
+# Plot the bar chart with a trendline
+ggplot(ster_data_summary, aes(x = apgar5, y = Count)) +
+  geom_col(color = "black", fill = "skyblue", alpha = 0.7) +  # Bar chart
+  geom_line(aes(y = Count), color = "red", size = 1.2) +       # Add trendline
+  geom_point(color = "red", size = 3) +                        # Highlight points
+  labs(
+    x = "Five-Minute APGAR Score",
+    y = "Observation Count"
+  ) +
+  theme_minimal() +
+  scale_x_continuous(breaks = 0:10) +
+  scale_y_continuous(limits = c(0, max(ster_data_summary$Count) + 100), expand = c(0, 0)) +
+  theme(
+    axis.text.x = element_text(hjust = 1, vjust = 1),
+    axis.text.y = element_text(size = 12)
+  )
+
+```
+
+```{r}
+#| label: fig-antbscore
+#| fig-cap: APGAR5 score distribution for the usage of antibiotics
+#| echo: false
+#| warning: false
+#| message: false
+
+# Filter data for Antibiotics (antb == 1)
+antb_data <- balanced_data %>% filter(antb == 1)
+
+# Compute the counts for each APGAR5 score
+antb_data_summary <- antb_data %>%
+  group_by(apgar5) %>%
+  summarise(Count = n(), .groups = "drop") %>%
+  arrange(apgar5)  # Ensure data is sorted by APGAR5
+
+
+# Plot the bar chart with a trendline
+ggplot(antb_data_summary, aes(x = apgar5, y = Count)) +
+  geom_col(color = "black", fill = "skyblue", alpha = 0.7) +  # Bar chart
+  geom_line(aes(y = Count), color = "red", size = 1.2) +       # Add trendline
+  geom_point(color = "red", size = 3) +                        # Highlight points
+  labs(
+    x = "Five-Minute APGAR Score",
+    y = "Observation Count"
+  ) +
+  theme_minimal() +
+  scale_x_continuous(breaks = 0:10) +
+  scale_y_continuous(limits = c(0, max(antb_data_summary$Count) + 100), expand = c(0, 0)) +
+  theme(
+    axis.text.x = element_text(hjust = 1, vjust = 1),
+    axis.text.y = element_text(size = 12)
+  )
+
+
+
+```
+
+```{r}
+#| label: fig-chorscore
+#| fig-cap: APGAR5 score distribution for the usage of chorioamnionitis
+#| echo: false
+#| warning: false
+#| message: false
+
+# Filter data for Chorioamnionitis (chor == 1)
+chor_data <- balanced_data %>% filter(chor == 1)
+
+# Compute the counts for each APGAR5 score
+chor_data_summary <- chor_data %>%
+  group_by(apgar5) %>%
+  summarise(Count = n(), .groups = "drop") %>%
+  arrange(apgar5)  # Ensure data is sorted by APGAR5
+
+
+# Plot the bar chart with a trendline
+ggplot(chor_data_summary, aes(x = apgar5, y = Count)) +
+  geom_col(color = "black", fill = "skyblue", alpha = 0.7) +  # Bar chart
+  geom_line(aes(y = Count), color = "red", size = 1.2) +       # Add trendline
+  geom_point(color = "red", size = 3) +                        # Highlight points
+  labs(
+    x = "Five-Minute APGAR Score",
+    y = "Observation Count"
+  ) +
+  theme_minimal() +
+  scale_x_continuous(breaks = 0:10) +
+  scale_y_continuous(limits = c(0, max(chor_data_summary$Count) + 50), expand = c(0, 0)) +
+  theme(
+    axis.text.x = element_text(hjust = 1, vjust = 1),
+    axis.text.y = element_text(size = 12)
+  )
+
+
+
+```
+
+```{r}
+#| label: fig-anesscore
+#| fig-cap: APGAR5 score distribution for the usage of anesthesia
+#| echo: false
+#| warning: false
+#| message: false
+
+# Filter data for Anesthesia (anes == 1)
+anes_data <- balanced_data %>% filter(anes == 1)
+
+# Compute the counts for each APGAR5 score
+anes_data_summary <- anes_data %>%
+  group_by(apgar5) %>%
+  summarise(Count = n(), .groups = "drop") %>%
+  arrange(apgar5)  # Ensure data is sorted by APGAR5
+
+
+# Plot the bar chart with a trendline
+ggplot(anes_data_summary, aes(x = apgar5, y = Count)) +
+  geom_col(color = "black", fill = "skyblue", alpha = 0.7) +  # Bar chart
+  geom_line(aes(y = Count), color = "red", size = 1.2) +       # Add trendline
+  geom_point(color = "red", size = 3) +                        # Highlight points
+  labs(
+    x = "Five-Minute APGAR Score",
+    y = "Observation Count"
+  ) +
+  theme_minimal() +
+  scale_x_continuous(breaks = 0:10) +
+  scale_y_continuous(limits = c(0, max(anes_data_summary$Count) + 200), expand = c(0, 0)) +
+  theme(
+    axis.text.x = element_text(hjust = 1, vjust = 1),
+    axis.text.y = element_text(size = 12)
+  )
+
+
+```
+
+
+## Results from the prediction model
+
+Our results are summarized in @tbl-modelresults.
+
+
+
+
 
 
 
@@ -207,26 +1233,7 @@ In @fig-ppcheckandposteriorvsprior-1 we implement a posterior predictive check. 
 
 In @fig-ppcheckandposteriorvsprior-2 we compare the posterior with the prior. This shows... 
 
-```{r}
-#| eval: true
-#| echo: false
-#| message: false
-#| warning: false
-#| label: fig-ppcheckandposteriorvsprior
-#| layout-ncol: 2
-#| fig-cap: "Examining how the model fits, and is affected by, the data"
-#| fig-subcap: ["Posterior prediction check", "Comparing the posterior with the prior"]
 
-pp_check(first_model) +
-  theme_classic() +
-  theme(legend.position = "bottom")
-
-posterior_vs_prior(first_model) +
-  theme_minimal() +
-  scale_color_brewer(palette = "Set1") +
-  theme(legend.position = "bottom") +
-  coord_flip()
-```
 
 ## Diagnostics
 
@@ -234,20 +1241,8 @@ posterior_vs_prior(first_model) +
 
 @fig-stanareyouokay-2 is a Rhat plot. It shows... This suggests...
 
-```{r}
-#| echo: false
-#| eval: true
-#| message: false
-#| warning: false
-#| label: fig-stanareyouokay
-#| fig-cap: "Checking the convergence of the MCMC algorithm"
-#| fig-subcap: ["Trace plot", "Rhat plot"]
-#| layout-ncol: 2
 
-plot(first_model, "trace")
 
-plot(first_model, "rhat")
-```
 
 
 

@@ -1,7 +1,7 @@
 #### Preamble ####
 # Purpose: Selects relevant variables for analysis and removes the outliers(unknown or unreported).
 # Author: Yunkyung Ko
-# Date: 18 November 2024
+# Date: 21 November 2024
 # Contact: yunkyung.ko@mail.utoronto.ca
 # License: MIT
 # Pre-requisites:
@@ -50,6 +50,28 @@ infant_health_na <-
 infant_health <- infant_health_na %>%
   drop_na()
 
+library(dplyr)
+
+# Define the desired sample size per `apgar5` score
+# You can use the minimum count across groups or specify a fixed number
+desired_sample_size <- 2000  # Adjust this based on your needs
+
+# Stratified random sampling
+balanced_data <- infant_health %>%
+  group_by(apgar5) %>%
+  sample_n(size = min(desired_sample_size, n()), replace = FALSE) %>%  # Ensure no oversampling
+  ungroup()
+
+# Check the distribution of the new dataset
+balanced_data %>%
+  group_by(apgar5) %>%
+  summarise(Count = n()) %>%
+  print()
+
+
 #### Save data ####
 write_csv(infant_health, "data/02-analysis_data/infant_health.csv")
 write_parquet(infant_health, "data/02-analysis_data/infant_health.parquet")
+
+write_csv(balanced_data, "data/02-analysis_data/infant_balanced.csv")
+write_parquet(balanced_data, "data/02-analysis_data/infant_balanced.parquet")

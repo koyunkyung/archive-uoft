@@ -3,7 +3,7 @@
 
 ## Overview
 
-This repo contains the analysis aimed at predicting neonatal health outcomes, specifically the Apgar score, using maternal and delivery-related variables. The project leverages advanced statistical and machine learning techniques, including Bayesian GLM(Generalized Linear Model)s and Random forests, to address critical challenges in early neonatal risk assessment. By utilizing datasets from the National Center for Health Statistics, this research aims to support data-driven decision making in maternal and neonatal care.
+This repo contains the analysis aimed at predicting neonatal health outcomes, specifically the Apgar score, using maternal and delivery-related variables. The project leverages advanced statistical and machine learning techniques, including Bayesian GLM(Generalized Linear Model)s and Random Forests, to address critical challenges in early neonatal risk assessment. By utilizing datasets from the National Center for Health Statistics, this research aims to support data-driven decision making in maternal and neonatal care.
 
 
 ## File Structure
