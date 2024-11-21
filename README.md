@@ -1,4 +1,4 @@
-# Estimating the Number of Doctoral Degree Holders in the U.S.: A Comparative Analysis Using 2022 ACS Data and Laplace Ratio Estimators
+# Estimating the Number of Doctoral Degree Holders in the US: A Comparative Analysis Using 2022 ACS Data and Laplace Ratio Estimators
 ## Discrepancy Between Estimated and Actual Totals Show Regional Variations in Educational Attainment
 
 ## Overview
