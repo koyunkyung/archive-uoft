@@ -59,7 +59,9 @@ Overview text
 
 ## Measurement
 	
-Some paragraphs about how we go from a phenomena in the world to an entry in the dataset.
+The data transforms the phenomenon of infant health status into data, defining measurable variables that can capture the complex factors influencing the APGAR5 score. This transformation is achieved through the collection of information on various treatments and conditions experienced during labor and delivery, such as steroid use, chorioamnionitis, antibiotics, and anesthesia, among others. These variables, which are typically binary, are then recorded through surveys or medical records, using checkboxes or scales that allow for quantification. The APGAR5 score itself, is also a simplified numerical representation of an infant's health, which may overlook the complexities of their condition.
+
+By structuring these variables into numerical or categorical forms, the data can be analyzed and used to model the relationship between treatments and the APGAR5 score. However, this process involves challenges such as measurement error and biases, especially when data collection relies on self-reporting or clinician-recorded information. 
 
 ## Outcome variables
 
@@ -949,7 +951,7 @@ ggplot(heatmap_long, aes(x = APGAR5, y = Drug_Usage, fill = Count)) +
   scale_fill_gradient(
     low = "skyblue", 
     high = "blue", 
-    name = "Count of Yes Responses", 
+    name = "Yes Responses", 
     guide = guide_colorbar(
       name = "Yes Responses",
       barwidth = 1,  # Adjust the width of the legend
@@ -1191,10 +1193,146 @@ ggplot(anes_data_summary, aes(x = apgar5, y = Count)) +
 
 ## Results from the prediction model
 
-Our results are summarized in @tbl-modelresults.
+```{r}
+#| echo: false
+#| eval: true
+#| warning: false
+#| message: false
+
+library(randomForest)
+library(caret)
+
+rf_model <-
+  readRDS(file = here::here("models/random_forest.rds"))
+```
 
 
+```{r}
+#| echo: false
+#| eval: true
+#| label: tbl-rfsummary1
+#| tbl-cap: Variable importance of treatments during labor and delivery on infant health, based on Random Forest model
+#| warning: false
 
+# Load necessary libraries
+library(tidyverse)
+library(caret)
+library(knitr)
+library(kableExtra)
+
+# Custom labels for the variables
+custom_labels <- c(
+  "indc1" = "Induction of Labor",
+  "augmt1" = "Augmentation of Labor",
+  "ster1" = "Steroids",
+  "antb1" = "Antibiotics",
+  "chor1" = "Chorioamnionitis",
+  "anes1" = "Anesthesia"
+)
+
+# Extract variable importance using caret
+importance_data <- varImp(rf_model, scale = TRUE)
+
+# Convert varImp.train object to a data frame
+importance_table <- as.data.frame(importance_data$importance)
+
+# Add variable names as a new column
+importance_table$Variable <- rownames(importance_table)
+
+# Transform the data frame
+importance_table <- importance_table %>%
+  mutate(
+    `Treatment Type` = recode(Variable, !!!custom_labels),  # Replace with custom labels
+    `Variable Importance` = Overall / sum(Overall) * 100  # Convert to percentages
+  ) %>%
+  select(`Treatment Type`, `Variable Importance`) %>%  # Select relevant columns
+  arrange(match(`Treatment Type`, custom_labels)) %>%  # Sort by custom_labels order
+  mutate(`Variable Importance` = round(`Variable Importance`, 2))  # Round to 2 decimal places
+
+# Display the importance table using kableExtra
+importance_table %>%
+  kable(
+    col.names = c("Treatment Type", "Variable Importance (%)")) %>%
+  kable_styling(full_width = FALSE, position = "center")
+
+```
+
+```{r}
+#| echo: false
+#| eval: true
+#| label: fig-rfsumbar
+#| fig-cap: Variable importance of treatments during labor and delivery on infant health, expressed in bar plots
+#| warning: false
+
+# Load necessary library
+library(ggplot2)
+
+# Horizontal bar plot
+ggplot(importance_table, aes(x = `Variable Importance`, y = `Treatment Type`)) +
+  geom_bar(stat = "identity", fill = "#DDA0DD", color = "grey") +
+  labs(
+    x = "Variable Importance (%)",
+    y = "Treatment Type"
+  ) +
+  theme_minimal() +
+  theme(
+    axis.title.x = element_text(size = 12),
+    axis.title.y = element_text(size = 12),
+    axis.text.x = element_text(size = 10),
+    axis.text.y = element_text(size = 10)
+  )
+
+
+```
+
+
+```{r}
+#| echo: false
+#| eval: true
+#| label: tbl-rfsummary2
+#| tbl-cap: Model accuracy metrics for Random Forest Model
+#| warning: false
+#| message: false
+
+
+# Load necessary libraries
+library(tidyverse)
+library(caret)
+library(knitr)
+library(kableExtra)
+
+# Predict on test data
+train_data <- read_csv("../data/02-analysis_data/train_test_data/train_data.csv")
+test_data <- read_csv("../data/02-analysis_data/train_test_data/test_data.csv")
+train_data <- train_data %>%
+  mutate(across(c("indc", "augmt", "ster", "antb", "chor", "anes"), as.factor))
+test_data <- test_data %>%
+  mutate(across(c("indc", "augmt", "ster", "antb", "chor", "anes"), as.factor))
+predictions <- predict(rf_model, newdata = test_data)
+
+# Calculate performance metrics
+actual <- test_data$apgar5
+rmse <- sqrt(mean((predictions - actual)^2))  # RMSE
+mae <- mean(abs(predictions - actual))       # MAE
+rss <- sum((predictions - actual)^2)         # Residual Sum of Squares
+tss <- sum((actual - mean(actual))^2)        # Total Sum of Squares
+r_squared <- 1 - (rss / tss)                 # R-Squared
+adjusted_r_squared <- 1 - ((1 - r_squared) * ((nrow(test_data) - 1) / (nrow(test_data) - length(rf_model$importance) - 1)))
+
+# Create a summary table
+accuracy_table <- tibble(
+  Metric = c("RMSE", "MAE", "R-Squared", "Adjusted R-Squared"),
+  Value = c(round(rmse, 2), round(mae, 2), round(r_squared, 2), round(adjusted_r_squared, 2))
+)
+
+# Display the table
+accuracy_table %>%
+  kable(
+    col.names = c("Metric", "Value")
+  ) %>%
+  kable_styling(full_width = FALSE, position = "center")
+
+```
 
 
 
@@ -1226,24 +1364,6 @@ Weaknesses and next steps should also be included.
 # Additional data details
 
 # Model details {#sec-model-details}
-
-## Posterior predictive check
-
-In @fig-ppcheckandposteriorvsprior-1 we implement a posterior predictive check. This shows...
-
-In @fig-ppcheckandposteriorvsprior-2 we compare the posterior with the prior. This shows... 
-
-
-
-## Diagnostics
-
-@fig-stanareyouokay-1 is a trace plot. It shows... This suggests...
-
-@fig-stanareyouokay-2 is a Rhat plot. It shows... This suggests...
-
-
-
-
 
 
 \newpage
