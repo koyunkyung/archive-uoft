@@ -1,7 +1,7 @@
 #### Preamble ####
 # Purpose: Tests the structure and validity of the simulated infant health dataset. Shows expected results of the logistic regression model with simulated data.
 # Author: Yunkyung Ko
-# Date: 18 November 2024
+# Date: 23 November 2024
 # Contact: yunkyung.ko@mail.utoronto.ca
 # License: MIT
 # Pre-requisites: 
@@ -106,22 +106,54 @@ sim_data <- sim_data %>%
     drug_count = rowSums(select(., c(indc, augmt, ster, antb, chor, anes)) == 1, na.rm = TRUE)
   )
 
-# Graph 1: Relationship between Number of Drugs Used and APGAR Score
-num_drugs <- ggplot(sim_data, aes(x = drug_count, y = apgar5)) +
-  geom_point(shape = 4, color = "blue", size = 2, alpha = 0.8) +  # Add blue X-shaped points
-  geom_smooth(method = "lm", color = "red", fill = "red", alpha = 0.2) + # Add trend line and CI
-  labs(
-    title = "Relationship between Number of Treatments During Labor/Delivery\nand the Infant's Health Status",
-    x = "Number of Treatments (Drug Usage) During Labor and Delivery",
-    y = "Five-Minute APGAR Score"
+# Graph 1: Relationship between Number of Treatments Used and APGAR Score
+simm_data <- sim_data %>%
+  mutate(
+    drug_count = rowSums(select(., c(indc, augmt, ster, antb, chor, anes)) == 1, na.rm = TRUE)
+  )
+
+summary_data_s <- simm_data %>%
+  group_by(drug_count) %>%
+  summarise(
+    mean_apgar5 = mean(apgar5),
+    sd_apgar5 = sd(apgar5)
+  )
+
+num_drugs <- ggplot(summary_data_s, aes(x = factor(drug_count), y = mean_apgar5)) +
+  geom_bar(
+    stat = "identity",
+    width = 0.5,  # Adjust width for thinner bars
+    fill = "skyblue",
+    color = "black",
+    alpha = 0.7
   ) +
-  scale_y_continuous(limits = c(0, 10), breaks = 0:10) +  # Ensure y-axis ranges from 0 to 10
+  geom_errorbar(
+    aes(ymin = mean_apgar5 - sd_apgar5, ymax = mean_apgar5 + sd_apgar5),
+    width = 0.2,  # Width of error bars remains the same
+    color = "blue"
+  ) +
+  geom_text(
+    aes(label = round(mean_apgar5, 1)),
+    vjust = -0.5,
+    size = 4,
+    color = "black"
+  ) +
+  labs(
+    title = "Relationship between the number of treatments used during labor/delivery and the APGAR5 score",
+    x = "Number of Treatments During Labor and Delivery",
+    y = "Mean of APGAR5 Score"
+  ) +
+  scale_y_continuous(
+    limits = c(0, max(summary_data_s$mean_apgar5 + summary_data_s$sd_apgar5) + 1),
+    breaks = seq(0, 10, by = 1)
+  ) +
   theme_minimal() +
   theme(
-    plot.background = element_rect(fill = "white"),  # Set overall background to white
-    plot.title = element_text(hjust = 0.5, face = "bold", size = 14),  # Center and bold title
-    axis.text = element_text(size = 12),  # Increase axis text size
-    axis.title = element_text(size = 13)  # Increase axis title size
+    plot.background = element_rect(fill = "white"),
+    axis.text = element_text(size = 12),
+    axis.title = element_text(size = 13),
+    plot.title = element_text(hjust = 0.5, size = 11.5, face = "bold"),  # Center and format title
+    plot.margin = margin(10, 10, 10, 10)  # Add spacing around the plot
   )
 # Save the plot in .png file
 ggsave(filename = "data/00-simulated_data/simulated_results/num_drugs.png", plot = num_drugs, width = 8, height = 6, dpi = 300)
