@@ -34,19 +34,8 @@ randfor <- ranger(
 )
 
 
-# Model 2: Bayesian GLM for Predicting apgar5
-bayeslinear <- stan_glm(
-  formula = apgar5 ~ indc + augmt + ster + antb + chor + anes,  # Formula for the model
-  data = analysis_data,                                         # Dataset
-  family = gaussian(),                                          # Assumes normal errors for continuous outcome
-  prior = normal(location = 0, scale = 2.5, autoscale = TRUE),  # Priors for coefficients
-  prior_intercept = normal(location = 0, scale = 2.5, autoscale = TRUE), # Prior for intercept
-  prior_aux = exponential(rate = 1, autoscale = TRUE),          # Prior for auxiliary parameters (e.g., sigma)
-  seed = 853                                                    # Seed for reproducibility
-)
-
 
 #### Save model ####
 saveRDS(randfor, file = "models/random_forest.rds")
-saveRDS(bayeslinear, file = "models/bayesian_glm.rds")
+
 
