@@ -13,6 +13,7 @@
 library(data.table)
 library(tidyverse)
 library(arrow)
+library(caret)
 
 #### Clean data ####
 raw_data <- fread("data/01-raw_data/infant_data.csv")
@@ -64,9 +65,25 @@ balanced_data <- infant_health %>%
 balanced_data <- balanced_data %>%
   mutate(across(c("indc", "augmt", "ster", "antb", "chor", "anes"), ~ as.factor(.)))
 
+# Split data into training and testing sets to use it for prediction and accuracy check
+set.seed(853) # For reproducibility
+train_indices <- createDataPartition(balanced_data$apgar5, p = 0.7, list = FALSE)
+train_data <- balanced_data[train_indices, ]
+test_data <- balanced_data[-train_indices, ]
+
+
+
 #### Save data ####
 write_csv(infant_health, "data/02-analysis_data/infant_health.csv")
 write_parquet(infant_health, "data/02-analysis_data/infant_health.parquet")
 
 write_csv(balanced_data, "data/02-analysis_data/infant_balanced.csv")
 write_parquet(balanced_data, "data/02-analysis_data/infant_balanced.parquet")
+
+write_csv(train_data, "data/02-analysis_data/train_test_data/train_data.csv")
+write_parquet(train_data, "data/02-analysis_data/train_test_data/train_data.parquet")
+
+write_csv(test_data, "data/02-analysis_data/train_test_data/test_data.csv")
+write_parquet(test_data, "data/02-analysis_data/train_test_data/test_data.parquet")
+
+
