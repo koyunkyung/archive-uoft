@@ -12,8 +12,7 @@ The repo is structured as:
 
 -   `data/00-simulated_data` contains the simulated dataset and the simulated results of this analysis.
 -   `data/01-raw_data` was intended to host the original datasets obtained from National Center for Health Statistics (https://www.cdc.gov/nchs/nvss/linked-birth.htm). However, due to memory constraints, large datasets (1.94GB in .csv format and 142.8MB in .parquet format) could not be included in this repo. Please refer to the link above to access the original dataset directly.
--   `data/02-analysis_data` contains the cleaned dataset that was constructed.
--   `data/02-analysis_data/train_test_data` contains the train and test dataset for analyzing the accuracy of the model predictions.
+-   `data/02-analysis_data` contains the cleaned dataset, and the train and test dataste for analyzing the accuracy of the model predictions.
 -   `models` contains random forest models and bayesian glm models for predicting the apgar5 score. 
 -   `other` contains relevant literature, details about LLM chat interactions, and sketches.
 -   `paper` contains the files used to generate the paper, including the Quarto document and reference bibliography file, as well as the PDF of the paper. 
