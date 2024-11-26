@@ -1473,16 +1473,17 @@ Addressing these limitations, future research should aim to incorporate more div
 
 # Appendix {#sec-appendix}
 
-
 # Additional data details
+
+
 
 # Model details {#sec-model-details}
 
 ## Posterior predictive check
 
-In @fig-ppcheckandposteriorvsprior-1 we implement a posterior predictive check. This shows...
+In @fig-ppcheckandposteriorvsprior-1 we implement a posterior predictive check, with the dark line representing the observed data distribution and the lighter lines indicating the posterior predictive distribution. This shows the notable deviation between `y` and `y_rep`, particularly the oscillations in the observed data. It suggests that the model may not fully capture the underlying structure of the observed data and proposes the need for model refinement, such as including additional predictors or modifying priors [@tellingstories].
 
-In @fig-ppcheckandposteriorvsprior-2 we compare the posterior with the prior. This shows... 
+@fig-ppcheckandposteriorvsprior-2 compares the prior and posterior distributions of the model parameters. Significant shifts, such as for 'Steroids' and 'Chorioamnionitis' suggest these variables have strong impacts on the outcome, while minimal shifts for 'Antibiotics' indicate limited evidence of their effect. We can also note that the credible intervals underscore uncertainty.
 
 ```{r}
 #| eval: true
@@ -1498,18 +1499,36 @@ pp_check(bayesian_model) +
   theme_classic() +
   theme(legend.position = "bottom")
 
+# Create a named vector for the full variable names
+variable_names <- c(
+  "ster" = "Steroids",
+  "sigma" = "Residual Std.",
+  "indc" = "Induction of Labor",
+  "chor" = "Chorioamnionitis",
+  "augmt" = "Augmentation of Labor",
+  "antb" = "Antibiotics",
+  "anes" = "Anesthesia",
+  "(Intercept)" = "(Intercept)"
+)
+
+# Update the plot with the full variable names
 posterior_vs_prior(bayesian_model) +
   theme_minimal() +
-  scale_color_brewer(palette = "Set1") +
+  scale_color_manual(
+    values = RColorBrewer::brewer.pal(length(variable_names), "Set1"),  # Use the same color palette
+    labels = variable_names  # Apply full names to the legend
+  ) +
   theme(legend.position = "bottom") +
-  coord_flip()
+  coord_flip() +
+  scale_x_discrete(labels = variable_names)  # Apply the full names to y-axis
+
 ```
 
 ## Diagnostics
 
-@fig-stanareyouokay-1 is a trace plot. It shows... This suggests...
+@fig-stanareyouokay-1, which is a trace plot, shows stable and consistent fluctuations around a central value across iterations for all four chains. This suggests that the Bayesian model's Markov Chain Monte Carlo (MCMC) sampling has converged appropriately, ensuring that the posterior distributions are valid for interpretation.
 
-@fig-stanareyouokay-2 is a Rhat plot. It shows... This suggests...
+@fig-stanareyouokay-2, which is a Rhat plot, shows that all Rhat values are very close to 1 and none exceed the threshold of 1.05, indicating that the chains have converged well. This suggests that the Markov Chain Monte Carlo (MCMC) sampling has achieved stability and the posterior distributions can be reliably interpreted.
 
 ```{r}
 #| echo: false
@@ -1521,7 +1540,28 @@ posterior_vs_prior(bayesian_model) +
 #| fig-subcap: ["Trace plot", "Rhat plot"]
 #| layout-ncol: 2
 
-plot(bayesian_model, "trace")
+# Create a named vector for full variable names
+variable_names <- c(
+  "(Intercept)" = "(Intercept)",
+  "indc" = "Induction of Labor",
+  "augmt" = "Augmentation of Labor",
+  "ster" = "Steroids",
+  "antb" = "Antibiotics",
+  "chor" = "Chorioamnionitis",
+  "anes" = "Anesthesia",
+  "sigma" = "Residual Standard Deviation"
+)
+
+# Extract and relabel trace plots
+bayesplot::mcmc_trace(
+  as.array(bayesian_model),  # Convert model to array for trace plotting
+  pars = names(variable_names),  # Use variable names
+  facet_args = list(labeller = ggplot2::labeller(.rows = variable_names))  # Apply custom labels
+) +
+  theme_minimal() +
+  theme(legend.position = "bottom")
+
+
 
 plot(bayesian_model, "rhat")
 ```
