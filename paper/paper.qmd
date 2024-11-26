@@ -1,12 +1,12 @@
 ---
-title: "How Drug Usage During Labor and Delivery Affects Infant Health: A Predictive Analysis of APGAR5 Scores"
-subtitle: "!!! MAIN RESULTS !!!"
+title: "How Drug Usage During Labor and Delivery Affects Infant Health: A Predictive Analysis of Apgar5 Scores"
+subtitle: "Steroid Efficacy and Antibiotic Risks in Labor-Associated Care"
 author: 
   - Yunkyung Ko
 thanks: "Code and data are available at: [https://github.com/koyunkyung/infant_health](https://github.com/koyunkyung/infant_health)."
 date: today
 date-format: long
-abstract: "First sentence. Second sentence. Third sentence. Fourth sentence."
+abstract: "How maternal and neonatal drug interventions during labor shape the health status of a newborn remains a key question in perinatal care. With the 2023 Natality Data for the United States, we examined the relationship between six labor-related treatments and Apgar5 scores, a standard measure of neonatal health. Using a Random Forest model for prediction and a Bayesian Linear Model for inference, we identified usage of steroids and chorioamnionitis as the most impactful, while antibiotics dosage showed minimal influence. The analysis shows significant disparities in treatment efficacy, and further suggests the need for optimized corticosteroid formulations or targeted antibiotic protocols."
 format: pdf
 number-sections: true
 bibliography: references.bib
@@ -35,18 +35,17 @@ balanced_data <- read_csv("../data/02-analysis_data/infant_balanced.csv")
 ```
 
 
-# Introduction
+# Introduction {#sec-introduction}
 
-Overview paragraph
+The health of newborns is strongly influenced by the treatments administered during labor and delivery [@who_operational_guidance]. These interventions, including steroids, antibiotics, and anesthesia, are intended to address complications and improve neonatal outcomes, but their effectiveness varies widely [@anesthesiology_obstetric_anesthesia]. This paper uses the 2023 Natality Data for the United States [@rawdata] to analyze the impact of six specific treatments on neonatal health outcomes, measured using the Apgar5 score.
 
-Estimand paragraph
+The estimand of interest is the average treatment effect (ATE) of six labor-associated interventions on neonatal health outcomes, as measured by Apgar5 scores. Specifically, we aim to quantify how the administration of each treatment changes the Apgar score compared to scenarios where the treatment is not applied [@tellingstories]. By applying predictive modeling via Random Forest and inferential analysis through Bayesian linear models, we assess not only the magnitude of these effects[@geeksforgeeks_random_forest] but also the underlying uncertainties[@strimmerlab_priors].
 
-Results paragraph
+The analysis shows that prenatal exposure to steroids significantly improve Apgar scores (@tbl-rfsummary1), underscoring their role as a cornerstone of perinatal care. Conversely, antibiotics dosage doesn't show much contribution to the score distribution (@tbl-rfsummary1) and raises concerns about potential risks, including microbiota disruption [@narrow_spectrum_antibiotics]. Moreover, the analysis proposes significant disparities in the consistent application and effectiveness of these treatments (@fig-rfsumbar). 
 
-Why it matters paragraph
+This study has its significance in that it states the need to improve health outcomes for mothers and their newborns globally. As recognized by the World Health Organization, a healthy start in life has significant repercussions for a person's health and well-being during infancy, childhood, and adulthood [@who_maternal_health]. Ensuring quality care in maternal and newborn health is integral to the right to health, equity, and the preservation of dignity for women and their babies [@who_maternal_health].
 
-Telegraphing paragraph: The remainder of this paper is structured as follows. @sec-data....
-
+The remainder of this paper is structured as follows: @sec-data describes the dataset and methodology and @sec-model exhibits the use of predictive and inferential models. @sec-results presents the results of the analysis, detailing the observed relationships between treatments and neonatal health outcomes. @sec-discussion discusses the implications of these findings, focusing on healthcare policy and clinical practice improvements. Finally, @sec-weakeness concludes with a discussion of the study's limitations and potential areas for future research. @sec-appendix provides additional data details and model diagnostics.
 
 
 # Data {#sec-data}
@@ -849,7 +848,7 @@ mosaic(
 
 ```
 
-# Model
+# Model {#sec-model}
 
 The goal of our modelling strategy is twofold. Firstly, a Random Forest model was utilized to identify significant predictors of infant health status, as measured by the 5-minute Apgar score. Secondly, a Bayesian Linear Model was applied to quantify the effects of medical interventions during labor and delivery on infant health outcomes, incorporating prior knowledge into the analysis framework. 
 
@@ -898,7 +897,7 @@ The Bayesian Linear Model was employed to incorporate prior knowledge [@strimmer
 
 By integrating the Random Forest's predictive accuracy [@geeksforgeeks_random_forest] with the Bayesian Linear Model's capacity for inference and uncertainty quantification [@nguyen2018uncertainty], this dual-model approach offers a comprehensive understanding of the factors influencing infant health outcomes.
 
-# Results
+# Results {#sec-results}
 
 ## Results from examining the analysis dataset
 
@@ -941,7 +940,7 @@ ggplot(summary_data, aes(x = factor(drug_count), y = mean_apgar5)) +
   geom_text(
     aes(label = round(mean_apgar5, 1)),
     vjust = -0.5,
-    size = 4,
+    size = 3,
     color = "black"
   ) +
   labs(
@@ -954,8 +953,8 @@ ggplot(summary_data, aes(x = factor(drug_count), y = mean_apgar5)) +
   ) +
   theme_minimal() +
   theme(
-    axis.text = element_text(size = 12),
-    axis.title = element_text(size = 13)
+    axis.text = element_text(size = 10),
+    axis.title = element_text(size = 10)
   )
 
 ```
@@ -1056,7 +1055,7 @@ ggplot(indc_data_summary, aes(x = apgar5, y = Count)) +
   scale_y_continuous(limits = c(0, max(indc_data_summary$Count) + 100), expand = c(0, 0)) +
   theme(
     axis.text.x = element_text(hjust = 1, vjust = 1),
-    axis.text.y = element_text(size = 12)
+    axis.text.y = element_text(size = 10)
   )
 
 ```
@@ -1092,7 +1091,7 @@ ggplot(augmt_data_summary, aes(x = apgar5, y = Count)) +
   scale_y_continuous(limits = c(0, max(augmt_data_summary$Count) + 100), expand = c(0, 0)) +
   theme(
     axis.text.x = element_text(hjust = 1, vjust = 1),
-    axis.text.y = element_text(size = 12)
+    axis.text.y = element_text(size = 10)
   )
 
 ```
@@ -1128,7 +1127,7 @@ ggplot(ster_data_summary, aes(x = apgar5, y = Count)) +
   scale_y_continuous(limits = c(0, max(ster_data_summary$Count) + 100), expand = c(0, 0)) +
   theme(
     axis.text.x = element_text(hjust = 1, vjust = 1),
-    axis.text.y = element_text(size = 12)
+    axis.text.y = element_text(size = 10)
   )
 
 ```
@@ -1166,7 +1165,7 @@ ggplot(antb_data_summary, aes(x = apgar5, y = Count)) +
   scale_y_continuous(limits = c(0, max(antb_data_summary$Count) + 100), expand = c(0, 0)) +
   theme(
     axis.text.x = element_text(hjust = 1, vjust = 1),
-    axis.text.y = element_text(size = 12)
+    axis.text.y = element_text(size = 10)
   )
 
 
@@ -1206,7 +1205,7 @@ ggplot(chor_data_summary, aes(x = apgar5, y = Count)) +
   scale_y_continuous(limits = c(0, max(chor_data_summary$Count) + 50), expand = c(0, 0)) +
   theme(
     axis.text.x = element_text(hjust = 1, vjust = 1),
-    axis.text.y = element_text(size = 12)
+    axis.text.y = element_text(size = 10)
   )
 
 
@@ -1246,7 +1245,7 @@ ggplot(anes_data_summary, aes(x = apgar5, y = Count)) +
   scale_y_continuous(limits = c(0, max(anes_data_summary$Count) + 200), expand = c(0, 0)) +
   theme(
     axis.text.x = element_text(hjust = 1, vjust = 1),
-    axis.text.y = element_text(size = 12)
+    axis.text.y = element_text(size = 10)
   )
 
 
@@ -1356,10 +1355,10 @@ ggplot(importance_table, aes(x = `Variable Importance`, y = `Treatment Type`)) +
   ) +
   theme_minimal() +
   theme(
-    axis.title.x = element_text(size = 12),
-    axis.title.y = element_text(size = 12),
-    axis.text.x = element_text(size = 10),
-    axis.text.y = element_text(size = 10)
+    axis.title.x = element_text(size = 10),
+    axis.title.y = element_text(size = 10),
+    axis.text.x = element_text(size = 9),
+    axis.text.y = element_text(size = 9)
   )
 
 
@@ -1473,13 +1472,26 @@ Addressing these limitations, future research should aim to incorporate more div
 
 # Appendix {#sec-appendix}
 
-# Additional data details
+## Additional data details
+
+### Survey design and sampling techniques
+
+The 2023 Natality Dataset provides detailed records of maternal and neonatal health outcomes across diverse populations in the United States. This obervational dataset aggregates data from hospital records, birth certificates, and surveys completed by healthcare providers. Its comprehensive scope includes variables like maternal age, gestational age, socio-economic status, and the application of specific labor-related treatments.
+
+--- The dataset represents a census of live births in the U.S., negating the need for probabilistic sampling. However, for this study, we employed a stratified sampling approach to create a balanced subset. Treatments like steroids and antibiotics often show skewed distributions, with underrepresentation in certain socio-economic or geographic groups. Stratified sampling ensures adequate representation of minority groups, enabling a more equitable evaluation of treatment effects. Simulations using bootstrapped resampling were conducted to validate that the subset retained key characteristics of the full dataset.---
 
 
 
-# Model details {#sec-model-details}
+### Observational data considerations
 
-## Posterior predictive check
+
+!!![NEED TO WORK MORE] !!!
+
+
+
+## Model details {#sec-model-details}
+
+### Posterior predictive check
 
 In @fig-ppcheckandposteriorvsprior-1 we implement a posterior predictive check, with the dark line representing the observed data distribution and the lighter lines indicating the posterior predictive distribution. This shows the notable deviation between `y` and `y_rep`, particularly the oscillations in the observed data. It suggests that the model may not fully capture the underlying structure of the observed data and proposes the need for model refinement, such as including additional predictors or modifying priors [@tellingstories].
 
@@ -1524,7 +1536,7 @@ posterior_vs_prior(bayesian_model) +
 
 ```
 
-## Diagnostics
+### Diagnostics
 
 @fig-stanareyouokay-1, which is a trace plot, shows stable and consistent fluctuations around a central value across iterations for all four chains. This suggests that the Bayesian model's Markov Chain Monte Carlo (MCMC) sampling has converged appropriately, ensuring that the posterior distributions are valid for interpretation.
 
@@ -1549,7 +1561,7 @@ variable_names <- c(
   "antb" = "Antibiotics",
   "chor" = "Chorioamnionitis",
   "anes" = "Anesthesia",
-  "sigma" = "Residual Standard Deviation"
+  "sigma" = "Residual Std."
 )
 
 # Extract and relabel trace plots
