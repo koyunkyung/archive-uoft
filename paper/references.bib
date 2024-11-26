@@ -10,6 +10,17 @@
   }
   
   
+@misc{rawdata,
+  author       = {{National Bureau of Economic Research (NBER)}},
+  title        = {2023 Natality Data for the United States},
+  year         = {2023},
+  url          = {https://data.nber.org/nvss/natality/csv/2023/natality2023us.csv},
+  note         = {Accessed: 2024-11-23},
+  institution  = {National Center for Health Statistics (NCHS)},
+  abstract     = {This dataset provides detailed information on natality in the United States for the year 2023, including variables such as birth rates, parental demographics, and health outcomes.},
+}
+
+  
 @Manual{natality2023,
     title = {User Guide to the Natality Public Use File, 2023 Data Set},
     author = {{Centers for Disease Control and Prevention (CDC)} and {{National Center for Health Statistics (NCHS)}}},
@@ -18,6 +29,33 @@
     url = {https://ftp.cdc.gov/pub/Health_Statistics/NCHS/Dataset_Documentation/DVS/natality/UserGuide2023.pdf},
     note = {Accessed on 2024-11-18.}
 }
+
+@misc{cdc_facility_worksheet_2016,
+  author       = {{Centers for Disease Control and Prevention (CDC)}},
+  title        = {Facility Worksheet for the Live Birth Certificate},
+  year         = {2016},
+  url          = {https://www.cdc.gov/nchs/data/dvs/facility-worksheet-2016-508.pdf},
+  note         = {Accessed: 2024-11-24}
+}
+
+@Manual{cdcFacilityGuide,
+    title = {Guide to Completing the Facility Worksheets for the Certificate of Live Birth and Report of Fetal Death},
+    author = {{Centers for Disease Control and Prevention (CDC)} and {{National Center for Health Statistics (NCHS)}}},
+    organization = {Centers for Disease Control and Prevention (CDC)},
+    year = {n.d.},
+    note = {Accessed on 2024-11-18.},
+    url = {https://www.cdc.gov/nchs/data/dvs/GuidetoCompleteFacilityWks.pdf},
+}
+
+
+@misc{medicalnewstoday_apgar_scores,
+  author       = {{Medical News Today}},
+  title        = {Apgar Scores: Overview, Purpose, and Interpretation},
+  year         = {2024},
+  url          = {https://www.medicalnewstoday.com/articles/apgar-scores#overview},
+  note         = {Accessed: 2024-11-24}
+}
+
 
 @Misc{cambridgeResuscitation,
     title = {Definition of Resuscitation},
@@ -35,19 +73,8 @@
     url = {https://kidshealth.org/en/parents/apgar0.html},
 }
 
-@Manual{cdcFacilityGuide,
-    title = {Guide to Completing the Facility Worksheets for the Certificate of Live Birth and Report of Fetal Death},
-    author = {{Centers for Disease Control and Prevention (CDC)} and {{National Center for Health Statistics (NCHS)}}},
-    organization = {Centers for Disease Control and Prevention (CDC)},
-    year = {n.d.},
-    note = {Accessed on 2024-11-18.},
-    url = {https://www.cdc.gov/nchs/data/dvs/GuidetoCompleteFacilityWks.pdf},
-}
 
-
-
-
-@Article{thereferencecanbewhatever,
+@Article{tidyverse,
     title = {Welcome to the {tidyverse}},
     author = {Hadley Wickham and Mara Averick and Jennifer Bryan and Winston Chang and Lucy D'Agostino McGowan and Romain François and Garrett Grolemund and Alex Hayes and Lionel Henry and Jim Hester and Max Kuhn and Thomas Lin Pedersen and Evan Miller and Stephan Milton Bache and Kirill Müller and Jeroen Ooms and David Robinson and Dana Paige Seidel and Vitalie Spinu and Kohske Takahashi and Davis Vaughan and Claus Wilke and Kara Woo and Hiroaki Yutani},
     year = {2019},
@@ -56,47 +83,74 @@
     number = {43},
     pages = {1686},
     doi = {10.21105/joss.01686},
-  }  
+  }
   
+@Article{randomForest,
+    title = {Classification and Regression by randomForest},
+    author = {{Andy Liaw and Matthew Wiener}},
+    journal = {R News},
+    year = {2002},
+    volume = {2},
+    number = {3},
+    pages = {18-22},
+    url = {https://CRAN.R-project.org/doc/Rnews/},
+  }
   
-@Manual{citeLahman,
-    title = {{Lahman: Sean `Lahman' Baseball Database}},
-    author = {Michael Friendly and Chris Dalzell and Martin Monkman and Dennis Murphy},
-    year = {2020},
-    note = {R package version 8.0-0},
-    url = {https://CRAN.R-project.org/package=Lahman},
-  }  
+@Article{caret,
+    title = {Building Predictive Models in R Using the caret Package},
+    volume = {28},
+    url = {https://www.jstatsoft.org/index.php/jss/article/view/v028i05},
+    doi = {10.18637/jss.v028.i05},
+    number = {5},
+    journal = {Journal of Statistical Software},
+    author = {{Kuhn} and {Max}},
+    year = {2008},
+    pages = {1–26},
+  }
   
-  
-@article{gebru2021datasheets,
-  title={Datasheets for datasets},
-  author={Gebru, Timnit and Morgenstern, Jamie and Vecchione, Briana and Vaughan, Jennifer Wortman and Wallach, Hanna and Iii, Hal Daum{\'e} and Crawford, Kate},
-  journal={Communications of the ACM},
-  volume={64},
-  number={12},
-  pages={86--92},
-  year={2021},
-  publisher={ACM New York, NY, USA}
+@Misc{rstanarm,
+  title = {rstanarm: {Bayesian} applied regression modeling via {Stan}},
+  author = {Ben Goodrich and Jonah Gabry and Imad Ali and Sam Brilleman},
+  note = {R package version 2.32.1},
+  year = {2024},
+  url = {https://mc-stan.org/rstanarm/},
 }
 
-@Misc{rstanarm,
-    title = {{rstanarm: {Bayesian} applied regression modeling via {Stan}}},
-    author = {Ben Goodrich and Jonah Gabry and Imad Ali and Sam Brilleman},
-    note = {R package version 2.21.3},
-    year = {2022},
-    url = {https://mc-stan.org/rstanarm/},
+
+@Book{ggplot2,
+    author = {Hadley Wickham},
+    title = {ggplot2: Elegant Graphics for Data Analysis},
+    publisher = {Springer-Verlag New York},
+    year = {2016},
+    isbn = {978-3-319-24277-4},
+    url = {https://ggplot2.tidyverse.org},
   }
   
-@Manual{palmerpenguins,
-    title = {{palmerpenguins: Palmer Archipelago (Antarctica) penguin data}},
-    author = {Allison Marie Horst and Alison Presmanes Hill and Kristen B Gorman},
-    year = {2020},
-    note = {R package version 0.1.0},
-    doi = {10.5281/zenodo.3960218},
-    url = {https://allisonhorst.github.io/palmerpenguins/},
-  }
-  
-  
+@misc{analyticsvidhya2015,
+  author       = {{Analytics Vidhya}},
+  title        = {Easy Methods to Deal with Categorical Variables in Predictive Modeling},
+  year         = {2015},
+  url          = {https://www.analyticsvidhya.com/blog/2015/11/easy-methods-deal-categorical-variables-predictive-modeling/},
+  note         = {Accessed: 2024-11-25}
+}
+
+@misc{brownlee2019,
+  author       = {{Jason Brownlee}},
+  title        = {Train-Test Split for Evaluating Machine Learning Algorithms},
+  year         = {2019},
+  url          = {https://machinelearningmastery.com/train-test-split-for-evaluating-machine-learning-algorithms/},
+  note         = {Accessed: 2024-11-25}
+}
+
+
+@misc{healthknowledge2024,
+  author       = {{HealthKnowledge}},
+  title        = {Errors in Epidemiological Measurements},
+  year         = {2024},
+  url          = {https://www.healthknowledge.org.uk/e-learning/epidemiology/practitioners/errors-epidemiological-measurements},
+  note         = {Accessed: 2024-11-25}
+}
+
 @book{tellingstories,
     title = {Telling Stories with Data},
     author = {Rohan Alexander},
@@ -105,12 +159,98 @@
     url = {https://tellingstorieswithdata.com/}
   }  
   
-  
+@article{aap2006,
+  author       = {{American Academy of Pediatrics}},
+  title        = {The Apgar Score},
+  journal      = {Pediatrics},
+  volume       = {117},
+  number       = {4},
+  pages        = {1444--1447},
+  year         = {2006},
+  url          = {https://publications.aap.org/pediatrics/article/117/4/1444/70944/},
+  note         = {Accessed: 2024-11-25}
+}
 
-@Manual{shelter,
-    title = {Deaths of Shelter Residents},
-    author = {{Toronto Shelter & Support Services}},
-    year = {2024},
-    note = {As accessed 2024-10-02.},
-    url = {https://open.toronto.ca/dataset/deaths-of-shelter-residents/},
-  }  
+@misc{geeksforgeeks_feature_encoding,
+  author       = {{GeeksforGeeks}},
+  title        = {Feature Encoding Techniques - Machine Learning},
+  year         = {n.d.},
+  url          = {https://www.geeksforgeeks.org/feature-encoding-techniques-machine-learning/},
+  note         = {Accessed: 2024-11-25}
+}
+
+@misc{brownlee2020,
+  author       = {{Jason Brownlee}},
+  title        = {5 Effective Ways to Handle Imbalanced Data in Machine Learning},
+  year         = {2020},
+  url          = {https://machinelearningmastery.com/5-effective-ways-to-handle-imbalanced-data-in-machine-learning/},
+  note         = {Accessed: 2024-11-25}
+}
+
+@misc{selectstatistics2024,
+  author       = {{Select Statistical Consultants}},
+  title        = {The Importance and Effect of Sample Size},
+  year         = {2024},
+  url          = {https://select-statistics.co.uk/blog/importance-effect-sample-size/},
+  note         = {Accessed: 2024-11-25}
+}
+
+
+@misc{isi2024,
+  author       = {{International Statistical Institute}},
+  title        = {Handling Data Imbalance in Machine Learning},
+  year         = {2024},
+  url          = {https://isi-web.org/sites/default/files/2024-02/Handling-Data-Imbalance-in-Machine-Learning.pdf},
+  note         = {Accessed: 2024-11-25}
+}
+
+@misc{friendly1992,
+  author       = {{Michael Friendly}},
+  title        = {Mosaic Displays for Loglinear Models},
+  year         = {1992},
+  url          = {https://www.datavis.ca/papers/asa92.html},
+  note         = {Accessed: 2024-11-25}
+}
+
+@misc{mlnuggets2024,
+  author       = {{Machine Learning Nuggets}},
+  title        = {Decision Trees and Random Forests},
+  year         = {2024},
+  url          = {https://www.machinelearningnuggets.com/decision-trees-and-random-forests/},
+  note         = {Accessed: 2024-11-25}
+}
+
+@misc{geeksforgeeks_random_forest,
+  author       = {{GeeksforGeeks}},
+  title        = {What are the Advantages and Disadvantages of Random Forest?},
+  year         = {n.d.},
+  url          = {https://www.geeksforgeeks.org/what-are-the-advantages-and-disadvantages-of-random-forest/},
+  note         = {Accessed: 2024-11-25}
+}
+
+@misc{strimmerlab_priors,
+  author       = {{Strimmer Lab}},
+  title        = {Choosing Priors in Bayesian Analysis},
+  year         = {n.d.},
+  url          = {https://strimmerlab.github.io/publications/lecture-notes/MATH20802/choosing-priors-in-bayesian-analysis.html},
+  note         = {Accessed: 2024-11-25}
+}
+
+@misc{clevelandclinic_apgar,
+  author       = {{Cleveland Clinic}},
+  title        = {Apgar Score},
+  year         = {n.d.},
+  url          = {https://my.clevelandclinic.org/health/diagnostics/23094-apgar-score},
+  note         = {Accessed: 2024-11-25}
+}
+
+
+@article{nguyen2018uncertainty,
+  author       = {{Luong Ha Nguyen and Ianis Gaudot and James-a. Goulet}},
+  title        = {Uncertainty quantification for model parameters and hidden state variables in Bayesian dynamic linear models},
+  journal      = {Structural Control and Health Monitoring},
+  year         = {2018},
+  pages        = {e2309},
+  doi          = {10.1002/stc.2309},
+  hal_id       = {hal-04460099}
+}
