@@ -1272,7 +1272,7 @@ bayesian_model <-
   readRDS(file = here::here("models/bayesian_lm.rds"))
 ```
 
-### Random Forest Model Results
+### Random Forest Model Results {#sec-randfor-result}
 
 @tbl-rfsummary1 and @fig-rfsumbar shows that usage of steroids (45.76%) is the most influential factor among the treatments during labor and delivery when predicting Apgar5 scores. It is followed by usage of chorioamnionitis (22.44%) and anesthesia (13.99%), which also contributes substantially. Meanwhile, the exposure to antibiotics (0.00%) shows no measurable impact in this context, and suggests its irrelevance to the model's predictions. 
 
@@ -1341,10 +1341,11 @@ importance_table %>%
 library(ggplot2)
 
 # Reorder the levels of 'Treatment Type' to match the custom labels
-importance_table$`Treatment Type` <- factor(
-  importance_table$`Treatment Type`,
-  levels = c("Induction of Labor", "Augmentation of Labor", "Steroids", "Antibiotics", "Chorioamnionitis", "Anesthesia")
-)
+importance_table <- importance_table %>%
+  mutate(`Treatment Type` = factor(
+    `Treatment Type`,
+    levels = c("Induction of Labor", "Augmentation of Labor", "Steroids", "Antibiotics", "Chorioamnionitis", "Anesthesia")
+  ))
 
 # Create the horizontal bar plot with the specified order
 ggplot(importance_table, aes(x = `Variable Importance`, y = `Treatment Type`)) +
@@ -1364,6 +1365,7 @@ ggplot(importance_table, aes(x = `Variable Importance`, y = `Treatment Type`)) +
 
 ```
 
+@tbl-rfsummary2 shows the Random Forest model, despite incorporating hyperparameter tuning, demonstrated suboptimal performance. Specifically, the Root Mean Squared Error (RMSE) of 3.12 and Mean Absolute Error (MAE) of 2.69 suggest that the model's predictions deviate significantly from the observed values on average [@vitalflux_metrics]. Furthermore, the R-squared and Adjusted R-squared values of 0.02 suggest the model captures only 2% of the variance in the target variable [@vitalflux_metrics]. These results propose that further refinement is necessary, potentially through reevaluating feature engineering, exploring additional hyperparameter configurations, or considering alternative modeling approaches better suited for the data [@AnalyticsVidhyaFeatureEngineering2021].
 
 ```{r}
 #| echo: false
@@ -1412,11 +1414,13 @@ accuracy_table %>%
 
 ### Bayesian Linear Model Results
 
+Our results from the Bayesian Linear Model are summarized in @tbl-modelresults.
+
 ```{r}
 #| echo: false
 #| eval: true
 #| label: tbl-modelresults
-#| tbl-cap: "Explanatory models of flight time based on wing width and wing length"
+#| tbl-cap: Bayesian linear models quantifying the effects of medical interventions during labor and delivery on infant health outcomes
 #| warning: false
 
 modelsummary::modelsummary(
@@ -1431,19 +1435,37 @@ modelsummary::modelsummary(
 
 # Discussion
 
-## First discussion point {#sec-first-point}
+## Pharmaceutical companies should focus on optimizing antenatal corticosteroid formulations {#sec-first-point}
 
-If my paper were 10 pages, then should be be at least 2.5 pages. The discussion is a chance to show off what you know and what you learnt from all this. 
+@sec-randfor-result reveals that maternal and neonatal treatments during labor, such as steroids and antibiotics, have differential impacts on infant health outcomes. Usage of steroids, which showed positive correlations with the Apgar5 score in @fig-sterscore, was actually affirmed their critical role in improving neonatal survival, especially in extremely preterm infants [@nih_prenatal_steroid_treatment]. In particular, antenatal corticosteroids stand out as the core intervention for preterm births under the gestation period of 22 weeks, significantly reducing complications like respiratory distress syndrome by accelerating fetal lung development [@nih_prenatal_steroid_treatment]. 
 
-## Second discussion point {#sec-second-point}
+In accordance to these analyses results, pharmaceutical companies can focus on optimizing steroid formulations for safer and more effective administration during earlier gestations [@nih_prenatal_steroid_treatment]. Current formulations of antenatal corticosteroids, like betamethasone, have shown strong efficacy in improving neonatal outcomes but may carry risks when administered too early or in repeated doses [@nichd_prenatal_steroid_treatment]. Hence, adjusting dosages or delivery mechanisms could enhance safety while preserving their life-saving benefits for preterm infants. For instance, this could involve sustained-release versions or targeted delivery systems to minimize potential side effects on both the mother and fetus [@nichd_prenatal_steroid_treatment].
 
-Please don't use these as sub-heading labels - change them to be what your point actually is.
+
+## Pharmaceutical companies, policymakers, and healthcare providers should collaborate to develop targeted antibiotics and enforce evidence-based protocols {#sec-second-point}
+
+Contrary to the influence of antibiotics dosage, the use of antibiotics appears less impactful as shown in @fig-rfsumbar. While crucial for preventing infections, their overuse or inappropriate administration may disrupt the delicate balance of neonatal microbiota and contribute to antibiotic resistance [@nih_prenatal_steroid_treatment]. To address this, pharmaceutical innovations could focus on creating narrower-spectrum antibiotics that are highly effective against labor-associated infections while preserving beneficial bacteria [@narrow_spectrum_antibiotics]. In addition, exploring probiotics or adjunct therapies to counteract microbiota disruption could further improve outcomes for newborns exposed to antibiotics [@cdhf_probiotics_infants]. These actions align with the broader goal of a precision medicine approach, tailoring treatments to minimize risks while maximizing benefits for both mothers and infants [@nih_prenatal_steroid_treatment].
+
+Policymakers and healthcare providers must also take active roles in this regard. Enforcing evidence-based protocols for these treatments is crucial to ensure their judicious application [@acog_clinical_guidelines]. Guidelines should outline clear indications for use, supported by comprehensive training for obstetric care providers to minimize variability in practice [@who_operational_guidance]. By prioritizing the safe and effective administration of treatments [@who_operational_guidance], stakeholders can achieve better neonatal outcomes and address the risks associated with inappropriate interventions.
 
 ## Third discussion point {#sec-third-point}
 
-## Weaknesses and next steps
+The variability in treatment efficacy as observed in @fig-result2 and @fig-rfsumbar furthermore suggests the significant influence of contextual factors such as healthcare access, infrastructure, and socio-economic disparities [@who_contextual_factors]. For instance, in low-resource settings, the availability of prenatal steroids may be limited, leading to suboptimal outcomes for preterm infants [@who_contextual_factors]. Additionally, disparities in healthcare provider expertise and institutional protocols can amplify these variations, making it difficult to ensure consistent care across different regions or populations [@ajog_healthcare_disparities].
 
-Weaknesses and next steps should also be included.
+Governments and healthcare organizations have an essential role to play in mitigating these disparities. For example, investments in prenatal care infrastructure, ensuring the availability of essential medications and training obstetric care providers, would be recommended [@who_contextual_factors]. Mobile health initiatives and telemedicine could also play a transformative role in reaching underserved populations, ensuring that even remote areas benefit from timely interventions [@ajog_healthcare_disparities].
+
+Moreover, pharmaceutical companies can contribute by designing drugs that are accessible and effective in diverse healthcare settings [@ajog_healthcare_disparities]. For instance, creating heat-stables formulations or medications with extended shelf lives can help ensure their utility in regions with limited resources [@ajog_healthcare_disparities]. Collaboration with local healthcare systems to distribute these innovations is equally important [@who_contextual_factors]. Addressing the structural and systematic factors that impact treatment efficacy can enhance the accessibility and consistency of labor-related medical interventions.
+
+## Limitations of the study and directions for future research {#sec-weakeness}
+
+In order to accurately contextualize the findings of this analysis, several limitations must be acknowledged. First, the observational nature of the study may introduce confounding variables that were not accounted for, potentially biasing the results [@biostatistics_confounding]. Unlike randomized controlled trials (RCTs), observational studies lack random assignment, making it challenging to establish causality [@pmc5073487]. Confounding factors, such as socioeconomic status, pre-existing health conditions, or access to healthcare, could influence both the treatment received and the neonatal outcomes, thereby skewing the correlations observed [@biostatistics_confounding]. 
+
+Second, the study's findings may have limited applicability to the broader maternal population if the sample is not representative [@tellingstories]. Factors such as geographic location, healthcare facility type, and demographic characteristics can influence treatment practices and outcomes [@bmjmedicine_observational_study]. For instance, a study conducted in a tertiary care center may not reflect the experiences of patients in rural or under-resourced settings [@bmjmedicine_observational_study].
+
+Third, inconsistencies in data collection methods, such as subjective interpretations of medical records or variability in documentation practices across facilities, can lead to measurement errors [@healthknowledge2024]. These discrepancies may affect the accuracy of recorded treatments and outcomes, introducing bias and affecting the reliability of the conclusions drawn [@cambridge_observational_studies]. Standardized data collection protocols might be essential to minimize such errors [@cambridge_observational_studies].
+
+Addressing these limitations, future research should aim to incorporate more diverse populations to enhance external validity [@scribbr_external_validity]. Conducting randomized controlled trials, where feasible, would provide more definitive evidence regarding the efficacy of specific treatments during labor [@pmc5073487]. Moreover, integrating pharmacokinetic and pharmacodynamic analyses, which helps complete a picture of how drugs are processed in the body, could offer deeper insights into how much of the drug reaches the baby and how quickly it is absorbed [@pmc5446801]. Efforts by pharmaceutical companies and policymakers could play a pivotal role in advancing the research agenda by supporting studies that explore the safety and effectiveness of treatments for pregnant populations [@bmj_clinical_trials_pregnancy]. These investments would not only address a critical area of unmet medical need but also uphold an ethical commitment to improving the health and well-being of mothers and their children [@springer_drug_treatments_pregnancy].
+
 
 \newpage
 
@@ -1453,7 +1475,6 @@ Weaknesses and next steps should also be included.
 
 
 # Additional data details
-
 
 # Model details {#sec-model-details}
 
