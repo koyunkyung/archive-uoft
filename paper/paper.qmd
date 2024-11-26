@@ -99,7 +99,7 @@ filtered_data |>
   
   # Add labels
   labs(x = "APGAR5 Score",
-       y = "Count of Observations") +
+       y = "Observation Count") +
   
   # Format y-axis numbers with commas
   scale_y_continuous(labels = comma) +
@@ -129,7 +129,7 @@ analysis_data |>
     alpha = 0.7) + 
   # Add labels
   labs(x = "APGAR5 Score",
-       y = "Count of Observations") +
+       y = "Observation Count") +
   # Format y-axis numbers with commas
   scale_y_continuous(labels = comma) +
   # Apply a clean theme
@@ -198,8 +198,8 @@ drug_count_summary <- anal_data %>%
 
 # Plot the counts with all x-axis values displayed
 ggplot(drug_count_summary, aes(x = drug_count, y = observation_count)) +
-  geom_bar(stat = "identity", fill = "darkgreen", color = "grey") +  # Bar plot
-  geom_text(aes(label = comma(observation_count)), vjust = -0.5, size = 4, color = "black") +  # Add counts above bars
+  geom_bar(stat = "identity", fill = "darkgreen",alpha = 0.5, color = "grey") +  # Bar plot
+  geom_text(aes(label = comma(observation_count)), vjust = -0.5, size = 3, color = "black") +  # Add counts above bars
   labs(
     x = "Number of Treatments Used During Labor and Delivery",
     y = "Observation Count"
@@ -208,8 +208,8 @@ ggplot(drug_count_summary, aes(x = drug_count, y = observation_count)) +
   scale_x_continuous(breaks = seq(min(drug_count_summary$drug_count), max(drug_count_summary$drug_count), by = 1)) +  # Ensure all x-axis values are shown
   theme_minimal() +
   theme(
-    axis.text = element_text(size = 12),
-    axis.title = element_text(size = 13)
+    axis.text = element_text(size = 10),
+    axis.title = element_text(size = 10)
   )
 
 
@@ -252,14 +252,14 @@ treatment_summary <- balanced_data %>%
   )
 
 # Plot the distribution of observations for each treatment
-ggplot(treatment_summary, aes(x = Treatment_Type, y = Count, fill = Treatment_Type)) +
-  geom_bar(stat = "identity", fill = "darkgreen", color = "grey") +  # Bar plot
-  geom_text(aes(label = comma(Count)), vjust = -0.5, size = 4, color = "black") +  # Add counts above bars
+ggplot(treatment_summary, aes(x = Count, y = Treatment_Type, fill = Treatment_Type)) +
+  geom_bar(stat = "identity", fill = "darkgreen", alpha = 0.5, color = "grey") +  # Bar plot
+  geom_text(aes(label = comma(Count)), vjust = -0.5, size = 3, color = "black") +  # Add counts above bars
   labs(
-    x = "Treatment Type",
-    y = "Observation Count"
+    x = "Observation Count",
+    y = "Treatment Type"
   ) +
-  scale_y_continuous(labels = comma) +  # Format y-axis labels with commas
+  scale_x_continuous(labels = comma) +  # Format x-axis labels with commas
   theme_minimal() +
   theme(
     axis.text = element_text(size = 10),
@@ -291,7 +291,7 @@ ld_indl_summary1 <- raw_data %>%
 # Plot the bar graph
 ggplot(ld_indl_summary1, aes(x = ld_indl, y = Count)) +
   geom_bar(stat = "identity", fill = "#a9dfbf", color = "grey") +  # Bar plot
-  geom_text(aes(label = comma(Count)), vjust = -0.5, size = 4, color = "black") +  # Add counts above bars
+  geom_text(aes(label = comma(Count)), vjust = -0.5, size = 3, color = "black") +  # Add counts above bars
   labs(
     x = "Induction of Labor",
     y = "Observation Count"
@@ -300,8 +300,8 @@ ggplot(ld_indl_summary1, aes(x = ld_indl, y = Count)) +
   scale_y_continuous(labels = comma) +  # Format y-axis labels with commas
   theme_minimal() +
   theme(
-    axis.text = element_text(size = 11),
-    axis.title = element_text(size = 13)
+    axis.text = element_text(size = 10),
+    axis.title = element_text(size = 10)
   )
 
 ```
@@ -325,7 +325,7 @@ ld_indl_summary2 <- balanced_data %>%
 # Plot the bar graph
 ggplot(ld_indl_summary2, aes(x = ld_indl, y = Count)) +
   geom_bar(stat = "identity", fill = "#a9dfbf", color = "grey") +  # Bar plot
-  geom_text(aes(label = comma(Count)), vjust = -0.5, size = 4, color = "black") +  # Add counts above bars
+  geom_text(aes(label = comma(Count)), vjust = -0.5, size = 3, color = "black") +  # Add counts above bars
   labs(
     x = "Induction of Labor",
     y = "Observation Count"
@@ -334,8 +334,8 @@ ggplot(ld_indl_summary2, aes(x = ld_indl, y = Count)) +
   scale_y_continuous(labels = comma) +  # Format y-axis labels with commas
   theme_minimal() +
   theme(
-    axis.text = element_text(size = 11),
-    axis.title = element_text(size = 13)
+    axis.text = element_text(size = 10),
+    axis.title = element_text(size = 10)
   )
 
 
@@ -364,7 +364,7 @@ ld_augm_summary1 <- raw_data %>%
 # Plot the bar graph
 ggplot(ld_augm_summary1, aes(x = ld_augm, y = Count)) +
   geom_bar(stat = "identity", fill = "#a9dfbf", color = "grey") +  # Bar plot
-  geom_text(aes(label = comma(Count)), vjust = -0.5, size = 4, color = "black") +  # Add counts above bars
+  geom_text(aes(label = comma(Count)), vjust = -0.5, size = 3, color = "black") +  # Add counts above bars
   labs(
     x = "Augmentation of Labor",
     y = "Observation Count"
@@ -373,8 +373,8 @@ ggplot(ld_augm_summary1, aes(x = ld_augm, y = Count)) +
   scale_y_continuous(labels = comma) +  # Format y-axis labels with commas
   theme_minimal() +
   theme(
-    axis.text = element_text(size = 11),
-    axis.title = element_text(size = 13)
+    axis.text = element_text(size = 10),
+    axis.title = element_text(size = 10)
   )
 
 ```
@@ -398,7 +398,7 @@ ld_augm_summary2 <- balanced_data %>%
 # Plot the bar graph
 ggplot(ld_augm_summary2, aes(x = ld_augm, y = Count)) +
   geom_bar(stat = "identity", fill = "#a9dfbf", color = "grey") +  # Bar plot
-  geom_text(aes(label = comma(Count)), vjust = -0.5, size = 4, color = "black") +  # Add counts above bars
+  geom_text(aes(label = comma(Count)), vjust = -0.5, size = 3, color = "black") +  # Add counts above bars
   labs(
     x = "Augmentation of Labor",
     y = "Observation Count"
@@ -407,8 +407,8 @@ ggplot(ld_augm_summary2, aes(x = ld_augm, y = Count)) +
   scale_y_continuous(labels = comma) +  # Format y-axis labels with commas
   theme_minimal() +
   theme(
-    axis.text = element_text(size = 11),
-    axis.title = element_text(size = 13)
+    axis.text = element_text(size = 10),
+    axis.title = element_text(size = 10)
   )
 
 
@@ -439,7 +439,7 @@ ld_ster_summary1 <- raw_data %>%
 # Plot the bar graph
 ggplot(ld_ster_summary1, aes(x = ld_ster, y = Count)) +
   geom_bar(stat = "identity", fill = "#a9dfbf", color = "grey") +  # Bar plot
-  geom_text(aes(label = comma(Count)), vjust = -0.5, size = 4, color = "black") +  # Add counts above bars
+  geom_text(aes(label = comma(Count)), vjust = -0.5, size = 3, color = "black") +  # Add counts above bars
   labs(
     x = "Steroids Usage",
     y = "Observation Count"
@@ -448,8 +448,8 @@ ggplot(ld_ster_summary1, aes(x = ld_ster, y = Count)) +
   scale_y_continuous(labels = comma) +  # Format y-axis labels with commas
   theme_minimal() +
   theme(
-    axis.text = element_text(size = 11),
-    axis.title = element_text(size = 13)
+    axis.text = element_text(size = 10),
+    axis.title = element_text(size = 10)
   )
 
 ```
@@ -472,7 +472,7 @@ ld_ster_summary2 <- balanced_data %>%
 # Plot the bar graph
 ggplot(ld_ster_summary2, aes(x = ld_ster, y = Count)) +
   geom_bar(stat = "identity", fill = "#a9dfbf", color = "grey") +  # Bar plot
-  geom_text(aes(label = comma(Count)), vjust = -0.5, size = 4, color = "black") +  # Add counts above bars
+  geom_text(aes(label = comma(Count)), vjust = -0.5, size = 3, color = "black") +  # Add counts above bars
   labs(
     x = "Steroids Usage",
     y = "Observation Count"
@@ -481,8 +481,8 @@ ggplot(ld_ster_summary2, aes(x = ld_ster, y = Count)) +
   scale_y_continuous(labels = comma) +  # Format y-axis labels with commas
   theme_minimal() +
   theme(
-    axis.text = element_text(size = 11),
-    axis.title = element_text(size = 13)
+    axis.text = element_text(size = 10),
+    axis.title = element_text(size = 10)
   )
 
 
@@ -514,7 +514,7 @@ ld_antb_summary1 <- raw_data %>%
 # Plot the bar graph
 ggplot(ld_antb_summary1, aes(x = ld_antb, y = Count)) +
   geom_bar(stat = "identity", fill = "#a9dfbf", color = "grey") +  # Bar plot
-  geom_text(aes(label = comma(Count)), vjust = -0.5, size = 4, color = "black") +  # Add counts above bars
+  geom_text(aes(label = comma(Count)), vjust = -0.5, size = 3, color = "black") +  # Add counts above bars
   labs(
     x = "Antibiotics Usage",
     y = "Observation Count"
@@ -523,8 +523,8 @@ ggplot(ld_antb_summary1, aes(x = ld_antb, y = Count)) +
   scale_y_continuous(labels = comma) +  # Format y-axis labels with commas
   theme_minimal() +
   theme(
-    axis.text = element_text(size = 11),
-    axis.title = element_text(size = 13)
+    axis.text = element_text(size = 10),
+    axis.title = element_text(size = 10)
   )
 
 ```
@@ -549,7 +549,7 @@ ld_antb_summary2 <- balanced_data %>%
 # Plot the bar graph
 ggplot(ld_antb_summary2, aes(x = ld_antb, y = Count)) +
   geom_bar(stat = "identity", fill = "#a9dfbf", color = "grey") +  # Bar plot
-  geom_text(aes(label = comma(Count)), vjust = -0.5, size = 4, color = "black") +  # Add counts above bars
+  geom_text(aes(label = comma(Count)), vjust = -0.5, size = 3, color = "black") +  # Add counts above bars
   labs(
     x = "Antibiotics Usage",
     y = "Observation Count"
@@ -558,8 +558,8 @@ ggplot(ld_antb_summary2, aes(x = ld_antb, y = Count)) +
   scale_y_continuous(labels = comma) +  # Format y-axis labels with commas
   theme_minimal() +
   theme(
-    axis.text = element_text(size = 11),
-    axis.title = element_text(size = 13)
+    axis.text = element_text(size = 10),
+    axis.title = element_text(size = 10)
   )
 
 
@@ -590,7 +590,7 @@ ld_chor_summary1 <- raw_data %>%
 # Plot the bar graph
 ggplot(ld_chor_summary1, aes(x = ld_chor, y = Count)) +
   geom_bar(stat = "identity", fill = "#a9dfbf", color = "grey") +  # Bar plot
-  geom_text(aes(label = comma(Count)), vjust = -0.5, size = 4, color = "black") +  # Add counts above bars
+  geom_text(aes(label = comma(Count)), vjust = -0.5, size = 3, color = "black") +  # Add counts above bars
   labs(
     x = "Chorioamnionitis Usage",
     y = "Observation Count"
@@ -599,8 +599,8 @@ ggplot(ld_chor_summary1, aes(x = ld_chor, y = Count)) +
   scale_y_continuous(labels = comma) +  # Format y-axis labels with commas
   theme_minimal() +
   theme(
-    axis.text = element_text(size = 11),
-    axis.title = element_text(size = 13)
+    axis.text = element_text(size = 10),
+    axis.title = element_text(size = 10)
   )
 
 ```
@@ -623,7 +623,7 @@ ld_chor_summary2 <- balanced_data %>%
 # Plot the bar graph
 ggplot(ld_chor_summary2, aes(x = ld_chor, y = Count)) +
   geom_bar(stat = "identity", fill = "#a9dfbf", color = "grey") +  # Bar plot
-  geom_text(aes(label = comma(Count)), vjust = -0.5, size = 4, color = "black") +  # Add counts above bars
+  geom_text(aes(label = comma(Count)), vjust = -0.5, size = 3, color = "black") +  # Add counts above bars
   labs(
     x = "Chorioamnionitis Usage",
     y = "Observation Count"
@@ -632,8 +632,8 @@ ggplot(ld_chor_summary2, aes(x = ld_chor, y = Count)) +
   scale_y_continuous(labels = comma) +  # Format y-axis labels with commas
   theme_minimal() +
   theme(
-    axis.text = element_text(size = 11),
-    axis.title = element_text(size = 13)
+    axis.text = element_text(size = 10),
+    axis.title = element_text(size = 10)
   )
 
 
@@ -662,7 +662,7 @@ ld_anes_summary1 <- raw_data %>%
 # Plot the bar graph
 ggplot(ld_anes_summary1, aes(x = ld_anes, y = Count)) +
   geom_bar(stat = "identity", fill = "#a9dfbf", color = "grey") +  # Bar plot
-  geom_text(aes(label = comma(Count)), vjust = -0.5, size = 4, color = "black") +  # Add counts above bars
+  geom_text(aes(label = comma(Count)), vjust = -0.5, size = 3, color = "black") +  # Add counts above bars
   labs(
     x = "Anesthesia Usage",
     y = "Observation Count"
@@ -671,8 +671,8 @@ ggplot(ld_anes_summary1, aes(x = ld_anes, y = Count)) +
   scale_y_continuous(labels = comma) +  # Format y-axis labels with commas
   theme_minimal() +
   theme(
-    axis.text = element_text(size = 11),
-    axis.title = element_text(size = 13)
+    axis.text = element_text(size = 10),
+    axis.title = element_text(size = 10)
   )
 
 ```
@@ -696,7 +696,7 @@ ld_anes_summary2 <- balanced_data %>%
 # Plot the bar graph
 ggplot(ld_anes_summary2, aes(x = ld_anes, y = Count)) +
   geom_bar(stat = "identity", fill = "#a9dfbf", color = "grey") +  # Bar plot
-  geom_text(aes(label = comma(Count)), vjust = -0.5, size = 4, color = "black") +  # Add counts above bars
+  geom_text(aes(label = comma(Count)), vjust = -0.5, size = 3, color = "black") +  # Add counts above bars
   labs(
     x = "Anesthesia Usage",
     y = "Observation Count"
@@ -705,8 +705,8 @@ ggplot(ld_anes_summary2, aes(x = ld_anes, y = Count)) +
   scale_y_continuous(labels = comma) +  # Format y-axis labels with commas
   theme_minimal() +
   theme(
-    axis.text = element_text(size = 11),
-    axis.title = element_text(size = 13)
+    axis.text = element_text(size = 10),
+    axis.title = element_text(size = 10)
   )
 
 
@@ -1433,22 +1433,22 @@ modelsummary::modelsummary(
 ```
 
 
-# Discussion
+# Discussion {#sec-discussion}
 
-## Pharmaceutical companies should focus on optimizing antenatal corticosteroid formulations {#sec-first-point}
+## Optimization of anetenatal corticosteroid formulations {#sec-first-point}
 
 @sec-randfor-result reveals that maternal and neonatal treatments during labor, such as steroids and antibiotics, have differential impacts on infant health outcomes. Usage of steroids, which showed positive correlations with the Apgar5 score in @fig-sterscore, was actually affirmed their critical role in improving neonatal survival, especially in extremely preterm infants [@nih_prenatal_steroid_treatment]. In particular, antenatal corticosteroids stand out as the core intervention for preterm births under the gestation period of 22 weeks, significantly reducing complications like respiratory distress syndrome by accelerating fetal lung development [@nih_prenatal_steroid_treatment]. 
 
 In accordance to these analyses results, pharmaceutical companies can focus on optimizing steroid formulations for safer and more effective administration during earlier gestations [@nih_prenatal_steroid_treatment]. Current formulations of antenatal corticosteroids, like betamethasone, have shown strong efficacy in improving neonatal outcomes but may carry risks when administered too early or in repeated doses [@nichd_prenatal_steroid_treatment]. Hence, adjusting dosages or delivery mechanisms could enhance safety while preserving their life-saving benefits for preterm infants. For instance, this could involve sustained-release versions or targeted delivery systems to minimize potential side effects on both the mother and fetus [@nichd_prenatal_steroid_treatment].
 
 
-## Pharmaceutical companies, policymakers, and healthcare providers should collaborate to develop targeted antibiotics and enforce evidence-based protocols {#sec-second-point}
+## Targeted antibiotics and enforcement of evidence-based protocols {#sec-second-point}
 
 Contrary to the influence of antibiotics dosage, the use of antibiotics appears less impactful as shown in @fig-rfsumbar. While crucial for preventing infections, their overuse or inappropriate administration may disrupt the delicate balance of neonatal microbiota and contribute to antibiotic resistance [@nih_prenatal_steroid_treatment]. To address this, pharmaceutical innovations could focus on creating narrower-spectrum antibiotics that are highly effective against labor-associated infections while preserving beneficial bacteria [@narrow_spectrum_antibiotics]. In addition, exploring probiotics or adjunct therapies to counteract microbiota disruption could further improve outcomes for newborns exposed to antibiotics [@cdhf_probiotics_infants]. These actions align with the broader goal of a precision medicine approach, tailoring treatments to minimize risks while maximizing benefits for both mothers and infants [@nih_prenatal_steroid_treatment].
 
 Policymakers and healthcare providers must also take active roles in this regard. Enforcing evidence-based protocols for these treatments is crucial to ensure their judicious application [@acog_clinical_guidelines]. Guidelines should outline clear indications for use, supported by comprehensive training for obstetric care providers to minimize variability in practice [@who_operational_guidance]. By prioritizing the safe and effective administration of treatments [@who_operational_guidance], stakeholders can achieve better neonatal outcomes and address the risks associated with inappropriate interventions.
 
-## Third discussion point {#sec-third-point}
+## Disparities in treatment efficacy influenced by contextual factors {#sec-third-point}
 
 The variability in treatment efficacy as observed in @fig-result2 and @fig-rfsumbar furthermore suggests the significant influence of contextual factors such as healthcare access, infrastructure, and socio-economic disparities [@who_contextual_factors]. For instance, in low-resource settings, the availability of prenatal steroids may be limited, leading to suboptimal outcomes for preterm infants [@who_contextual_factors]. Additionally, disparities in healthcare provider expertise and institutional protocols can amplify these variations, making it difficult to ensure consistent care across different regions or populations [@ajog_healthcare_disparities].
 
