@@ -78,7 +78,7 @@ The Apgar score is a measure of the need for resuscitation [@natality2023] to th
 
 ```{r}
 #| label: fig-apgar1
-#| fig-cap: "The distribution of APGAR5 scores across the entire observation in the original dataset **Note:** Unknown or unreported observations were excluded so that the distribution could be clearly visualized"
+#| fig-cap: "The distribution of Apgar5 scores across the entire observation in the original dataset (**Note:** Unknown or unreported observations were excluded so that the distribution could be clearly visualized)"
 #| echo: false
 #| warning: false
 #| message: false
@@ -112,7 +112,7 @@ filtered_data |>
 
 ```{r}
 #| label: fig-apgar2
-#| fig-cap: The distribution of APGAR5 scores across the filtered observation in analysis dataset, which selected the relevant variables and removed the NA values
+#| fig-cap: "The distribution of Apgar5 scores across the filtered observation in analysis dataset, which selected the relevant variables and removed the NA values"
 #| echo: false
 #| warning: false
 #| message: false
@@ -141,7 +141,7 @@ Therefore, to ensure a balanced analysis [@brownlee2020], the data was refined t
 
 ```{r}
 #| label: fig-apgar3
-#| fig-cap: The distribution of APGAR5 scores across the filtered observation in analysis dataset
+#| fig-cap: "The distribution of Apgar5 scores across the filtered observation in analysis dataset"
 #| echo: false
 #| warning: false
 #| message: false
@@ -179,7 +179,7 @@ All of the predictor variables used in the analysis are classified under the sam
 
 ```{r}
 #| label: fig-numtreat
-#| fig-cap: The distribution of observations across different number of treatments used during delivery and labor
+#| fig-cap: "The distribution of observations across different number of treatments used during delivery and labor"
 #| echo: false
 #| warning: false
 #| message: false
@@ -271,12 +271,17 @@ ggplot(treatment_summary, aes(x = Count, y = Treatment_Type, fill = Treatment_Ty
 
 @fig-indc1 shows that in the raw data, the "No" category dominates with over 2.4 million observations, while the "Yes" category trails with around 1.2 million. After filtering and refining the dataset, @fig-indc2 shows that the gap between the "Yes" and "No" category becomes narrow, with the "No" category with 15,752 and "Yes" category with 6,248. This kind of balancing process is expected to allow for a more robust evaluation of how labor induction might influence Apgar scores, reducing the risk of the prediction model underestimating or overestimating treatment effects [@isi2024].
 
+\newpage
+
 ```{r}
 #| label: fig-indc1
 #| fig-cap: The distribution of observations in the raw dataset based on whether the infant received induction of labor or not
 #| echo: false
 #| warning: false
 #| message: false
+#| fig-width: 5
+#| fig-height: 4
+
 
 # Prepare the data
 ld_indl_summary1 <- raw_data %>%
@@ -305,12 +310,17 @@ ggplot(ld_indl_summary1, aes(x = ld_indl, y = Count)) +
 
 ```
 
+\newpage
+
 ```{r}
 #| label: fig-indc2
 #| fig-cap: The distribution of observations in the analysis dataset based on whether the infant received induction of labor or not
 #| echo: false
 #| warning: false
 #| message: false
+#| fig-width: 5
+#| fig-height: 4
+
 
 # Prepare the data
 ld_indl_summary2 <- balanced_data %>%
@@ -340,6 +350,8 @@ ggplot(ld_indl_summary2, aes(x = ld_indl, y = Count)) +
 
 ```
 
+\newpage
+
 ### Augmentation of labor
 
 @fig-augmt1 shows that in the raw data, the "No" category overwhelmingly dominates with 2,850,569 observations compared to 752,302 in the "Yes" category. @fig-augmt2 narrow the gap with the "No" category reduced to 18,589 and "Yes" category adjusted to 3,411.
@@ -350,6 +362,8 @@ ggplot(ld_indl_summary2, aes(x = ld_indl, y = Count)) +
 #| echo: false
 #| warning: false
 #| message: false
+#| fig-width: 5
+#| fig-height: 4
 
 # Prepare the data
 ld_augm_summary1 <- raw_data %>%
@@ -378,12 +392,17 @@ ggplot(ld_augm_summary1, aes(x = ld_augm, y = Count)) +
 
 ```
 
+\newpage
+
 ```{r}
 #| label: fig-augmt2
 #| fig-cap: The distribution observations in the analysis datset based on whether the infant received augmentation of labor or not
 #| echo: false
 #| warning: false
 #| message: false
+#| fig-width: 5
+#| fig-height: 4
+
 
 # Prepare the data
 ld_augm_summary2 <- balanced_data %>%
@@ -414,6 +433,7 @@ ggplot(ld_augm_summary2, aes(x = ld_augm, y = Count)) +
 
 ```
 
+\newpage
 
 ### Steroids (glucocorticoids) for fetal lung maturation received by the mother before delivery
 
@@ -425,6 +445,8 @@ ggplot(ld_augm_summary2, aes(x = ld_augm, y = Count)) +
 #| echo: false
 #| warning: false
 #| message: false
+#| fig-width: 5
+#| fig-height: 4
 
 # Prepare the data
 ld_ster_summary1 <- raw_data %>%
@@ -452,12 +474,17 @@ ggplot(ld_ster_summary1, aes(x = ld_ster, y = Count)) +
   )
 
 ```
+
+\newpage
+
 ```{r}
 #| label: fig-ster2
 #| fig-cap: The distribution observations in the analysis datset based on whether the infant received steroid treatments or not
 #| echo: false
 #| warning: false
 #| message: false
+#| fig-width: 5
+#| fig-height: 4
 
 # Prepare the data
 ld_ster_summary2 <- balanced_data %>%
@@ -489,6 +516,7 @@ ggplot(ld_ster_summary2, aes(x = ld_ster, y = Count)) +
 
 ```
 
+\newpage
 
 ### Antibiotics received by the mother during delivery
 
@@ -500,6 +528,8 @@ ggplot(ld_ster_summary2, aes(x = ld_ster, y = Count)) +
 #| echo: false
 #| warning: false
 #| message: false
+#| fig-width: 5
+#| fig-height: 4
 
 # Prepare the data
 ld_antb_summary1 <- raw_data %>%
@@ -528,6 +558,7 @@ ggplot(ld_antb_summary1, aes(x = ld_antb, y = Count)) +
 
 ```
 
+\newpage
 
 ```{r}
 #| label: fig-antb2
@@ -535,6 +566,8 @@ ggplot(ld_antb_summary1, aes(x = ld_antb, y = Count)) +
 #| echo: false
 #| warning: false
 #| message: false
+#| fig-width: 5
+#| fig-height: 4
 
 # Prepare the data
 ld_antb_summary2 <- balanced_data %>%
@@ -566,6 +599,8 @@ ggplot(ld_antb_summary2, aes(x = ld_antb, y = Count)) +
 
 ```
 
+\newpage
+
 ### Clinical chorioamnionitis diagnosed during labor or maternal temperature over 38 degrees celcius (100.4 degrees fahrenheit)
 
 @fig-chor1 shows that the "No" category dominates with 3,539,254 observations, compared to 63,617 in the "Yes" category. @fig-chor2 shows that the extreme disparity between the two categories is addressed after balancing, with the "No" category having 21,213 and the "Yes" category having 787.
@@ -576,6 +611,8 @@ ggplot(ld_antb_summary2, aes(x = ld_antb, y = Count)) +
 #| echo: false
 #| warning: false
 #| message: false
+#| fig-width: 5
+#| fig-height: 4
 
 # Prepare the data
 ld_chor_summary1 <- raw_data %>%
@@ -603,12 +640,17 @@ ggplot(ld_chor_summary1, aes(x = ld_chor, y = Count)) +
   )
 
 ```
+
+\newpage
+
 ```{r}
 #| label: fig-chor2
 #| fig-cap: The distribution observations in the analysis datset based on whether the infant received chorioamnionitis treatments or not
 #| echo: false
 #| warning: false
 #| message: false
+#| fig-width: 5
+#| fig-height: 4
 
 # Prepare the data
 ld_chor_summary2 <- balanced_data %>%
@@ -638,6 +680,8 @@ ggplot(ld_chor_summary2, aes(x = ld_chor, y = Count)) +
 
 ```
 
+\newpage
+
 ### Epidural or spinal anesthesia during labor
 
 @fig-anes1 shows that in the raw data, the "Yes" category dominates with 2,810,461 observations, while the "No" category has 792,410. The initial overrepresentation of the "Yes" category is addressed through the balancing process, with @fig-anes2 showing the "Yes" category of 15,387 and the "No" category of 6,613.
@@ -648,6 +692,8 @@ ggplot(ld_chor_summary2, aes(x = ld_chor, y = Count)) +
 #| echo: false
 #| warning: false
 #| message: false
+#| fig-width: 5
+#| fig-height: 4
 
 # Prepare the data
 ld_anes_summary1 <- raw_data %>%
@@ -676,12 +722,16 @@ ggplot(ld_anes_summary1, aes(x = ld_anes, y = Count)) +
 
 ```
 
+\newpage
+
 ```{r}
 #| label: fig-anes2
 #| fig-cap: The distribution observations in the analysis datset based on whether the infant received anesthesia treatments or not
 #| echo: false
 #| warning: false
 #| message: false
+#| fig-width: 5
+#| fig-height: 4
 
 # Prepare the data
 ld_anes_summary2 <- balanced_data %>%
@@ -712,6 +762,7 @@ ggplot(ld_anes_summary2, aes(x = ld_anes, y = Count)) +
 
 ```
 
+\newpage
 
 ## Correlation between predictor variables
 
@@ -769,6 +820,7 @@ In @fig-corr2, most cases fall into the "neither used" category (Steroids:0, Ant
 #| echo: false
 #| warning: false
 #| message: false
+
 
 # Load necessary library
 library(vcd)
@@ -959,6 +1011,8 @@ ggplot(summary_data, aes(x = factor(drug_count), y = mean_apgar5)) +
 
 ```
 
+\newpage
+
 ### Relationship between the type of treatments administered during labor/delivery and the Apgar5 scores
 
 @fig-result2 shows that most treatments during labor and delivery are associated with normal Apgar scores ranging from 7 to 10, as indicated by the darker blue shades in these columns. Treatments such as usage of anesthesia and antibiotics exhibit broader distributions across Apgar scores, suggesting their use in a wide range of delivery conditions. Lower Apgar scores ranging from 0 to 3 are relatively rare, shown by lighter shades across treatments. Moreover, drug usage of chorioamnionitis and steroids show fewer "Yes" responses overall, suggesting their more targeted use. 
@@ -1024,6 +1078,8 @@ ggplot(heatmap_long, aes(x = APGAR5, y = Drug_Usage, fill = Count)) +
 
 ```
 
+\newpage
+
 @fig-indcscore shows that observation counts increase steadily from scores 0 to 5, remain relatively stable between scores 5 and 9, and then drop sharply at score 10. This pattern suggests that most infants who experienced induction during labor tend to achieve mid-to-high Apgar5 scores, reflecting generally stable and favorable health outcomes. 
 
 ```{r}
@@ -1059,6 +1115,8 @@ ggplot(indc_data_summary, aes(x = apgar5, y = Count)) +
   )
 
 ```
+
+\newpage
 
 @fig-augmtscore shows that observation counts are lower at extreme scores of 0 and 10, steadily increase from scores 1 to 5, plateau between 5 and 8, and peak at score 9 before sharply declining at score 10. This pattern suggests that augmentation of labor is associated with mid-to-high Apgar5 scores, reflecting favorable infant health outcomes in most cases, while fewer cases exhibit very low or extremely high scores.
 
@@ -1096,6 +1154,8 @@ ggplot(augmt_data_summary, aes(x = apgar5, y = Count)) +
 
 ```
 
+\newpage
+
 @fig-sterscore shows that observation counts are relatively low at extreme scores of 0 and 10, increase steadily from scores 0 to 4, and peak at score 4 before gradually declining through scores 5 to 10. This pattern proposes that usage of steroids for fetal lung maturation received by the mother before delivery is associated with a concentration of Apgar5 scores in the mid-range, reflecting moderate infant health outcomes in most cases.
 
 ```{r}
@@ -1131,6 +1191,8 @@ ggplot(ster_data_summary, aes(x = apgar5, y = Count)) +
   )
 
 ```
+
+\newpage
 
 @fig-antbscore shows that observation counts rise gradually from scores 0 to 2, and maintain a steady plateau between scores 4 and 7, before declining through scores 8 to 10. This pattern suggests that infants exposed to antibiotics received by the mother during delivery tend to achieve moderate Apgar5 scores, with fewer observations at both low and high extremes.
 
@@ -1172,6 +1234,8 @@ ggplot(antb_data_summary, aes(x = apgar5, y = Count)) +
 
 ```
 
+\newpage
+
 @fig-chorscore shows that the observation count peaks sharply at a score of 1, then stabilizes between scores 2 and 5, followed by a gradual decline from scores 6 through 10. This distribution suggests that infants that were diagnosed clinical chorioamnionitis during labor or maternal temperature over 38 degrees celcius tend to achieve lower-to-mid range Apgar5 scores.
 
 ```{r}
@@ -1212,6 +1276,8 @@ ggplot(chor_data_summary, aes(x = apgar5, y = Count)) +
 
 ```
 
+\newpage
+
 @fig-anesscore shows that observation counts steadily increase from scores 0 to 5. Beyond score 5, the counts plateau, maintaining a relatively stable distribution across scores 6 to 9, followed by a sharp decline at score 10. This suggests the widespread distribution of higher Apgar scores when epidural or spinal anesthesia is used during labor.
 
 ```{r}
@@ -1251,6 +1317,7 @@ ggplot(anes_data_summary, aes(x = apgar5, y = Count)) +
 
 ```
 
+\newpage
 
 ## Results from the prediction model
 
@@ -1363,6 +1430,8 @@ ggplot(importance_table, aes(x = `Variable Importance`, y = `Treatment Type`)) +
 
 
 ```
+
+\newpage
 
 @tbl-rfsummary2 shows the Random Forest model, despite incorporating hyperparameter tuning, demonstrated suboptimal performance. Specifically, the Root Mean Squared Error (RMSE) of 3.12 and Mean Absolute Error (MAE) of 2.69 suggest that the model's predictions deviate significantly from the observed values on average [@vitalflux_metrics]. Furthermore, the R-squared and Adjusted R-squared values of 0.02 suggest the model captures only 2% of the variance in the target variable [@vitalflux_metrics]. These results propose that further refinement is necessary, potentially through reevaluating feature engineering, exploring additional hyperparameter configurations, or considering alternative modeling approaches better suited for the data [@AnalyticsVidhyaFeatureEngineering2021].
 
@@ -1485,7 +1554,7 @@ Integrating survey methodologies with the 2023 US Natality Data enables research
 
 ### Observational data considerations
 
-Observational data serve as the main database in biomedical research, particularly when randomized controlled trials (RCTs) are impractical due to ethical or logistical constraints [@healthknowledge2024]. These datasets, often derived from electronic health records, patient surveys, or longitudinal studies [@healthknowledge2024], provide valuable insights into real-world healthcare outcomes. However, their inherent limitations necessitate careful consideration to ensure robust and credible findings. Among the key challenges are confounding variables, selection bias, and measurement errors [@tellingstories]. For instance, in analyzing the effects of prenatal steroids on neonatal outcomes, unmeasured factors such as maternal health or socioeconomic status can introduce confounding [@natality202]. Advanced statistical techniques like propensity score matching or instrumental variables are essential to isolate causal effects from observational data [@Olier2023ObservationalData].
+Observational data serve as the main database in biomedical research, particularly when randomized controlled trials (RCTs) are impractical due to ethical or logistical constraints [@healthknowledge2024]. These datasets, often derived from electronic health records, patient surveys, or longitudinal studies [@healthknowledge2024], provide valuable insights into real-world healthcare outcomes. However, their inherent limitations necessitate careful consideration to ensure robust and credible findings. Among the key challenges are confounding variables, selection bias, and measurement errors [@tellingstories]. For instance, in analyzing the effects of prenatal steroids on neonatal outcomes, unmeasured factors such as maternal health or socioeconomic status can introduce confounding [@natality2023]. Advanced statistical techniques like propensity score matching or instrumental variables are essential to isolate causal effects from observational data [@Olier2023ObservationalData].
 
 Another critical issue is selection bias, where certain subgroups (e.g., uninsured individuals or marginalized populations) may be systematically underrepresented in the dataset, thus limiting the generalizability of findings [@tellingstories]. Addressing this requires techniques such as weighting adjustments or sensitivity analyses and, where possible, integration with survey data to fill informational gaps. Additionally, measurement errors and missing data—common in healthcare records—can distort results [@healthknowledge2024]. Strategies such as multiple imputation and rigorous data cleaning are indispensable for mitigating these challenges [@healthknowledge2024]. Coupled with robust ethical safeguards, including informed consent and adherence to privacy standards, these measures ensure that observational studies maintain both scientific and ethical rigor [@healthknowledge2024].
 
@@ -1582,6 +1651,98 @@ bayesplot::mcmc_trace(
 
 plot(bayesian_model, "rhat")
 ```
+
+### Model API Predictions
+
+#### API execution details
+
+The 'Infant Health Prediction API' provides predictions for infant health status based on maternal and delivery-related factors. By accepting structured datasets in CSV format, it offers researchers a powerful tool to generate real-time predictions using advanced maching learning models.
+
+- Endpoint URL: `http://127.0.0.1:3505/predict_csv_local`
+
+- Description: This endpoint processes a local CSV file containing test data and provides predictions from both the Random Forest and Bayesian Linear models.
+
+  - Random Forest Model: 
+  
+    Handles complex interactions between variables to generate robust predictions.
+    
+  - Bayesian Linear Model:
+  
+    Offers interpretable results with uncertainty quantification.
+
+
+#### Input requirements
+
+- The input file must be a CSV containing only numeric columns.
+
+- Required features include drug usage indicators and delivery-related factors.
+
+- Missing or non-numeric data will result in validation errors.
+
+#### Output requirements
+
+The API returns predictions in JSON format. Each entry corresponds to a row in the input dataset, with predictions for models:
+
+    "Random_Forest_Predictions": 5.0648,
+    
+    "Bayesian_Linear_Model_Predictions": 5.1659
+    
+
+The CURL command used to trigger the API:
+
+```bash
+
+curl -X POST 'http://127.0.0.1:3505/predict_csv_local' -H 'accept: */*' -d ''
+
+```
+
+### Shiny web applications for visualizing and analyzing predictions
+
+The 'Infant Health Prediction App' is a Shiny web application that enables users to:
+- Upload a dataset containing infant-related data in CSV format.
+- Run predictions for infant health status using both a Random Forest model and a Bayesian Linear model.
+- View prediction results in an interactive table.
+- Explore visualizations of the predictions through histograms.
+
+#### Features
+1. Data Upload and Preview: Users can upload datasets and preview them in an interactive table.
+2. Model Predictions: Predictions from both models are displayed in a table for easy comparison.
+3. Visualizations: Histograms provide insights into the distribution of predictions from each model.
+
+#### How to Run the App
+To launch the app locally, use the following R command:
+
+```r
+
+library(shiny)
+
+runApp("../scripts/07-shiny_app.R")
+
+```
+
+\newpage
+
+#### App Interface
+Below is the interface of the Infant Health Prediction App:
+
+![App Interface](../models/results/interface_screenshot.png)
+
+\newpage
+
+#### Prediction Table
+The predictions are displayed in an interactive table:
+
+![Prediction Table from the Shiny Web Application](../models/results/prediction_table_screenshot.png)
+
+\newpage
+
+#### Visualizations
+The histograms show the distribution of model predictions:
+
+![Random Forest Histogram from the Shiny Web Application](../models/results/random_forest_histogram.png)
+
+![Bayesian Linear Model Histogram from the Shiny Web Application](../models/results/bayesian_linear_histogram.png)
+
 
 
 \newpage
