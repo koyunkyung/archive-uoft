@@ -4,15 +4,15 @@ subtitle: "Analysis of US Birth Records for Public Health Insights"
 author: 
   - Yunkyung Ko
 thanks: "Code and data are available at: [https://github.com/koyunkyung/infant_health](https://github.com/koyunkyung/infant_health)."
-date: "`r Sys.time()`"
-date-format: "D MMMM YYYY"
+date: today
+date-format: long
 abstract: "The 2023 Natality Dataset provides birth record data for the United States, covering demographic, medical, and geographic variables. The dataset enables research on public health, maternal outcomes, and disparities in birth trends. The datasheet documents the creation, composition, and potential uses of the dataset while addressing its limitations and ethical considerations."
 format: pdf
 number-sections: true
 bibliography: references.bib
 ---
 
-Extract of the questions from @cdc_facility_worksheet_2016.
+Extract of the questions from @gebru2021datasheetsdatasets.
 
 
 **Motivation**
@@ -20,11 +20,17 @@ Extract of the questions from @cdc_facility_worksheet_2016.
 1. *For what purpose was the dataset created? Was there a specific task in mind? Was there a specific gap that needed to be filled? Please provide a description.*
 
 The dataset was created to serve as a standardized source for analyzing trends in maternal and infant health across the United States [@natality2023]. Its primary purposes include:
-  - Public health researching and reporting
+
+  - Public health researching and reporting:
+  
   By capturing demographic, medical, and geographic variables, it supports studies on key public health indicators. The target of studies include rates of preterm births and low birth weight, and disparities in maternal health outcomes by race, ethnicity, or socioeconomic status [@cdc2023births].
-  - Policy development and evaluation
+  
+  - Policy development and evaluation:
+  
   Policymakers make use of this dataset to evaluate the effectiveness of health interventions and programs, such as those under the health people of age 20 to 30 [@cdc2023evaluation]. It identifies geographic regions or sub-populations that require targeted healthcare intiatives or funding, and assess trends over time to guide future health policies and resource allocation [@cdc2023evaluation].
-  - Addressing data gaps in maternal and infant health
+  
+  - Addressing data gaps in maternal and infant health:
+  
   The dataset solves for the inconsistencies in reporting across states by providing a nationwide coverage of natality data [@bigdataframework2023]. It standardizes information collected from birth certificates, ensuring compatibility for cross-state comparisons and longitudinal studies [@cdc2023nvss]. 
     
     
@@ -56,11 +62,17 @@ The 2023 Natality Dataset is a census of all registered live births in the U.S, 
 4. *What data does each instance consist of? "Raw" data (for example, unprocessed text or images) or features? In either case, please provide a description.*
 
 Each instance in the dataset consists of structured data derived from standardized birth certificates [@natality2023]. The data includes both raw fields (e.g., mother's age, infant's birth weight) and processed features (e.g., gestational age in weeks, calculated Apgar scores) [@natality2023]. These fields capture demographic, medical, and geographic information, such as:
-  - *Demographics: 
+
+  - Demographics: 
+  
     maternal age, race, education, marital status, residency
-  - *Medical details:
+    
+  - Medical details:
+  
     birth weight, gestational age, prenatal care visits, complications during pregnancy or delivery, method of delivery (e.g., cesarean)
-  - *Geographic information:
+    
+  - Geographic information:
+  
     state and country of birth
 
 
@@ -74,115 +86,360 @@ Commonly missing fields in this dataset include details about the father (e.g., 
 
 
 7. *Are relationships between individual instances made explicit (for example, users' movie ratings, social network links)? If so, please describe how these relationships are made explicit.*
-	- TBD
+
+Relationships between individual instances are not explicitly defined in this dataset and each record represents a standalone live birth [@cdc2023birthguidelines]. Every individual instance is not linked to other births, even in cases of familial connections (e.g., siblings born in different years) [@cdc2023birthguidelines]. However, relationships can be inferred indirectly through shared geographic or demographic attributes, such as births occurring within the same country or among mothers of similar age and race [@natality2023]. These inferred connections are not explicitly encoded, but can be analyzed statistically for patterns or trends.
+
+
 8. *Are there recommended data splits (for example, training, development/validation, testing)? If so, please provide a description of these splits, explaining the rationale behind them.*
-	- TBD
+
+The Centers for Disease Control and Prevention (CDC) does not prescribe specific data splits for this dataset [@cdc2023birthguidelines], but researchers are encouraged to determine appropriate data partitioning strategies. For instance, they can divide data into training, validation, and testing sets based on their specific analytical objectives and methodological requirements [@sharpsight2023]. This approach may ensure the data to be utilized effectively in addressing diverse research questions.
+
+
 9. *Are there any errors, sources of noise, or redundancies in the dataset? If so, please provide a description.*
-	- TBD
+
+The 2023 Natality Dataset contains relatively high-quality data due to its collection and standardization by the National Center for Health Statistics (NCHS). The NCHS employs rigorous data cleaning protocols including checks for internal consistency, cross-referencing with prior datasets for anomalies, and imputing missing values where appropriate [@cdc2023natality]. However, there are potential errors, noise, and redundancies that arise from the complexities of data collection across states and facilities:
+
+  - Incomplete Data:
+  
+    Certain fields, such as prenatal care visits, father’s information (e.g., age, education), and specific medical details, may be missing [@rawdata]. These gaps often result from incomplete reporting by healthcare providers or omitted information from parents [@cdc2023vscp].
+    
+  - Reporting Variability:
+  
+    Differences in how states and hospitals document medical complications, delivery methods, or maternal health conditions can lead to inconsistencies [@pmc5073487]. For example, complications during labor may be underreported in some jurisdictions due to differences in medical coding practices or provider discretion [@pmc5073487].
+    
+  - Data Noise:
+  
+    Some data points may include noise due to typographical errors, such as invalid maternal ages (e.g., extreme outliers) or implausible gestational ages [@bmjmedicine_observational_study]. These errors, though infrequent, can affect statistical analyses if not addressed.
+    
+  - Geographical and Temporal Variations:
+  
+    Geographic disparities in healthcare access and reporting capabilities can lead to systematic biases, such as underrepresentation of certain rural areas or delays in data submission [@cdc2023vscp].
+
+
 10. *Is the dataset self-contained, or does it link to or otherwise rely on external resources (for example, websites, tweets, other datasets)? If it links to or relies on external resources, a) are there guarantees that they will exist, and remain constant, over time; b) are there official archival versions of the complete dataset (that is, including the external resources as they existed at the time the dataset was created); c) are there any restrictions (for example, licenses, fees) associated with any of the external resources that might apply to a dataset consumer? Please provide descriptions of all external resources and any restrictions associated with them, as well as links or other access points, as appropriate.*
-	- TBD
+
+The '2023 Natality Data for the United States' is largely self-contained, as it contains extensive birth records collected through standardized birth certificates across all United States and territories [@natality2023]. The dataset does not rely on external resources like websites, tweets, or other datasets for its core content. However, researchers can enhance analyses by linking this dataset to other publicly available resources, such as socioeconomic data from the American Community Survey(ACS) or environmental data from the EPA [@cdc2023wonder].
+
+For access to more specific geographic data, such as specific countries or smaller regions, researchers may need to submit a formal data request to the National Center for Health Statistics (NCHS) [@cdc2023wonder]. These requests are subject to review and approval to ensure compliance with privacy and ethical standards [@cdc2023vscp]. Such restrictions are in place to prevent the misuse of sensitive data and to protect individual privacy [@cdc2023vscp]. 
+ 
+  **a) Guarantees of Continuity**
+  
+  The datsaet itself is archived and maintained by the National Center for Health Statistics (NCHS), ensuring its availability over time [@cdc2023vscp]. External resources for linkage, like ACS data, are also federally maintained, providing similar guarantees of continuity [@census2023acs].
+  
+  
+  **b) Archival Versions**
+  
+  The NCHS maintains archival versions of the natality dataset, preserving the data as it existed at the time of release [@rawdata]. These archives include documentation to support reproducibilty.
+  
+  **c) Restrictions**
+  
+  While the dataset is free of charge and unrestricted for general use, requests for detailed geographic data may require additional permissions. Users must also follow ethical guidelines when linking with external datasets to prevent privacy violations or misuse [@cdc2023vscp].
+
 11. *Does the dataset contain data that might be considered confidential (for example, data that is protected by legal privilege or by doctor-patient confidentiality, data that includes the content of individuals' non-public communications)? If so, please provide a description.*
-	- TBD
+
+The dataset does not contain data that is protected by legal privilege or doctor-patient confidentiality, as it is publicly available and anaonymized to safeguard individual privacy [@rawdata]. Personally identifiable information (PII), such as names, Social Security numbers, or exact residential addresses, is excluded to comply with federal privacy laws and regulations, including the Health Insurance Portability and Accountability Act (HIPAA) [@natality2023].
+
+However, the dataset includes sensitive demographic and health-related information, such as maternal age, race, education, and detailed medical data (e.g., complications during pregnancy, prenatal care visits). While this information is anonymized, it is still considered sensitive due to its potential to identify individuals when combined with external datasets. To mitigate risks, the National Center for Health Statistics (NCHS) applies strict data handling policies, and access to specific geographic data, such as detailed county-level information, requires additional permissions and adherence to ethical guidelines [@natality2023]. These measures ensure that the dataset is suitable for public health research while minimizing risks associated with confidentiality breaches.
+
 12. *Does the dataset contain data that, if viewed directly, might be offensive, insulting, threatening, or might otherwise cause anxiety? If so, please describe why.*
-	- TBD
+
+The dataset does not contain data that is inherently offensive, insulting, or threatening. However, certain fields may include sensitive demographic or medical information, such as maternal age, race, ethnicity, and health outcomes (e.g., complications during pregnancy, infant mortality). When misinterpreted or presented without proper context, this data could inadvertently reinforce stereotypes or cause anxiety, particularly in discussions around health disparities or adverse outcomes [@cdc2023vscp].
+
+For instance, data highlighting disparities in preterm birth rates among different racial or ethnic groups could be misused or misrepresented in ways that perpetuate stigma or bias [@bmjmedicine_observational_study]. To address this, researchers and policymakers using the dataset are encouraged to approach analyses with sensitivity, ensuring that findings are contextualized and presented in a manner that respects the dignity and privacy of all individuals represented [@natality2023].
+
 13. *Does the dataset identify any sub-populations (for example, by age, gender)? If so, please describe how these subpopulations are identified and provide a description of their respective distributions within the dataset.*
-	- TBD
+
+Sub-populations identified by the dataset based on demographic and medical attributes [@natality2023] include:
+
+  - Age:
+  
+  The maternal age variable allows for sub-populations such as adolescent mothers (<20 years old), mothers of advanced maternal age (35+ years), and age-specific birth trends.
+  
+  - Race and Ethnicity:
+  
+  Maternal race and ethnicity are recorded, enabling analyses of sub-populations such as non-Hispanic, White, Black, Hispanic, and Asian mothers. This enables studies on health disparities, such as differences in preterm birth or low birth weight rates among racial and ethnic groups.
+  
+  - Geographic Location:
+  
+  Births are categorized by state and country, allowing for sub-populations based on urban or rural settings and regional disparities in healthcare access or outcomes.
+  
+  - Medical Factors:
+  
+  The dataset identifies sub-populations based on medical characteristics, such as mothers with complications during pregnancy, preterm births, or low birth weight infants.
+
+
 14. *Is it possible to identify individuals (that is, one or more natural persons), either directly or indirectly (that is, in combination with other data) from the dataset? If so, please describe how.*
-	- TBD
+
+It is not possible to directly identify individuals from the dataset, as it is anonymized and excludes personally identifiable information (PII) such as names, addresses, and Social Security numbers [@natality2023]. However, indirect identification could be theoretically possible if the dataset is combined with external information. For instance, a record with unique combinations of attributes—such as maternal age, race, specific birth complications, and detailed geographic location—could potentially be matched to external data sources like local news reports or publicly available registries [@cdc2023vscp]. To mitigate such risks, the dataset limits access to granular geographic details (e.g., county-level data) and enforces strict ethical guidelines for use  [@cdc2023vscp]. These measures significantly reduce the likelihood of re-identification while preserving the dataset’s utility for research.
+
+
 15. *Does the dataset contain data that might be considered sensitive in any way (for example, data that reveals race or ethnic origins, sexual orientations, religious beliefs, political opinions or union memberships, or locations; financial or health data; biometric or genetic data; forms of government identification, such as social security numbers; criminal history)? If so, please provide a description.*
-	- TBD
-16. *Any other comments?*
-	- TBD
+
+The dataset contains sensitive data, primarily related to health and demographics. Sensitive fields include [@cdc2023vscp]:
+
+  - Race and Ethnic Origins:
+  
+    Records of maternal race and ethnicity are included in the dataset. While this information is critical for analyzing disparities in birth outcomes, these fields must be interpreted carefully to avoid reinforcing stereotypes, as disparities often reflect systemic inequalities rather than intrinsic differences.
+    
+  - Health Data:
+  
+    - Maternal Health: Data on complications during pregnancy, delivery methods (e.g., cesarean sections), prenatal care visits
+    
+    - Infant Outcomes: Metrics like Apgar scores, birth weight, gestational age, whether the birth was preterm
+    
+    These fields are sensitive as they relate to medical conditions that could reveal vulnerabilities or personal health histories if misused.
+    
+  - Geographic Location:
+  
+    Even though the dataset provides state-level and limited geographic information, such as country or metropolitan area, access to detailed geographic data is possible after special permission. Geographic information, when combined with other datasets, could lead to indirect identification or stigmatization of specific communities with poor health outcomes.
+    
+In order to minimize the risk of misuse or harm to individuals and communities, researchers must handle these fields responsible, contextualizing analyses to avoid reinforcing biases or stigmatizing groups [@cdc2023vscp]. Access to more specific geographic details is restricted to approved uses, ensuring compliance with federal privacy regulations, including HIPAA and ethical guidelines from the National Center for Health Statistics (NCHS) [@cdc2023evaluation]. 
+  
+    
 
 **Collection process**
 
 1. *How was the data associated with each instance acquired? Was the data directly observable (for example, raw text, movie ratings), reported by subjects (for example, survey responses), or indirectly inferred/derived from other data (for example, part-of-speech tags, model-based guesses for age or language)? If the data was reported by subjects or indirectly inferred/derived from other data, was the data validated/verified? If so, please describe how.*
-	- TBD
+
+The data associated with each instance in the dataset was acquired from standardized birth certificates across the United States. These certificates are filled out at the time of birth by healthcare providers, including physicians, midwives, and hospital staff, based on direct observations during the delivery process and information reported by the mother or other reliable sources (e.g., medical records) [@cdc2023vscp].
+
+- Directly Observable Data:
+
+Certain data points, such as the infant's weight at birth, gestational age, and Apgar scores, are measured or observed by healthcare professionals.
+
+- Reported by Subjects:
+
+Information such as the mother's age, education level, race/ethnicity, and prenatal care visits is often provided by the mother or documented from her medical history.
+
+- Indirectly Inferred Data:
+
+Some fields, such as gestational age or complications during delivery, may be derived from medical evaluations, clinical records, or healthcare provider notes.
+
+The following methods were used to ensure data quality and consistency [@cdc2023birthguidelines]:
+
+- Standardization:
+
+The dataset adheres to the National Center for Health Statistics (NCHS) guidelines, ensuring that data collection and categorization are uniform across all states.
+
+- Validation:
+
+Healthcare professionals validate critical fields such as birth weight and gestational age by cross-referencing clinical records. Data entry undergoes quality checks by state vital statistics offices before submission to the NCHS.
+
+- Verification:
+
+Regular training for data collectors and feedback loops between hospitals and state agencies help minimize errors and improve reliability.
+
+
+
 2. *What mechanisms or procedures were used to collect the data (for example, hardware apparatuses or sensors, manual human curation, software programs, software APIs)? How were these mechanisms or procedures validated?*
-	- TBD
+
+The data in the dataset was collected through a combination of manual and automated mechanisms, standardized by the National Vital Statistics System (NVSS) under the National Center for Health Statistics (NCHS). The key mechanisms and procedures include [@cdc2023nvss]:
+
+  1. Manual Data Entry:
+  
+Birth certificates are completed by healthcare providers (e,g,, physicians, nurses, or midwives) and administrative staff in hospitals or birthing centers. These individuals manually document details such as maternal demographics, birth outcomes, and medical procedures based on observations, patient interviews, and clinical records.
+    
+  2. Standardized Electronic Systems:
+  
+Many states utilize Electronic Birth Registration Systems (EBRS) to digitize the process [@ebrs2024]. These systems allow hospital staff to enter birth certificate data electronically, reducing manual errors [@ebrs2024]. The EBRS software enforces validation rules, such as checking for logical consistency (e.g., gestational age aligning with birth weight) and completeness (e.g., ensuring no mandatory fields are left blank) [@ebrs_dashboard2024].
+  
+  3. Data Transmission:
+  
+Once entered, data is transmitted from state vital statistics offices to the NCHS through secure channels [@cdc2023nvss]. This ensures uniform data collection across all states and territories. The NCHS applies additional validation algorithms to identify and flag inconsistencies, such as outliers in birth weight or maternal age [@cdc2023vscp].
+    
+  4. Validation Procedures:
+  
+Training: Healthcare providers and staff responsible for data collection are trained periodically to ensure accuracy and compliance with NCHS guidelines.
+    
+Audits: Routine quality assurance audits are conducted to compare entered data with source documents (e.g., medical records) and identify discrepancies.
+    
+Feedback Loops: States receive feedback reports from the NCHS to address anomalies and improve future data collection processes.
+
+By leveraging a combination of manual human curation, electronic systems, and rigorous validation protocols, the dataset maintains a relatively high standard of accuracy and reliability, making it a trusted resource for public health research and policy development.
+
+
 3. *If the dataset is a sample from a larger set, what was the sampling strategy (for example, deterministic, probabilistic with specific sampling probabilities)?*
-	- TBD
+
+As part of the National Vital Statistics System (NVSS), the dataset includes all reported live births based on data collected through birth certificates, ensuring extensive coverage of the target population [@cdc2023nvss]. While the dataset itself is exhaustive and not a sample, researchers often create subsets or samples for specific analyses. These subsets can be generated using the following strategies:
+
+  - Deterministic Sampling:
+  
+    - Researchers may filter data based on predetermined criteria [@deterministic_sampling2024], such as geographic region (e.g., focusing on births in a specific state) or maternal age groups (e.g., teenage mothers or mothers over 40).
+    
+    - This approach ensures that the subset aligns with the research objectives but may not represent the entire population.
+    
+  - Probabilistic Sampling:
+  
+    - For statistical analyses, probabilistic methods such as stratified random sampling can be employed [@tellingstories]. For example, researchers might stratify the data by race/ethnicity or socioeconomic status to ensure representation across key demographic groups.
+    
+    - Sampling weights, often provided in supplementary datasets, can adjust for any oversampling or undersampling to maintain population-level estimates [@tellingstories].
+    
+  - Exclusions Due to Missing or Invalid Data:
+  
+    - In practice, records with missing, incomplete, or invalid fields may be excluded from specific analyses [@pmc_sampling2013]. For instance, births with unrecorded gestational ages or birth weights might be omitted in studies focusing on preterm births.
+
+
+
 4. *Who was involved in the data collection process (for example, students, crowdworkers, contractors) and how were they compensated (for example, how much were crowdworkers paid)?*
-	- TBD
+
+The data collection process involved healthcare providers, administrative staff, and state-level vital statistics offices [@cdc2023vscp]. Healthcare providers, including physicians, nurses, and midwives, recorded information during and after delivery, while hospital administrative staff assisted in completing birth certificates. State-level vital statistics offices ensured data entry and validation before transmitting the records to the National Center for Health Statistics (NCHS) [@cdc2023vscp]. These individuals were compensated as part of their professional roles within healthcare and administrative systems, and no additional payments were made specifically for data collection [@cdc2023birthguidelines]. The NCHS also provided training and feedback to ensure standardized data quality across all contributors [@cdc2023vscp].
+
+
 5. *Over what timeframe was the data collected? Does this timeframe match the creation timeframe of the data associated with the instances (for example, recent crawl of old news articles)? If not, please describe the timeframe in which the data associated with the instances was created.*
-	- TBD
+
+The data was collected continuously throughout the calendar year of 2023, with records submitted by hospitals, birthing centers, and state vital statistics offices shortly after each birth [@cdc2023vscp]. The data collection timeframe aligns with the creation timeframe of the instances, as birth certificates are typically completed and validated within days or weeks of the birth event [@cdc2023birthguidelines]. This real-time collection ensures that the dataset accurately reflects births occurring in 2023 without significant delays or retrospective adjustments.
+
 6. *Were any ethical review processes conducted (for example, by an institutional review board)? If so, please provide a description of these review processes, including the outcomes, as well as a link or other access point to any supporting documentation.*
-	- TBD
+
+The National Vital Statistics System (NVSS), where strict privacy and data protection regulations are operated, is where the birth certificate data was collected through [@natality2023]. While the dataset itself does not require an Institutional Review Board (IRB) review due to its aggregated and de-identified nature, the underlying processes for collecting and managing birth certificate data adhere to ethical standards outlined by the National Center for Health Statistics (NCHS) and state-level public health agencies [@cdc_privacy2024]. These processes ensure compliance with federal and state laws, such as the Public Health Service Act, to protect individual confidentiality and data integrity [@cdc_privacy2024]. Additional ethical safeguards include restricted access to identifiable data and routine audits to maintain data security [@cdc_privacy2024].
+
+
 7. *Did you collect the data from the individuals in question directly, or obtain it via third parties or other sources (for example, websites)?*
-	- TBD
+
+The data was not collected directly from individuals but obtained via third parties, specifically through state vital statistics offices. These offices collect data from birth certificates completed by healthcare providers and administrative staff at hospitals and birthing centers [@cdc2023vscp]. The birth certificate information includes both observed data and data reported by the mother, ensuring comprehensive coverage of birth-related variables [@natality2023].
+
+
 8. *Were the individuals in question notified about the data collection? If so, please describe (or show with screenshots or other information) how notice was provided, and provide a link or other access point to, or otherwise reproduce, the exact language of the notification itself.*
-	- TBD
+
+Individuals are indirectly notified about the data collection as part of the birth registration process, which is legally mandated in the United States [@cdc_privacy2024]. Hospitals and healthcare providers inform mothers that birth-related data is recorded on official birth certificates. Notices regarding the use of this data for statistical purposes, including anonymization and public health research, are typically included in state guidelines or hospital documentation [@cdc2023vscp]. 
+
 9. *Did the individuals in question consent to the collection and use of their data? If so, please describe (or show with screenshots or other information) how consent was requested and provided, and provide a link or other access point to, or otherwise reproduce, the exact language to which the individuals consented.*
-	- TBD
+
+Consent for data collection and use is implied as part of the legal requirement for birth registration in the United States [@cdc_privacy2024]. Parents or guardians provide the necessary information to healthcare providers, who then complete the birth certificate [@cdc2023vscp]. Explicit consent for the statistical use of de-identified data is not required, as the data is anonymized and used solely for public health purposes under federal law [@cdc_privacy2024]. 
+
 10. *If consent was obtained, were the consenting individuals provided with a mechanism to revoke their consent in the future or for certain uses? If so, please provide a description, as well as a link or other access point to the mechanism (if appropriate).*
-	- TBD
+
+Because the data is de-identified and collected as part of a legal process, individuals do not have a mechanism to revoke their consent for data collection [@cdc_privacy2024]. However, stringent privacy protections ensure that the data is used only for statistical and public health purposes [@statcan_trustlaws2024]. 
+
 11. *Has an analysis of the potential impact of the dataset and its use on data subjects (for example, a data protection impact analysis) been conducted? If so, please provide a description of this analysis, including the outcomes, as well as a link or other access point to any supporting documentation.*
-	- TBD
-12. *Any other comments?*
-	- TBD
+
+The National Center for Health Statistics (NCHS) conducts routine data protection impact analyses to assess the risks and benefits of using the dataset [@cdc_privacy2024]. These analyses ensure that the de-identification process effectively protects individuals' privacy while maintaining the dataset's utility for public health research [@gdpr_dpia2024]. Outcomes of these reviews have led to stringent privacy policies and restricted access to personally identifiable information [@cdc_privacy2024]. 
+
 
 **Preprocessing/cleaning/labeling**
 
 1. *Was any preprocessing/cleaning/labeling of the data done (for example, discretization or bucketing, tokenization, part-of-speech tagging, SIFT feature extraction, removal of instances, processing of missing values)? If so, please provide a description. If not, you may skip the remaining questions in this section.*
-	- TBD
+
+Preprocessing and cleaning were performed on the raw birth certificate data before compiling the 2023 Natality Dataset. The following are the steps included [@cdc2023birthguidelines]:
+
+  - Validation and Cleaning:
+  
+    - Removal of records with missing or invalid values for critical fields such as birth weight, gestational age, or maternal age.
+    
+    - Logical consistency checks to ensure values align with realistic ranges (e.g., birth weights matching gestational age ranges).
+    
+  - Standardization:
+  
+    - Data fields were standardized based on the guidelines provided by the National Center for Health Statistics (NCHS) to ensure uniformity across states.
+    
+    - Categorical variables (e.g., race, method of delivery) were encoded into predefined formats to facilitate consistency in analysis.
+    
+  - Derived Variables:
+  
+    - Additional fields, such as age groups or preterm birth indicators, were derived from the raw data for easier stratification in research.
+
+
 2. *Was the "raw" data saved in addition to the preprocessed/cleaned/labeled data (for example, to support unanticipated future uses)? If so, please provide a link or other access point to the "raw" data.*
-	- TBD
+
+The raw data is retained alongside the processed dataset to ensure transparency and allow for future analysis [@natality2023]. Researchers and authorized personnel can request access to the raw, unprocessed data through the NCHS Vital Statistics Restricted Data Program. Details on accessing raw data can be found here: https://www.cdc.gov/nchs/data/data_access_and_resources_booklet_web.pdf
+
 3. *Is the software that was used to preprocess/clean/label the data available? If so, please provide a link or other access point.*
-	- TBD
-4. *Any other comments?*
-	- TBD
+
+The preprocessing and cleaning processes were carried out using state-level Electronic Birth Registration Systems (EBRS) and federal validation tools provided by the NCHS [@natality2023]. While the exact software used at the state level varies, the guidelines and validation tools employed by the NCHS are publicly documented [@cdc2023vscp]. More information on these tools can be accessed here: [https://www.cdc.gov/nchs/nvss/births.htm](https://www.cdc.gov/nchs/nvss/births.htm)
+
 
 **Uses**
 
 1. *Has the dataset been used for any tasks already? If so, please provide a description.*
-	- TBD
+
+The datasets has already been widely used for public health research and reporting. For instance, it has been used to analyze trends in preterm births, low birth weight rates, and disparities in maternal health outcomes across demographic groups [@cdc2023evaluation]. Policymakers and public health agencies have utilized the dataset to monitor key health indicators and evaluate the effectiveness of maternal and infant health programs [@cdc2023evaluation].
+
+
 2. *Is there a repository that links to any or all papers or systems that use the dataset? If so, please provide a link or other access point.*
-	- TBD
+
+The dataset is commonly referenced in public health reports published by the Centers for Disease Control and Prevention (CDC) and other research institutions. A repository of related publications can be accessed through the CDC WONDER system: [https://wonder.cdc.gov/natality.html](https://wonder.cdc.gov/natality.html). Additional scholarly articles citing the dataset are available via platforms like PubMed [https://pubmed.ncbi.nlm.nih.gov/](https://pubmed.ncbi.nlm.nih.gov/) and Google Scholar [https://scholar.google.com/](https://scholar.google.com/).
+
 3. *What (other) tasks could the dataset be used for?*
-	- TBD
+
+- Epidemiology: Studying correlations between maternal risk factors (e.g., obesity, smoking) and infant health outcomes.
+
+- Policy Evaluation: Assessing the impact of interventions like prenatal care programs or smoking cessation campaigns.
+
+- Healthcare Resource Allocation: Identifying geographic areas with higher rates of adverse outcomes to guide resource distribution.
+
+- Machine Learning Models: Developing predictive models for maternal and infant health risks.
+
+
+
 4. *Is there anything about the composition of the dataset or the way it was collected and preprocessed/cleaned/labeled that might impact future uses? For example, is there anything that a dataset consumer might need to know to avoid uses that could result in unfair treatment of individuals or groups (for example, stereotyping, quality of service issues) or other risks or harms (for example, legal risks, financial harms)? If so, please provide a description. Is there anything a dataset consumer could do to mitigate these risks or harms?*
-	- TBD
-5. *Are there tasks for which the dataset should not be used? If so, please provide a description.*
-	- TBD
-6. *Any other comments?*
-	- TBD
+
+There are some considerations that dataset consumers of 2023 Natality Data should consider [@bmjmedicine_observational_study]:
+
+- Sampling Bias: While the dataset includes all registered births, populations underrepresented in healthcare systems may have incomplete or inaccurate data.
+
+- De-Identification: Data anonymization limits the ability to link records to external datasets, potentially reducing its utility for longitudinal studies.
+
+- Data Cleaning: Removal of records with missing values might unintentionally exclude marginalized populations, introducing bias. To mitigate these risks, researchers should document preprocessing steps transparently and consider applying statistical adjustments to address biases.
+
 
 **Distribution**
 
 1. *Will the dataset be distributed to third parties outside of the entity (for example, company, institution, organization) on behalf of which the dataset was created? If so, please provide a description.*
-	- TBD
+
+The dataset is distributed to third parties, including researchers, public health organizations, and policymakers, through the Centers for Disease Control and Prevention (CDC) and its associated systems, such as the CDC WONDER platform [https://wonder.cdc.gov/](https://wonder.cdc.gov/). This distribution ensures that the dataset is accessible for public health analysis and academic research.
+
 2. *How will the dataset be distributed (for example, tarball on website, API, GitHub)? Does the dataset have a digital object identifier (DOI)?*
-	- TBD
+
+The dataset is primarily distributed through the CDC WONDER platform as downloadable files or via an interactive query system. Some datasets may also be made available through restricted-use agreements for more detailed analysis. While the dataset does not have a specific Digital Object Identifier (DOI), it is assigned unique identifiers through the NVSS [@cdc_data_access2024]. Access it here: [https://wonder.cdc.gov/](https://wonder.cdc.gov/)
+
 3. *When will the dataset be distributed?*
-	- TBD
+
+The dataset is distributed on an annual basis, typically several months after the close of the calendar year to allow for validation and quality assurance [@cdc_nvss_release2024]. The 2023 Natality Dataset was made available in mid-2024 [@natality2023], following the standard release schedule.
+
 4. *Will the dataset be distributed under a copyright or other intellectual property (IP) license, and/or under applicable terms of use (ToU)? If so, please describe this license and/ or ToU, and provide a link or other access point to, or otherwise reproduce, any relevant licensing terms or ToU, as well as any fees associated with these restrictions.*
-	- TBD
+
+The dataset is distributed under public use terms as defined by the CDC [@cdc_data_access2024]. Users must adhere to the terms outlined in the CDC's Data Use Agreement, which restricts the misuse of data for reidentification or commercial exploitation [@cdc_data_access2024]. Detailed terms are available here: [/https://www.cdc.gov/nchs/data/data_access_and_resources_booklet_web.pdf](/https://www.cdc.gov/nchs/data/data_access_and_resources_booklet_web.pdf)
+
+
 5. *Have any third parties imposed IP-based or other restrictions on the data associated with the instances? If so, please describe these restrictions, and provide a link or other access point to, or otherwise reproduce, any relevant licensing terms, as well as any fees associated with these restrictions.*
-	- TBD
+
+No third-party IP-based restrictions apply to the dataset. However, access to restricted-use versions of the dataset, containing additional variables or identifiers, requires approval and is subject to stringent use agreements to ensure data confidentiality [@cdc_data_access2024].
+
 6. *Do any export controls or other regulatory restrictions apply to the dataset or to individual instances? If so, please describe these restrictions, and provide a link or other access point to, or otherwise reproduce, any supporting documentation.*
-	- TBD
-7. *Any other comments?*
-	- TBD
+
+No specific export controls apply to the public-use version of the dataset. However, restricted-use data may be subject to additional controls to comply with U.S. privacy laws, such as the Health Insurance Portability and Accountability Act (HIPAA) [@natality2023]. These controls ensure the dataset remains compliant with national data privacy regulations [@cdc_data_access2024].
+
 
 **Maintenance**
 
 1. *Who will be supporting/hosting/maintaining the dataset?*
-	- TBD
-2. *How can the owner/curator/manager of the dataset be contacted (for example, email address)?*
-	- TBD
-3. *Is there an erratum? If so, please provide a link or other access point.*
-	- TBD
-4. *Will the dataset be updated (for example, to correct labeling errors, add new instances, delete instances)? If so, please describe how often, by whom, and how updates will be communicated to dataset consumers (for example, mailing list, GitHub)?*
-	- TBD
-5. *If the dataset relates to people, are there applicable limits on the retention of the data associated with the instances (for example, were the individuals in question told that their data would be retained for a fixed period of time and then deleted)? If so, please describe these limits and explain how they will be enforced.*
-	- TBD
-6. *Will older versions of the dataset continue to be supported/hosted/maintained? If so, please describe how. If not, please describe how its obsolescence will be communicated to dataset consumers.*
-	- TBD
-7. *If others want to extend/augment/build on/contribute to the dataset, is there a mechanism for them to do so? If so, please provide a description. Will these contributions be validated/verified? If so, please describe how. If not, why not? Is there a process for communicating/distributing these contributions to dataset consumers? If so, please provide a description.*
-	- TBD
-8. *Any other comments?*
-	- TBD
 
+The 2023 Natality Dataset is hosted and maintained by the National Center for Health Statistics (NCHS) as part of the National Vital Statistics System (NVSS) [@natality2023]. The NCHS ensures the dataset is updated, accurate, and accessible to researchers and public health professionals [@cdc2023natality].
+
+2. *How can the owner/curator/manager of the dataset be contacted (for example, email address)?*
+
+The NCHS can be contacted through its official support channels. For inquiries about the dataset, email: nchsquery@cdc.gov, or visit their website: [https://www.cdc.gov/nchs/nhis/contact.htm](https://www.cdc.gov/nchs/nhis/contact.htm)
+
+3. *Is there an erratum? If so, please provide a link or other access point.*
+
+Errata are issued as needed to correct errors in previously released datasets. Updates and corrections are communicated through the NCHS website: [https://www.cdc.gov/nchs/products/errata.htm](https://www.cdc.gov/nchs/products/errata.htm)
+
+4. *Will the dataset be updated (for example, to correct labeling errors, add new instances, delete instances)? If so, please describe how often, by whom, and how updates will be communicated to dataset consumers (for example, mailing list, GitHub)?*
+
+The dataset is updated annually to include new data, correct errors, and improve data quality. Updates are performed by state vital statistics offices and the NCHS [@cdc2023natality]. Changes are communicated to users through public notices on the NCHS website [https://www.cdc.gov/nchs/index.html](https://www.cdc.gov/nchs/index.html) and platforms like CDC WONDER [https://wonder.cdc.gov/](https://wonder.cdc.gov/).
+
+5. *If the dataset relates to people, are there applicable limits on the retention of the data associated with the instances (for example, were the individuals in question told that their data would be retained for a fixed period of time and then deleted)? If so, please describe these limits and explain how they will be enforced.*
+
+As the dataset is anonymized and used for statistical purposes, there are no strict limits on its retention. However, personally identifiable information (PII) is removed to ensure compliance with privacy laws [@cdc_privacy2024], such as the Public Health Service Act, and original PII-containing records are securely stored by state authorities [@public_health_service_act].
+
+
+6. *Will older versions of the dataset continue to be supported/hosted/maintained? If so, please describe how. If not, please describe how its obsolescence will be communicated to dataset consumers.*
+
+Older versions of the dataset remain publicly accessible for historical analysis but are not actively updated. Researchers are encouraged to use the latest version for current analyses. Notices about dataset updates and versioning are provided on the NCHS website: [https://www.cdc.gov/nchs/nvss/index.htm](https://www.cdc.gov/nchs/nvss/index.htm)
+
+7. *If others want to extend/augment/build on/contribute to the dataset, is there a mechanism for them to do so? If so, please provide a description. Will these contributions be validated/verified? If so, please describe how. If not, why not? Is there a process for communicating/distributing these contributions to dataset consumers? If so, please provide a description.*
+
+There is no formal mechanism for external contributions or augmentation of the dataset, as it is based on standardized birth certificate data collected through the NVSS. Researchers interested in collaborative efforts can propose supplemental analyses or request access to restricted-use datasets  [@cdc_privacy2024] by applying through the NCHS Restricted Data Access Program: [https://www.cdc.gov/nchs/dqs/index.html](https://www.cdc.gov/nchs/dqs/index.html)
 
 \newpage
 
