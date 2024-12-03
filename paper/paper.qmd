@@ -1,6 +1,6 @@
 ---
-title: "How Drug Usage During Labor and Delivery Affects Infant Health: A Predictive Analysis of Apgar5 Scores"
-subtitle: "Steroid Efficacy and Antibiotic Risks in Labor-Associated Care"
+title: "The Effects of Labor-Associated Drug Interventions on Neonatal Health Outcomes: A Predictive Analysis of Apgar5 Scores"
+subtitle: "Steroids Enhance Neonatal Health, While Antibiotics Show Limited Effectiveness"
 author: 
   - Yunkyung Ko
 thanks: "Code and data are available at: [https://github.com/koyunkyung/infant_health](https://github.com/koyunkyung/infant_health)."
@@ -67,6 +67,8 @@ The 5-minute Apgar score itself, is also a simplified numerical representation o
 
 By structuring these variables into categorical or numerical forms, the data can be analyzed and used to model the relationship between treatments and the APGAR5 score. Specifically, drug usage during labor and delivery was encoded as binary variables (@sec-predictor). However, this has a limitation that it disregards the quantitative intensity, dosage, or frequency of drug administration, leading to incomplete modeling of the treatment's impact [@geeksforgeeks_feature_encoding]. This simplification may also amplify noise in the data by grouping dissimilar observations into the same category, reducing the model's ability to detect subtle relationships [@geeksforgeeks_feature_encoding]. 
 
+More detailed information of data measurement including the survey and sampling methods are shown in @sec-datadetails. 
+
 ## Outcome variables
 
 ### Apgar Score: a measure the infant's chance of surviving the first year of life
@@ -112,7 +114,7 @@ filtered_data |>
 
 ```{r}
 #| label: fig-apgar2
-#| fig-cap: "The distribution of Apgar5 scores across the filtered observation in analysis dataset, which selected the relevant variables and removed the NA values"
+#| fig-cap: "The distribution of Apgar5 scores across the filtered observation in analysis dataset"
 #| echo: false
 #| warning: false
 #| message: false
@@ -214,6 +216,7 @@ ggplot(drug_count_summary, aes(x = drug_count, y = observation_count)) +
 
 ```
 
+\newpage
 
 ### Type of Treatments Used During Delivery and Labor
 
@@ -267,18 +270,20 @@ ggplot(treatment_summary, aes(x = Count, y = Treatment_Type, fill = Treatment_Ty
   )
 ```
 
-### Induction of labor
-
-@fig-indc1 shows that in the raw data, the "No" category dominates with over 2.4 million observations, while the "Yes" category trails with around 1.2 million. After filtering and refining the dataset, @fig-indc2 shows that the gap between the "Yes" and "No" category becomes narrow, with the "No" category with 15,752 and "Yes" category with 6,248. This kind of balancing process is expected to allow for a more robust evaluation of how labor induction might influence Apgar scores, reducing the risk of the prediction model underestimating or overestimating treatment effects [@isi2024].
-
 \newpage
 
+### Induction of labor
+
+@fig-indc-1 shows that in the raw data, the "No" category dominates with over 2.4 million observations, while the "Yes" category trails with around 1.2 million. After filtering and refining the dataset, @fig-indc-2 shows that the gap between the "Yes" and "No" category becomes narrow, with the "No" category with 15,752 and "Yes" category with 6,248. This kind of balancing process is expected to allow for a more robust evaluation of how labor induction might influence Apgar scores, reducing the risk of the prediction model underestimating or overestimating treatment effects [@isi2024].
+
 ```{r}
-#| label: fig-indc1
-#| fig-cap: The distribution of observations in the raw dataset based on whether the infant received induction of labor or not
+#| label: fig-indc
+#| fig-cap: The distribution of observations based on whether the infant received induction of labor or not
+#| fig-subcap: ["raw data", "analysis data"]
 #| echo: false
 #| warning: false
 #| message: false
+#| layout-ncol: 2
 #| fig-width: 5
 #| fig-height: 4
 
@@ -307,20 +312,6 @@ ggplot(ld_indl_summary1, aes(x = ld_indl, y = Count)) +
     axis.text = element_text(size = 10),
     axis.title = element_text(size = 10)
   )
-
-```
-
-\newpage
-
-```{r}
-#| label: fig-indc2
-#| fig-cap: The distribution of observations in the analysis dataset based on whether the infant received induction of labor or not
-#| echo: false
-#| warning: false
-#| message: false
-#| fig-width: 5
-#| fig-height: 4
-
 
 # Prepare the data
 ld_indl_summary2 <- balanced_data %>%
@@ -354,11 +345,13 @@ ggplot(ld_indl_summary2, aes(x = ld_indl, y = Count)) +
 
 ### Augmentation of labor
 
-@fig-augmt1 shows that in the raw data, the "No" category overwhelmingly dominates with 2,850,569 observations compared to 752,302 in the "Yes" category. @fig-augmt2 narrow the gap with the "No" category reduced to 18,589 and "Yes" category adjusted to 3,411.
+@fig-augmt-1 shows that in the raw data, the "No" category overwhelmingly dominates with 2,850,569 observations compared to 752,302 in the "Yes" category. @fig-augmt-2 narrow the gap with the "No" category reduced to 18,589 and "Yes" category adjusted to 3,411.
 
 ```{r}
-#| label: fig-augmt1
-#| fig-cap: The distribution observations in the raw dataset based on whether the infant received augmentation of labor or not
+#| label: fig-augmt
+#| fig-cap: The distribution of observations based on whether the infant received augmentation of labor or not
+#| fig-subcap: ["raw data", "analysis data"]
+#| layout-ncol: 2
 #| echo: false
 #| warning: false
 #| message: false
@@ -389,20 +382,6 @@ ggplot(ld_augm_summary1, aes(x = ld_augm, y = Count)) +
     axis.text = element_text(size = 10),
     axis.title = element_text(size = 10)
   )
-
-```
-
-\newpage
-
-```{r}
-#| label: fig-augmt2
-#| fig-cap: The distribution observations in the analysis datset based on whether the infant received augmentation of labor or not
-#| echo: false
-#| warning: false
-#| message: false
-#| fig-width: 5
-#| fig-height: 4
-
 
 # Prepare the data
 ld_augm_summary2 <- balanced_data %>%
@@ -437,11 +416,13 @@ ggplot(ld_augm_summary2, aes(x = ld_augm, y = Count)) +
 
 ### Steroids (glucocorticoids) for fetal lung maturation received by the mother before delivery
 
-@fig-ster1 shows that in the raw data, the "No" category heavily dominates with 3,464,273 observations compared to 138,598 in the "Yes" category, indicating severe imbalance. @fig-ster2 shows that the gap narrows after filtering and refining the dataset, with the "No" category to 19,662 and the "Yes" category to 2,338.
+@fig-ster-1 shows that in the raw data, the "No" category heavily dominates with 3,464,273 observations compared to 138,598 in the "Yes" category, indicating severe imbalance. @fig-ster-2 shows that the gap narrows after filtering and refining the dataset, with the "No" category to 19,662 and the "Yes" category to 2,338.
 
 ```{r}
-#| label: fig-ster1
-#| fig-cap: The distribution observations in the raw dataset based on whether the infant received steroid treatments or not
+#| label: fig-ster
+#| fig-cap: The distribution of observations based on whether the infant received steroid treatments or not
+#| fig-subcap: ["raw data", "analysis data"]
+#| layout-ncol: 2
 #| echo: false
 #| warning: false
 #| message: false
@@ -473,19 +454,6 @@ ggplot(ld_ster_summary1, aes(x = ld_ster, y = Count)) +
     axis.title = element_text(size = 10)
   )
 
-```
-
-\newpage
-
-```{r}
-#| label: fig-ster2
-#| fig-cap: The distribution observations in the analysis datset based on whether the infant received steroid treatments or not
-#| echo: false
-#| warning: false
-#| message: false
-#| fig-width: 5
-#| fig-height: 4
-
 # Prepare the data
 ld_ster_summary2 <- balanced_data %>%
   group_by(ster) %>%
@@ -512,19 +480,19 @@ ggplot(ld_ster_summary2, aes(x = ld_ster, y = Count)) +
   )
 
 
-
-
 ```
 
 \newpage
 
 ### Antibiotics received by the mother during delivery
 
-@fig-antb1 shows that in the raw data, the "No" category dominates with 2,701,457 observations, while the "Yes" category has significantly fewer at 901,414. After balancing, @fig-antb2 shows that the "No" category is reduced to 15,828 and the "Yes" category is adjusted to 6,172, narrowing the gap.
+@fig-antb-1 shows that in the raw data, the "No" category dominates with 2,701,457 observations, while the "Yes" category has significantly fewer at 901,414. After balancing, @fig-antb-2 shows that the "No" category is reduced to 15,828 and the "Yes" category is adjusted to 6,172, narrowing the gap.
 
 ```{r}
-#| label: fig-antb1
-#| fig-cap: The distribution observations in the raw dataset based on whether the infant received antibiotic treatments or not
+#| label: fig-antb
+#| fig-cap: The distribution of observations based on whether the infant received antibiotic treatments or not
+#| fig-subcap: ["raw data", "analysis data"]
+#| layout-ncol: 2
 #| echo: false
 #| warning: false
 #| message: false
@@ -556,19 +524,6 @@ ggplot(ld_antb_summary1, aes(x = ld_antb, y = Count)) +
     axis.title = element_text(size = 10)
   )
 
-```
-
-\newpage
-
-```{r}
-#| label: fig-antb2
-#| fig-cap: The distribution observations in the analysis datset based on whether the infant received antibiotic treatments or not
-#| echo: false
-#| warning: false
-#| message: false
-#| fig-width: 5
-#| fig-height: 4
-
 # Prepare the data
 ld_antb_summary2 <- balanced_data %>%
   group_by(antb) %>%
@@ -596,18 +551,19 @@ ggplot(ld_antb_summary2, aes(x = ld_antb, y = Count)) +
 
 
 
-
 ```
 
 \newpage
 
 ### Clinical chorioamnionitis diagnosed during labor or maternal temperature over 38 degrees celcius (100.4 degrees fahrenheit)
 
-@fig-chor1 shows that the "No" category dominates with 3,539,254 observations, compared to 63,617 in the "Yes" category. @fig-chor2 shows that the extreme disparity between the two categories is addressed after balancing, with the "No" category having 21,213 and the "Yes" category having 787.
+@fig-chor-1 shows that the "No" category dominates with 3,539,254 observations, compared to 63,617 in the "Yes" category. @fig-chor-2 shows that the extreme disparity between the two categories is addressed after balancing, with the "No" category having 21,213 and the "Yes" category having 787.
 
 ```{r}
-#| label: fig-chor1
-#| fig-cap: The distribution observations in the raw dataset based on whether the infant received chorioamnionitis treatments or not
+#| label: fig-chor
+#| fig-cap: The distribution of observations based on whether the infant received chorioamnionitis treatments or not
+#| fig-subcap: ["raw data", "analysis data"]
+#| layout-ncol: 2
 #| echo: false
 #| warning: false
 #| message: false
@@ -638,19 +594,6 @@ ggplot(ld_chor_summary1, aes(x = ld_chor, y = Count)) +
     axis.text = element_text(size = 10),
     axis.title = element_text(size = 10)
   )
-
-```
-
-\newpage
-
-```{r}
-#| label: fig-chor2
-#| fig-cap: The distribution observations in the analysis datset based on whether the infant received chorioamnionitis treatments or not
-#| echo: false
-#| warning: false
-#| message: false
-#| fig-width: 5
-#| fig-height: 4
 
 # Prepare the data
 ld_chor_summary2 <- balanced_data %>%
@@ -684,11 +627,13 @@ ggplot(ld_chor_summary2, aes(x = ld_chor, y = Count)) +
 
 ### Epidural or spinal anesthesia during labor
 
-@fig-anes1 shows that in the raw data, the "Yes" category dominates with 2,810,461 observations, while the "No" category has 792,410. The initial overrepresentation of the "Yes" category is addressed through the balancing process, with @fig-anes2 showing the "Yes" category of 15,387 and the "No" category of 6,613.
+@fig-anes-1 shows that in the raw data, the "Yes" category dominates with 2,810,461 observations, while the "No" category has 792,410. The initial overrepresentation of the "Yes" category is addressed through the balancing process, with @fig-anes-2 showing the "Yes" category of 15,387 and the "No" category of 6,613.
 
 ```{r}
-#| label: fig-anes1
-#| fig-cap: The distribution observations in the raw dataset based on whether the infant received anesthesia treatments or not
+#| label: fig-anes
+#| fig-cap: The distribution of observations based on whether the infant received anesthesia treatments or not
+#| fig-subcap: ["raw data", "analysis data"]
+#| layout-ncol: 2
 #| echo: false
 #| warning: false
 #| message: false
@@ -720,19 +665,6 @@ ggplot(ld_anes_summary1, aes(x = ld_anes, y = Count)) +
     axis.title = element_text(size = 10)
   )
 
-```
-
-\newpage
-
-```{r}
-#| label: fig-anes2
-#| fig-cap: The distribution observations in the analysis datset based on whether the infant received anesthesia treatments or not
-#| echo: false
-#| warning: false
-#| message: false
-#| fig-width: 5
-#| fig-height: 4
-
 # Prepare the data
 ld_anes_summary2 <- balanced_data %>%
   group_by(anes) %>%
@@ -757,7 +689,6 @@ ggplot(ld_anes_summary2, aes(x = ld_anes, y = Count)) +
     axis.text = element_text(size = 10),
     axis.title = element_text(size = 10)
   )
-
 
 
 ```
@@ -810,6 +741,8 @@ mosaic(
 
 ```
 
+\newpage
+
 ### Usage of Steroids and Antibiotics
 
 In @fig-corr2, most cases fall into the "neither used" category (Steroids:0, Antibiotics:0), shown by the large, darkly shaded area. This means that it is very common for neither treatment to be used together during labor [@friendly1992]. On the other hand, the smaller, lighter areas where either or both treatments are used show that these combinations happen much less often than expected [@friendly1992]. This suggests that steroids and antibiotics are usually not given together, and their usage might depend on specific and separate medical needs rather than being commonly paired treatments.
@@ -855,6 +788,7 @@ mosaic(
 
 ```
 
+\newpage
 
 ### Usage of Chorioamnionitis and Antibiotics
 
@@ -900,45 +834,72 @@ mosaic(
 
 ```
 
+\newpage
+
 # Model {#sec-model}
 
-The goal of our modelling strategy is twofold. Firstly, a Random Forest model was utilized to identify significant predictors of infant health status, as measured by the 5-minute Apgar score. Secondly, a Bayesian Linear Model was applied to quantify the effects of medical interventions during labor and delivery on infant health outcomes, incorporating prior knowledge into the analysis framework. 
-
-Here we briefly describe the Random Forest and Bayesian analysis models used to investigate these relationships. Background details and diagnostics are included in [Appendix -@sec-model-details].
+The modeling strategy in this study serves two primary goals: identifying significant predictors of neonatal health outcomes and quantifying the effects of labor-related medical interventions on these outcomes, measured by the 5-minute Apgar score. This dual approach employs a Random Forest model for prediction and a Bayesian Linear Model for inference. Details of the model implementation and diagnostics are provided in [Appendix -@sec-model-details].
 
 
 ## Model set-up
 
-Define $y_i$ as the APGAR5 score for the $i$th infant. Let the binary treatment variables $\text{indc}_i$, $\text{augmt}_i$, $\text{ster}_i$, $\text{antb}_i$, $\text{chor}_i$, and $\text{anes}_i$ represent the use of induction, augmentation, steroids, antibiotics, chorioamnionitis, and anesthesia, respectively, during labor and delivery.
+Define $y_i$ as the 5-minute Apgar score for the $i$th infant, a standard measure of neonatal health. Let the binary variables $\text{indc}_i$, $\text{augmt}_i$, $\text{ster}_i$, $\text{antb}_i$, $\text{chor}_i$, and $\text{anes}_i$ represent the use of induction, augmentation, steroids, antibiotics, chorioamnionitis, and anesthesia, respectively, during labor and delivery.
 
-### Random Forest Model
+### Model Specification
 
-The Random Forest Model is a non-parametic method that predicts $y_i$ using an ensemble of decision trees [@mlnuggets2024]:
+#### Random Forest Model
+
+The Random Forest model is a non-parametic method that predicts $y_i$ using a collection of decision trees [@mlnuggets2024]. The predicted 5-minute Apgar score is modeled as:
 
 $\hat{y}_i = \text{RandomForest}(X)$
 
 where $X$ represents the set of predictors: $(\text{indc}_i, \text{augmt}_i, \text{ster}_i, \text{antb}_i, \text{chor}_i, \text{anes}_i)$.
 
-We employ a grid search for hyperparameter tuning:
-  - $mtry$: Number of variables randomly sampled at each split (values: 2, 3, 4).
-  - $ntree$: Number of trees in the forest, fixed at 500.
+Hyperparameters were selected via grid search:
 
-The `caret` package[@caret] in R[@citeR] is used to implement the Random Forest model, with cross-validation to minimize overfitting.
+- $mtry$: Number of variables randomly sampled at each split (values: 2, 3, 4).
+- $ntree$: Number of trees in the forest, fixed at 500 for computational efficiency and robust performance.
+  
+Inherent assumptions to this model are the following [@appliedai_random_forest]:
+
+- Independence of Observations: Observations in the dataset are assumed to be independent of each other. 
+- Non-Linear Relationships: Random Forest inherently assumes the presence of non-linear relationships among predictors, making it suitable for complex interactions.
+- Equal Contribution of Predictors: Each predictor is initially treated with equal importance during sampling.
 
 
-### Bayesian Linear Model
+The Random Forest model was implemented using the `caret` package [@caret] in R[@citeR]. To minimize overfitting, 10-fold cross-validation was employed.
+
+#### Bayesian Linear Model
 
 The Bayesian Linear Model assumes the following relationship for each infant $i$:
 
 $y_i | \mu_i, \sigma \sim \text{Normal}(\mu_i, \sigma)$
 
+where:
+
 $\mu_i = \alpha + \beta_1 \cdot \text{indc}_i + \beta_2 \cdot \text{augmt}_i + \beta_3 \cdot \text{ster}_i + \beta_4 \cdot \text{antb}_i + \beta_5 \cdot \text{chor}_i + \beta_6 \cdot \text{anes}_i$
 
-Priors are specified as:
+The priors reflect weakly informative beliefs based on existing literature:
 
-$\alpha \sim \text{Normal}(5, 2), \quad \beta_j \sim \text{Normal}(0, 2) \quad \text{for } j = 1, \ldots, 6, \quad \sigma \sim \text{Exponential}(1)$
+- Intercept: $\alpha \sim \text{Normal}(5, 2)$, aligned with typical Apgar5 scores [@healthline_apgar_score].
+  
+- Coefficients: $\beta_j \sim \text{Normal}(0, 2) \quad \text{for } j = 1, \ldots, 6$, reflecting moderate but uncertain effects.
+  
+- Standard deviation: $\sigma \sim \text{Exponential}(1)$, ensuring positivity and discouraging extreme variability.
 
-We fit the Bayesian model using the `stan_glm` function in the `rstanarm`[@rstanarm] package, which implements Markov Chian Monte Carlo (MCMC) sampling with 4 chaing and 2000 iterations per chain. We use the default priors from `rstanarm`[@rstanarm].
+Inherent assumptions to this model are the following [@geeksforgeeks_bayesian_regression]:
+
+- Independence of Observations: Each infant's outcome is assumed to be independent of others.
+  
+- Normality of Residuals: The residuals $(y_i - \mu_i)$ are assumed to follow a normal distribution.
+  
+- Homoskedasticity: The variance $(\sigma)$ is assumed to be constant across all levels of predictors.
+  
+- Linear Relationships: The effects of predictors are assumed to be linear, which might oversimplify complex interactions.
+  
+- Priors Representing Beliefs: The priors are assumed to reasonably reflect prior knowledge, ensuring that they do not dominate the posterior estimates.
+  
+The model is implemented using the `stan_glm` function in the `rstanarm` package [@rstanarm]. Markov Chian Monte Carlo (MCMC) sampling was conducted with 4 chains and 2000 iterations per chain. Convergence diagnostics were verified, and posterior predictive checks were conducted to assess model fit, as shown in @sec-model-details.
 
 
 ### Model justification
@@ -947,7 +908,17 @@ The Random Forest Model was chosen for its robustness in handling non-linear rel
 
 The Bayesian Linear Model was employed to incorporate prior knowledge [@strimmerlab_priors] regarding the expected effects of treatments on the Apgar5 score. Utilizing weakly informative priors, such as Normal distributions centered around zero with a variance of 2, reflects a belief in moderate but uncertain associations between treatments and outcomes [@strimmerlab_priors]. The prior for the intercept (Normal(5, 2)) aligns with the central tendency of Apgar5 scores reported in previous studies [@clevelandclinic_apgar]. An exponential prior for the standard deviation parameter ensures positivity while discouraging extreme variability [@strimmerlab_priors].
 
-By integrating the Random Forest's predictive accuracy [@geeksforgeeks_random_forest] with the Bayesian Linear Model's capacity for inference and uncertainty quantification [@nguyen2018uncertainty], this dual-model approach offers a comprehensive understanding of the factors influencing infant health outcomes.
+By integrating the Random Forest's predictive accuracy [@geeksforgeeks_random_forest] with the Bayesian Linear Model's capacity for inference and uncertainty quantification [@nguyen2018uncertainty], this dual-model approach offers a comprehensive understanding of the factors influencing infant health outcomes. However, generalizability remains a concern for both models, as the results are derived from a specific population in the U.S. and may not extend to broader or differing contexts due to data limitations.
+
+### Alternative Models Considered
+
+#### Logistic Regression
+
+Logistic regression, known for its simplicity and interpretability, is suited for binary outcomes [@aws_logistic_regression]. Its application is limited in this study due to the continuous nature of the Apgar5 score, which cannot be effectively modeled using logistic regression. Additionally, logistic regression struggles to capture non-linear relationships and complex interactions among predictors [@aws_logistic_regression], which are critical features of this dataset. Consequently, it was excluded in favor of models better equipped to handle continuous outcomes and non-linear effects, such as Random Forest and Bayesian Linear Models. 
+
+#### Gradient Boosting Machines (GBM)
+
+Gradient Boosting Machines (GBM) were also considered due to their ability to handle imbalanced datasets through techniques like weighting and boosting [@towardsdatascience_gbm]. However, GBMs are computationally intensive and require careful hyperparameter tuning to avoid overfitting [@towardsdatascience_gbm]. In addition, while GBMs excel at prediction, their variable importance measures are less interpretable compared to Random Forest [@geeksforgeeks_gbm_rf], which aligns better with the study's goal of understanding the relative impact of predictors. Given these considerations, Random Forest was preferred over GBM due to its computational efficiency, robustness in handling complex interactions, and the ease of interpreting variable importance. 
 
 # Results {#sec-results}
 
@@ -1541,7 +1512,7 @@ Addressing these limitations, future research should aim to incorporate more div
 
 # Appendix {#sec-appendix}
 
-## Additional data details
+## Additional data details {#sec-datadetails}
 
 ### Survey design and sampling techniques
 
@@ -1549,7 +1520,7 @@ The 2023 Natality Dataset [@rawdata] provides detailed records of maternal and n
 
 The natality data involves addressing potential biases inherent in observational datasets. For example, selection bias may arise if certain populations, such as undocumented individuals or those from rural areas, are underrepresented in the data [@tellingstories]. Additionally, measurement errors, such as inconsistencies in self-reported variables like smoking status or prenatal care visits, can affect data reliability [@healthknowledge2024]. To mitigate these challenges, researchers employ weighting techniques to align samples with population distributions and utilize statistical models like propensity score matching to adjust for confounding factors [@Stuart2021].
 
-Integrating survey methodologies with the 2023 US Natality Data enables researchers to enrich findings by combining administrative records with additional information collected through structured questionnaires. This hybrid approach allows for the exploration of causal relationships, such as the effects of prenatal care access on birth outcomes. By adhering to rigorous survey design principles, such as pilot testing and the Total Survey Error framework, and employing robust sampling strategies, researchers can ensure their findings are both internally valid and generalizable. These methods ultimately enhance the utility of natality data for informing public health policies and interventions aimed at improving maternal and child health outcomes.
+Integrating survey methodologies with the 2023 US Natality Data enables researchers to enrich findings by combining administrative records with additional information collected through structured questionnaires [@groves2010total_survey_error]. This hybrid approach allows for the exploration of causal relationships, such as the effects of prenatal care access on birth outcomes. By adhering to rigorous survey design principles, such as pilot testing and the Total Survey Error framework, and employing robust sampling strategies, researchers can ensure their findings are both internally valid and generalizable [@groves2010total_survey_error]. These methods ultimately enhance the utility of natality data for informing public health policies and interventions aimed at improving maternal and child health outcomes.
 
 
 ### Observational data considerations
@@ -1560,8 +1531,13 @@ Another critical issue is selection bias, where certain subgroups (e.g., uninsur
 
 Causal inference remains a central challenge in using observational data, as the same individual cannot simultaneously experience treatment and non-treatment conditions [@tellingstories]. To approximate counterfactuals, researchers often rely on the Neyman-Rubin potential outcomes framework or marginal structural models [@Groves2010]. Complementing this with simulation studies can test the robustness of findings under varying assumptions. By adhering to established frameworks like the Total Survey Error Model and integrating observational datasets with structured surveys, researchers can produce more reliable and actionable insights [@CausalConversations2024]. This approach not only strengthens the internal and external validity [@tellingstories] of the results but also highlights the potential of observational data to inform equitable and effective healthcare interventions.
 
+### Idealized data collection framework
 
+In order to better answer the research question of how medical interventions during labor affect neonatal health, the data collection approach would integrate detailed clinical records, structured surveys, and longitudinal tracking. Clinical records should include precise data on medical interventions such as dosage, timing, and indications for treatment, allowing for a detailed analysis of dose-response relationships and temporal effects [@FrontiersPharmacology2020]. Longitudinal data would extend beyond immediate neonatal outcomes to track developmental milestones, maternal recovery, and long-term child health [@MCHData2009]. Moreover, structured surveys would gather information on maternal perceptions, socio-economic status, and access to prenatal care, designed with clarity and flow to minimize cognitive burden [@chetty2023annual].
 
+Enhancements to the sampling methodologies would also be made to improve the validity of the collected data. Stratified random sampling would ensure representativeness across demographic and geographic groups [@tellingstories], while pilot testing and adherence to the Total Survey Error framework would mitigate biases in question design and sampling [@groves2010total_survey_error]. Statistical adjustments, such as propensity score matching and weighting, would address selection biases and confounding variables inherent in observational data [@pmc5378668]. These techniques, coupled with frameworks like the Neyman-Rubin potential outcomes model, would support robust causal inference, even in the absence of randomized controlled trials [@causalconversations2024].
+
+By integrating diverse data sources, employing advanced statistical methods, and maintaining ethical considerations such as informed consent and participant privacy, researchers can capture complex interactions and contextual factors that influence neonatal health outcomes. Ultimately, this integrative approach not only addresses existing limitations in natality data but also generates actionable insights to guide clinical practices and shape public health policies aimed at improving maternal and neonatal health outcomes [@do2020quality].
 
 ## Model details {#sec-model-details}
 
@@ -1715,7 +1691,6 @@ To launch the app locally, use the following R command:
 ```r
 
 library(shiny)
-
 runApp("../scripts/07-shiny_app.R")
 
 ```
