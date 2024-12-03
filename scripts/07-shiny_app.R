@@ -1,13 +1,13 @@
 #### Preamble ####
 # Purpose: Shiny web application for visualizing and analyzing predictions from Random Forest and Bayesian Linear Models for infant health status
 # Author: Yunkyung Ko
-# Date: 29 November 2024
+# Date: 3 December 2024
 # Contact: yunkyung.ko@mail.utoronto.ca
 # License: MIT
 # Pre-requisites:
-# - The `shint`, `DT` package must be installed and loaded
+# - The `shiny`, `DT` package must be installed and loaded
 # - 05-model_data.R must have been run
-# - The user must provide a dataset with numeric features (e.g., `test_data.csv`)
+# - The user must provide a dataset with numeric features
 # Any other information needed? Make sure you are in the `infant_health` rproj
 
 
