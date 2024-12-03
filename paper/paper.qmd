@@ -56,7 +56,7 @@ We use the the statistical programming language R [@citeR] to analyze the relati
 
 To ensure a balanced distribution of observations across all Apgar5 score groups, we applied stratified random sampling and designated the sample size per group as 2,000. In addition, for data quality, we standardized the treatment measuring variables, containing respondents' answers of "Yes", "No", or "Unknown", into binary numerical variables. Then, the variables were converted into factors to prepare the data for predictive modeling[@analyticsvidhya2015], and split into training and testing sets to support machine learning workflows[@brownlee2019].
 
-In performing the analysis, we utilized several R packages. `tidyverse` [@tidyverse] was used for data manipulation, and `ggplot2`[@ggplot2] was used for visualizing results in graphical methods. `randomForest` [@randomForest] and `caret` [@caret] were used for Random Forest modeling while `rstanarm` [@rstanarm] was used for Bayesian linear modeling in the process of generating predictions.
+In performing the analysis, we utilized several R packages. `tidyverse` [@tidyverse] was used for data manipulation, and `ggplot2` [@ggplot2] was used for visualizing results in graphical methods. `randomForest` [@randomForest] and `caret` [@caret] were used for Random Forest modeling while `rstanarm` [@rstanarm] was used for Bayesian linear modeling in the process of generating predictions.
 
 
 ## Measurement
@@ -1645,7 +1645,7 @@ plot(bayesian_model, "rhat")
 
 The 'Infant Health Prediction API' provides predictions for infant health status based on maternal and delivery-related factors. By accepting structured datasets in CSV format, it offers researchers a powerful tool to generate real-time predictions using advanced maching learning models.
 
-- Endpoint URL: `http://127.0.0.1:3505/predict_csv_local`
+- Endpoint URL: [http://127.0.0.1:3505/predict_csv_local](http://127.0.0.1:3505/predict_csv_local)
 
 - Description: This endpoint processes a local CSV file containing test data and provides predictions from both the Random Forest and Bayesian Linear models.
 
