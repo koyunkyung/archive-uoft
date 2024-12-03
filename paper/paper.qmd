@@ -1533,11 +1533,18 @@ Causal inference remains a central challenge in using observational data, as the
 
 ### Idealized data collection framework
 
-In order to better answer the research question of how medical interventions during labor affect neonatal health, the data collection approach would integrate detailed clinical records, structured surveys, and longitudinal tracking. Clinical records should include precise data on medical interventions such as dosage, timing, and indications for treatment, allowing for a detailed analysis of dose-response relationships and temporal effects [@FrontiersPharmacology2020]. Longitudinal data would extend beyond immediate neonatal outcomes to track developmental milestones, maternal recovery, and long-term child health [@MCHData2009]. Moreover, structured surveys would gather information on maternal perceptions, socio-economic status, and access to prenatal care, designed with clarity and flow to minimize cognitive burden [@chetty2023annual].
+In order to better answer the research question of how medical interventions during labor affect neonatal health, the data collection approach would integrate detailed clinical records, structured surveys, and longitudinal tracking. Assuming a total budget of $1M, resources would be allocated to maximize data quality and ensure robust causal inference.
 
-Enhancements to the sampling methodologies would also be made to improve the validity of the collected data. Stratified random sampling would ensure representativeness across demographic and geographic groups [@tellingstories], while pilot testing and adherence to the Total Survey Error framework would mitigate biases in question design and sampling [@groves2010total_survey_error]. Statistical adjustments, such as propensity score matching and weighting, would address selection biases and confounding variables inherent in observational data [@pmc5378668]. These techniques, coupled with frameworks like the Neyman-Rubin potential outcomes model, would support robust causal inference, even in the absence of randomized controlled trials [@causalconversations2024].
+Clinical records would require $300,000 to include precise details on medical interventions, such as dosage, timing, and indications for treatment, enabling a detailed analysis of dose-response relationships and temporal effects [@FrontiersPharmacology2020]. This allocation would cover the development of standardized electronic medical records, data cleaning processes, and staff training to ensure consistent and accurate data entry [@ashtoncollegeEMR].
 
-By integrating diverse data sources, employing advanced statistical methods, and maintaining ethical considerations such as informed consent and participant privacy, researchers can capture complex interactions and contextual factors that influence neonatal health outcomes. Ultimately, this integrative approach not only addresses existing limitations in natality data but also generates actionable insights to guide clinical practices and shape public health policies aimed at improving maternal and neonatal health outcomes [@do2020quality].
+Longitudinal tracking, supported by a $200,000 allocation, would extend beyond immediate neonatal outcomes to monitor developmental milestones, maternal recovery, and long-term child health [@MCHData2009]. These funds would be utilized for setting up robust follow-up systems, providing incentives to maintain participant engagement, and integrating longitudinal data with clinical records for comprehensive analysis.
+
+In addition, structured surveys, allocated $250,000, would gather information on maternal perceptions, socio-economic status, and access to prenatal care. These surveys would be carefully designed with pilot testing and adherence to the Total Survey Error framework to mitigate biases and cognitive burden [@groves2010total_survey_error], ensuring clarity and representativeness across diverse demographic and geographic groups [@chetty2023annual].
+
+$150,000 would be dedicated to advanced analytical techniques, including statistical adjustments like propensity score matching and weighting, to address selection biases and confounding variables inherent in observational data [@pmc5378668]. Frameworks such as the Neyman-Rubin potential outcomes model would further support robust causal inference, even in the absence of randomized controlled trials [@causalconversations2024]. 
+
+The remaining $100,000 would ensure ethical compliance through informed consent processes, data anonymization, and administrative oversight [@tellingstories]. By integrating diverse data sources, employing advanced statistical methods, and maintaining rigorous ethical standards, this approach not only addresses existing limitations in natality data but also generates actionable insights to inform clinical practices and public health policies aimed at improving maternal and neonatal health outcomes [@do2020quality].
+
 
 ## Model details {#sec-model-details}
 
@@ -1546,6 +1553,8 @@ By integrating diverse data sources, employing advanced statistical methods, and
 In @fig-ppcheckandposteriorvsprior-1 we implement a posterior predictive check, with the dark line representing the observed data distribution and the lighter lines indicating the posterior predictive distribution. This shows the notable deviation between `y` and `y_rep`, particularly the oscillations in the observed data. It suggests that the model may not fully capture the underlying structure of the observed data and proposes the need for model refinement, such as including additional predictors or modifying priors [@tellingstories].
 
 @fig-ppcheckandposteriorvsprior-2 compares the prior and posterior distributions of the model parameters. Significant shifts, such as for 'Steroids' and 'Chorioamnionitis' suggest these variables have strong impacts on the outcome, while minimal shifts for 'Antibiotics' indicate limited evidence of their effect. We can also note that the credible intervals underscore uncertainty.
+
+\newpage
 
 ```{r}
 #| eval: true
@@ -1628,6 +1637,8 @@ bayesplot::mcmc_trace(
 plot(bayesian_model, "rhat")
 ```
 
+\newpage
+
 ### Model API Predictions
 
 #### API execution details
@@ -1672,6 +1683,8 @@ curl -X POST 'http://127.0.0.1:3505/predict_csv_local' -H 'accept: */*' -d ''
 
 ```
 
+\newpage
+
 ### Shiny web applications for visualizing and analyzing predictions
 
 The 'Infant Health Prediction App' is a Shiny web application that enables users to:
@@ -1681,9 +1694,9 @@ The 'Infant Health Prediction App' is a Shiny web application that enables users
 - Explore visualizations of the predictions through histograms.
 
 #### Features
-1. Data Upload and Preview: Users can upload datasets and preview them in an interactive table.
-2. Model Predictions: Predictions from both models are displayed in a table for easy comparison.
-3. Visualizations: Histograms provide insights into the distribution of predictions from each model.
+- Data Upload and Preview: Users can upload datasets and preview them in an interactive table.
+- Model Predictions: Predictions from both models are displayed in a table for easy comparison.
+- Visualizations: Histograms provide insights into the distribution of predictions from each model.
 
 #### How to Run the App
 To launch the app locally, use the following R command:
