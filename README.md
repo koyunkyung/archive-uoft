@@ -14,7 +14,7 @@ The repo is structured as:
 -   `data/01-raw_data` was intended to host the original datasets obtained from National Center for Health Statistics (https://data.nber.org/nvss/natality/csv/2023/natality2023us.csv). However, due to memory constraints, large datasets could not be included in this repo. Please refer to the link above to access the original dataset directly.
 -   `data/02-analysis_data` contains the cleaned dataset, and the train and test dataste for analyzing the accuracy of the model predictions.
 -   `models` contains random forest models and bayesian glm models for predicting the apgar5 score. 
--   `other` contains relevant literature, details about LLM chat interactions, and sketches.
+-   `other` contains relevant literature, datasheets for specified explanations of the raw dataset's data collection methods, details about LLM chat interactions, and sketches.
 -   `paper` contains the files used to generate the paper, including the Quarto document and reference bibliography file, as well as the PDF of the paper. 
 -   `scripts` contains the R scripts used to simulate, download, clean, and model data.
 
