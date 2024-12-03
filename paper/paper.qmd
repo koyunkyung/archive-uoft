@@ -171,6 +171,8 @@ knitr::kable(
 
 ```
 
+\newpage
+
 ## Predictor variables {#sec-predictor}
 
 All of the predictor variables used in the analysis are classified under the same category, which is the 'Characteristics of labor and delivery' [@natality2023]. This item, which contains 6 separate checkboxes that the respondent can choose from, allows for the reporting of more than one characteristic and includes a choice of "None of the above" [@cdcFacilityGuide].  
@@ -841,13 +843,11 @@ mosaic(
 The modeling strategy in this study serves two primary goals: identifying significant predictors of neonatal health outcomes and quantifying the effects of labor-related medical interventions on these outcomes, measured by the 5-minute Apgar score. This dual approach employs a Random Forest model for prediction and a Bayesian Linear Model for inference. Details of the model implementation and diagnostics are provided in [Appendix -@sec-model-details].
 
 
-## Model set-up
+## Model Specification
 
 Define $y_i$ as the 5-minute Apgar score for the $i$th infant, a standard measure of neonatal health. Let the binary variables $\text{indc}_i$, $\text{augmt}_i$, $\text{ster}_i$, $\text{antb}_i$, $\text{chor}_i$, and $\text{anes}_i$ represent the use of induction, augmentation, steroids, antibiotics, chorioamnionitis, and anesthesia, respectively, during labor and delivery.
 
-### Model Specification
-
-#### Random Forest Model
+### Random Forest Model
 
 The Random Forest model is a non-parametic method that predicts $y_i$ using a collection of decision trees [@mlnuggets2024]. The predicted 5-minute Apgar score is modeled as:
 
@@ -869,7 +869,7 @@ Inherent assumptions to this model are the following [@appliedai_random_forest]:
 
 The Random Forest model was implemented using the `caret` package [@caret] in R[@citeR]. To minimize overfitting, 10-fold cross-validation was employed.
 
-#### Bayesian Linear Model
+### Bayesian Linear Model
 
 The Bayesian Linear Model assumes the following relationship for each infant $i$:
 
@@ -902,7 +902,7 @@ Inherent assumptions to this model are the following [@geeksforgeeks_bayesian_re
 The model is implemented using the `stan_glm` function in the `rstanarm` package [@rstanarm]. Markov Chian Monte Carlo (MCMC) sampling was conducted with 4 chains and 2000 iterations per chain. Convergence diagnostics were verified, and posterior predictive checks were conducted to assess model fit, as shown in @sec-model-details.
 
 
-### Model justification
+## Model Justification
 
 The Random Forest Model was chosen for its robustness in handling non-linear relationships and complex interactions among predictors [@geeksforgeeks_random_forest], which is essential when analyzing the combined effects of various medical interventions on infant health outcomes. This method also provides interpretable measures of variable importance [@geeksforgeeks_random_forest], aiding in understanding the relative impact of each treatment.
 
@@ -930,7 +930,7 @@ Gradient Boosting Machines (GBM) were also considered due to their ability to ha
 
 ```{r}
 #| label: fig-result1
-#| fig-cap: The mean of Apgar5 scores by the number of treatments received during labor and delivery (**Note:** The dark blue lines represent error bars, indicating the variability or uncertainty around the mean Apgar5 scores for each number of treatments.)
+#| fig-cap: Average Apgar5 scores by the number of treatments received during labor and delivery (**Note:** The dark blue lines represent error bars, indicating the variability or uncertainty around the mean Apgar5 scores for each number of treatments.)
 #| echo: false
 #| warning: false
 #| message: false
@@ -1055,7 +1055,7 @@ ggplot(heatmap_long, aes(x = APGAR5, y = Drug_Usage, fill = Count)) +
 
 ```{r}
 #| label: fig-indcscore
-#| fig-cap: Apgar5 score distribution for the usage of induction labor (**Note:** The red line represents a visual summary of how observation counts change along the score range.)
+#| fig-cap: Apgar5 score distribution for infants who received induction of labor
 #| echo: false
 #| warning: false
 #| message: false
@@ -1093,7 +1093,7 @@ ggplot(indc_data_summary, aes(x = apgar5, y = Count)) +
 
 ```{r}
 #| label: fig-augmtscore
-#| fig-cap: Apgar5 score distribution for the usage of augmentation labor (**Note:** The red line represents a visual summary of how observation counts change along the score range.)
+#| fig-cap: Apgar5 score distribution for infants who received augmentation of labor
 #| echo: false
 #| warning: false
 #| message: false
@@ -1131,7 +1131,7 @@ ggplot(augmt_data_summary, aes(x = apgar5, y = Count)) +
 
 ```{r}
 #| label: fig-sterscore
-#| fig-cap: Apgar5 score distribution for the usage of steroids (**Note:** The red line represents a visual summary of how observation counts change along the score range.)
+#| fig-cap: Apgar5 score distribution for infants who received steroids dosage
 #| echo: false
 #| warning: false
 #| message: false
@@ -1169,7 +1169,7 @@ ggplot(ster_data_summary, aes(x = apgar5, y = Count)) +
 
 ```{r}
 #| label: fig-antbscore
-#| fig-cap: Apgar5 score distribution for the usage of antibiotics (**Note:** The red line represents a visual summary of how observation counts change along the score range.)
+#| fig-cap: Apgar5 score distribution for infants who received antibiotics dosage
 #| echo: false
 #| warning: false
 #| message: false
@@ -1211,7 +1211,7 @@ ggplot(antb_data_summary, aes(x = apgar5, y = Count)) +
 
 ```{r}
 #| label: fig-chorscore
-#| fig-cap: Apgar5 score distribution for the usage of chorioamnionitis (**Note:** The red line represents a visual summary of how observation counts change along the score range.)
+#| fig-cap: Apgar5 score distribution for infants who received chorioamnionitis dosage
 #| echo: false
 #| warning: false
 #| message: false
@@ -1253,7 +1253,7 @@ ggplot(chor_data_summary, aes(x = apgar5, y = Count)) +
 
 ```{r}
 #| label: fig-anesscore
-#| fig-cap: Apgar5 score distribution for the usage of anesthesia (**Note:** The red line represents a visual summary of how observation counts change along the score range.)
+#| fig-cap: Apgar5 score distribution for infants who received anesthesia dosage
 #| echo: false
 #| warning: false
 #| message: false
@@ -1371,7 +1371,7 @@ importance_table %>%
 #| echo: false
 #| eval: true
 #| label: fig-rfsumbar
-#| fig-cap: Variable importance of treatments during labor and delivery on infant health, expressed in bar plots
+#| fig-cap: Horizontal bar plot showing the variable importance of treatments during labor and delivery on infant health
 #| warning: false
 
 # Load necessary library
@@ -1459,7 +1459,7 @@ Our results from the Bayesian Linear Model are summarized in @tbl-modelresults.
 #| echo: false
 #| eval: true
 #| label: tbl-modelresults
-#| tbl-cap: Bayesian linear models quantifying the effects of medical interventions during labor and delivery on infant health outcomes
+#| tbl-cap: Summary of a bayesian linear model quantifying the effects of medical interventions during labor and delivery on infant health outcomes
 #| warning: false
 
 modelsummary::modelsummary(
