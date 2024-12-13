@@ -1,6 +1,6 @@
 ---
 title: "The Effects of Labor-Associated Drug Interventions on Neonatal Health Outcomes: A Predictive Analysis of Apgar5 Scores"
-subtitle: "Steroids Enhance Neonatal Health, While Antibiotics Show Limited Effectiveness"
+subtitle: "Steroids enhance neonatal health, while antibiotics show limited effectiveness"
 author: 
   - Yunkyung Ko
 thanks: "Code and data are available at: [https://github.com/koyunkyung/infant_health](https://github.com/koyunkyung/infant_health)."
@@ -65,7 +65,7 @@ The data transforms the phenomenon of infant health status into data, defining q
 
 The 5-minute Apgar score itself, is also a simplified numerical representation of an infant's health, which may overlook the complexities of their condition. While useful for rapid clinical decision-making, the Apgar score may fail to capture nuanced aspects of an infant's condition, such as underlying metabolic imbalances, subtle neurological issues, or long-term impact of perinatal complications [@aap2006].
 
-By structuring these variables into categorical or numerical forms, the data can be analyzed and used to model the relationship between treatments and the APGAR5 score. Specifically, drug usage during labor and delivery was encoded as binary variables (@sec-predictor). However, this has a limitation that it disregards the quantitative intensity, dosage, or frequency of drug administration, leading to incomplete modeling of the treatment's impact [@geeksforgeeks_feature_encoding]. This simplification may also amplify noise in the data by grouping dissimilar observations into the same category, reducing the model's ability to detect subtle relationships [@geeksforgeeks_feature_encoding]. 
+By structuring these variables into categorical or numerical forms, the data can be analyzed and used to model the relationship between treatments and the Apgar5 score. Specifically, drug usage during labor and delivery was encoded as binary variables (@sec-predictor). However, this has a limitation that it disregards the quantitative intensity, dosage, or frequency of drug administration, leading to incomplete modeling of the treatment's impact [@geeksforgeeks_feature_encoding]. This simplification may also amplify noise in the data by grouping dissimilar observations into the same category, reducing the model's ability to detect subtle relationships [@geeksforgeeks_feature_encoding]. 
 
 More detailed information of data measurement including the survey and sampling methods are shown in @sec-datadetails. 
 
@@ -75,7 +75,7 @@ More detailed information of data measurement including the survey and sampling 
 
 The Apgar score is a measure of the need for resuscitation [@natality2023] to the infant, which is "the act of bringing someone back to life or waking them" [@cambridgeResuscitation]. It is a test given to newborns soon after birth (5 minutes) to check 'Appearance(skin color)', 'Pulse(heart rate)', 'Grimace response(reflexes)', 'Activity(muscle tone)', 'Respiration(breathing rate and effort)' [@kidsHealthApgar]. Each is rated on a scale of 0 to 2, with 2 being the best score [@kidsHealthApgar]. Apgar scores range from 0 to 10, with a score of 7 or higher indicating that the neonate is in good to excellent physical condition [@natality2023].
 
-@fig-apgar1 shows that the majority of infants in the raw dataset achieve a high APGAR5 score, clustering around 9 and 10. Very few observations exist for lower scores, reflecting rare instances of significant distress at birth. Even after filtering the dataset by selecting the relevant variables for analysis and removing the NA values, @fig-apgar2 shows that the observations are overly clustered around high APGAR5 scores.
+@fig-apgar1 shows that many infants in the raw dataset achieve a high Apgar5 score, clustering around 9 and 10. Very few observations exist for lower scores, reflecting rare instances of significant distress at birth. Even after filtering the dataset by selecting the relevant variables for analysis and removing the NA values, @fig-apgar2 shows that the observations are overly clustered around high Apgar5 scores.
 
 
 ```{r}
@@ -175,11 +175,11 @@ knitr::kable(
 
 ## Predictor variables {#sec-predictor}
 
-All of the predictor variables used in the analysis are classified under the same category, which is the 'Characteristics of labor and delivery' [@natality2023]. This item, which contains 6 separate checkboxes that the respondent can choose from, allows for the reporting of more than one characteristic and includes a choice of "None of the above" [@cdcFacilityGuide].  
+All the predictor variables used in the analysis are classified under the same category, which is the 'Characteristics of labor and delivery' [@natality2023]. This item, which contains 6 separate checkboxes that the respondent can choose from, allows for the reporting of more than one characteristic and includes a choice of "None of the above" [@cdcFacilityGuide].  
 
 ### Number of Treatments Used During Delivery and Labor
 
-@fig-numtreat shows that the majority of observations involve 0 to 2 treatments during labor and delivery, with a steep decline in counts for 3 or more treatments. Most births reported in this dataset occur with minimal medical intervention, and higher number of treatments are relatively rare. 
+@fig-numtreat shows that many observations involve 0 to 2 treatments during labor and delivery, with a steep decline in counts for 3 or more treatments. Most births reported in this dataset occur with minimal medical intervention, and higher number of treatments are relatively rare. 
 
 ```{r}
 #| label: fig-numtreat
@@ -222,7 +222,7 @@ ggplot(drug_count_summary, aes(x = drug_count, y = observation_count)) +
 
 ### Type of Treatments Used During Delivery and Labor
 
-@fig-typetreat shows that the distribution of treatment types varies significantly, with anesthesia being the most commonly recorded intervention, while chorioamnionitis is rare. Treatments like anesthesia and antibiotics, with higher observation counts, may have a greater impact on the observed outcomes, whereas less frequent interventions, such as steroids or chorioamnionitis, may require careful consideration to avoid biases due to smaller sample sizes [@selectstatistics2024].
+@fig-typetreat shows that the distribution of treatment types varies significantly, with anesthesia being the most recorded intervention, while chorioamnionitis is rare. Treatments like anesthesia and antibiotics, with higher observation counts, may have a greater impact on the observed outcomes, whereas less frequent interventions, such as steroids or chorioamnionitis, may require careful consideration to avoid biases due to smaller sample sizes [@selectstatistics2024].
 
 ```{r}
 #| label: fig-typetreat
@@ -557,7 +557,7 @@ ggplot(ld_antb_summary2, aes(x = ld_antb, y = Count)) +
 
 \newpage
 
-### Clinical chorioamnionitis diagnosed during labor or maternal temperature over 38 degrees celcius (100.4 degrees fahrenheit)
+### Clinical chorioamnionitis diagnosed during labor or maternal temperature over 38 degrees Celcius (100.4 degrees Fahrenheit)
 
 @fig-chor-1 shows that the "No" category dominates with 3,539,254 observations, compared to 63,617 in the "Yes" category. @fig-chor-2 shows that the extreme disparity between the two categories is addressed after balancing, with the "No" category having 21,213 and the "Yes" category having 787.
 
@@ -705,7 +705,7 @@ ggplot(ld_anes_summary2, aes(x = ld_anes, y = Count)) +
 
 ```{r}
 #| label: fig-corr1
-#| fig-cap: Mosaic plot showing the correlation between induction and augmentation of labor (**Note:** the shading intensity (from light green to dark green) represents the standardized residuals of the chi-squared test for the contingency table.)
+#| fig-cap: The correlation between induction and augmentation of labor (**Note:** the shading intensity (from light green to dark green) represents the standardized residuals of the chi-squared test for the contingency table.)
 #| echo: false
 #| warning: false
 #| message: false
@@ -751,7 +751,7 @@ In @fig-corr2, most cases fall into the "neither used" category (Steroids:0, Ant
 
 ```{r}
 #| label: fig-corr2
-#| fig-cap: Mosaic plot showing the correlation between usage of steroids and antibiotics (**Note:** the shading intensity (from light green to dark green) represents the standardized residuals of the chi-squared test for the contingency table.)
+#| fig-cap: The correlation between usage of steroids and antibiotics (**Note:** the shading intensity (from light green to dark green) represents the standardized residuals of the chi-squared test for the contingency table.)
 #| echo: false
 #| warning: false
 #| message: false
@@ -794,11 +794,11 @@ mosaic(
 
 ### Usage of Chorioamnionitis and Antibiotics
 
-In @fig-corr3, the large, darkly shaded area for "Chorioamnionitis:0" and "Antibiotics:0" shows that cases where neither condition is present are more common than expected [@friendly1992]. Conversely, the smaller and lighter areas, especially for "Chorioamnionitis:1" and "Antibiotics:1", suggest that when chorioamnionitis occurs, antibiotics are often used. The pattern reflects a likely positive correlation [@friendly1992] between chorioamnionitis and anitbiotics usage.
+In @fig-corr3, the large, darkly shaded area for "Chorioamnionitis:0" and "Antibiotics:0" shows that cases where neither condition is present are more common than expected [@friendly1992]. Conversely, the smaller and lighter areas, especially for "Chorioamnionitis:1" and "Antibiotics:1", suggest that when chorioamnionitis occurs, antibiotics are often used. The pattern reflects a likely positive correlation [@friendly1992] between chorioamnionitis and antibiotics usage.
 
 ```{r}
 #| label: fig-corr3
-#| fig-cap: Mosaic plot showing the correlation between usage of chorioamnionitis and antibiotics (**Note:** the shading intensity (from light green to dark green) represents the standardized residuals of the chi-squared test for the contingency table.)
+#| fig-cap: The correlation between usage of chorioamnionitis and antibiotics (**Note:** the shading intensity (from light green to dark green) represents the standardized residuals of the chi-squared test for the contingency table.)
 #| echo: false
 #| warning: false
 #| message: false
@@ -849,7 +849,7 @@ Define $y_i$ as the 5-minute Apgar score for the $i$th infant, a standard measur
 
 ### Random Forest Model
 
-The Random Forest model is a non-parametic method that predicts $y_i$ using a collection of decision trees [@mlnuggets2024]. The predicted 5-minute Apgar score is modeled as:
+The Random Forest model is a non-parametric method that predicts $y_i$ using a collection of decision trees [@mlnuggets2024]. The predicted 5-minute Apgar score is modeled as:
 
 $\hat{y}_i = \text{RandomForest}(X)$
 
@@ -899,7 +899,7 @@ Inherent assumptions to this model are the following [@geeksforgeeks_bayesian_re
   
 - Priors Representing Beliefs: The priors are assumed to reasonably reflect prior knowledge, ensuring that they do not dominate the posterior estimates.
   
-The model is implemented using the `stan_glm` function in the `rstanarm` package [@rstanarm]. Markov Chian Monte Carlo (MCMC) sampling was conducted with 4 chains and 2000 iterations per chain. Convergence diagnostics were verified, and posterior predictive checks were conducted to assess model fit, as shown in @sec-model-details.
+The model is implemented using the `stan_glm` function in the `rstanarm` package [@rstanarm]. Markov Chain Monte Carlo (MCMC) sampling was conducted with 4 chains and 2000 iterations per chain. Convergence diagnostics were verified, and posterior predictive checks were conducted to assess model fit, as shown in @sec-model-details.
 
 
 ## Model Justification
@@ -990,7 +990,7 @@ ggplot(summary_data, aes(x = factor(drug_count), y = mean_apgar5)) +
 
 ```{r}
 #| label: fig-result2
-#| fig-cap: Heatmap of the overall correlation between treatments administered during labor/delivery and Apgar5 scores
+#| fig-cap: The overall correlation between treatments administered during labor/delivery and Apgar5 scores
 #| echo: false
 #| warning: false
 #| message: false
@@ -1207,7 +1207,7 @@ ggplot(antb_data_summary, aes(x = apgar5, y = Count)) +
 
 \newpage
 
-@fig-chorscore shows that the observation count peaks sharply at a score of 1, then stabilizes between scores 2 and 5, followed by a gradual decline from scores 6 through 10. This distribution suggests that infants that were diagnosed clinical chorioamnionitis during labor or maternal temperature over 38 degrees celcius tend to achieve lower-to-mid range Apgar5 scores.
+@fig-chorscore shows that the observation count peaks sharply at a score of 1, then stabilizes between scores 2 and 5, followed by a gradual decline from scores 6 through 10. This distribution suggests that infants that were diagnosed clinical chorioamnionitis during labor or maternal temperature over 38 degrees Celcius tend to achieve lower-to-mid range Apgar5 scores.
 
 ```{r}
 #| label: fig-chorscore
@@ -1311,7 +1311,7 @@ bayesian_model <-
 
 ### Random Forest Model Results {#sec-randfor-result}
 
-@tbl-rfsummary1 and @fig-rfsumbar shows that usage of steroids (45.76%) is the most influential factor among the treatments during labor and delivery when predicting Apgar5 scores. It is followed by usage of chorioamnionitis (22.44%) and anesthesia (13.99%), which also contributes substantially. Meanwhile, the exposure to antibiotics (0.00%) shows no measurable impact in this context, and suggests its irrelevance to the model's predictions. 
+@tbl-rfsummary1 and @fig-rfsumbar shows that usage of steroids (45.76%) is the most influential factor among the treatments during labor and delivery when predicting Apgar5 scores. It is followed by usage of chorioamnionitis (22.44%) and anesthesia (13.99%), which also contributes substantially. Meanwhile, the exposure to antibiotics (0.00%) shows no measurable impact and suggests its irrelevance to the model's predictions. 
 
 ```{r}
 #| echo: false
@@ -1371,7 +1371,7 @@ importance_table %>%
 #| echo: false
 #| eval: true
 #| label: fig-rfsumbar
-#| fig-cap: Horizontal bar plot showing the variable importance of treatments during labor and delivery on infant health
+#| fig-cap: Variable importance of treatments during labor and delivery on infant health, expressed in horizontal bar plots
 #| warning: false
 
 # Load necessary library
@@ -1474,11 +1474,11 @@ modelsummary::modelsummary(
 
 # Discussion {#sec-discussion}
 
-## Optimization of anetenatal corticosteroid formulations {#sec-first-point}
+## Optimization of antenatal corticosteroid formulations {#sec-first-point}
 
-@sec-randfor-result reveals that maternal and neonatal treatments during labor, such as steroids and antibiotics, have differential impacts on infant health outcomes. Usage of steroids, which showed positive correlations with the Apgar5 score in @fig-sterscore, was actually affirmed their critical role in improving neonatal survival, especially in extremely preterm infants [@nih_prenatal_steroid_treatment]. In particular, antenatal corticosteroids stand out as the core intervention for preterm births under the gestation period of 22 weeks, significantly reducing complications like respiratory distress syndrome by accelerating fetal lung development [@nih_prenatal_steroid_treatment]. 
+@sec-randfor-result reveals that maternal and neonatal treatments during labor, such as steroids and antibiotics, have differential impacts on infant health outcomes. Usage of steroids, which showed positive correlations with the Apgar5 score in @fig-sterscore, was affirmed their critical role in improving neonatal survival, especially in extremely preterm infants [@nih_prenatal_steroid_treatment]. In particular, antenatal corticosteroids stand out as the core intervention for preterm births under the gestation period of 22 weeks, significantly reducing complications like respiratory distress syndrome by accelerating fetal lung development [@nih_prenatal_steroid_treatment]. 
 
-In accordance to these analyses results, pharmaceutical companies can focus on optimizing steroid formulations for safer and more effective administration during earlier gestations [@nih_prenatal_steroid_treatment]. Current formulations of antenatal corticosteroids, like betamethasone, have shown strong efficacy in improving neonatal outcomes but may carry risks when administered too early or in repeated doses [@nichd_prenatal_steroid_treatment]. Hence, adjusting dosages or delivery mechanisms could enhance safety while preserving their life-saving benefits for preterm infants. For instance, this could involve sustained-release versions or targeted delivery systems to minimize potential side effects on both the mother and fetus [@nichd_prenatal_steroid_treatment].
+In accordance with these analyses results, pharmaceutical companies can focus on optimizing steroid formulations for safer and more effective administration during earlier gestations [@nih_prenatal_steroid_treatment]. Current formulations of antenatal corticosteroids, like betamethasone, have shown strong efficacy in improving neonatal outcomes but may carry risks when administered too early or in repeated doses [@nichd_prenatal_steroid_treatment]. Hence, adjusting dosages or delivery mechanisms could enhance safety while preserving their life-saving benefits for preterm infants. For instance, this could involve sustained-release versions or targeted delivery systems to minimize potential side effects on both the mother and fetus [@nichd_prenatal_steroid_treatment].
 
 
 ## Targeted antibiotics and enforcement of evidence-based protocols {#sec-second-point}
@@ -1497,7 +1497,7 @@ Moreover, pharmaceutical companies can contribute by designing drugs that are ac
 
 ## Limitations of the study and directions for future research {#sec-weakeness}
 
-In order to accurately contextualize the findings of this analysis, several limitations must be acknowledged. First, the observational nature of the study may introduce confounding variables that were not accounted for, potentially biasing the results [@biostatistics_confounding]. Unlike randomized controlled trials (RCTs), observational studies lack random assignment, making it challenging to establish causality [@pmc5073487]. Confounding factors, such as socioeconomic status, pre-existing health conditions, or access to healthcare, could influence both the treatment received and the neonatal outcomes, thereby skewing the correlations observed [@biostatistics_confounding]. 
+To accurately contextualize the findings of this analysis, several limitations must be acknowledged. First, the observational nature of the study may introduce confounding variables that were not accounted for, potentially biasing the results [@biostatistics_confounding]. Unlike randomized controlled trials (RCTs), observational studies lack random assignment, making it challenging to establish causality [@pmc5073487]. Confounding factors, such as socioeconomic status, pre-existing health conditions, or access to healthcare, could influence both the treatment received and the neonatal outcomes, thereby skewing the correlations observed [@biostatistics_confounding]. 
 
 Second, the study's findings may have limited applicability to the broader maternal population if the sample is not representative [@tellingstories]. Factors such as geographic location, healthcare facility type, and demographic characteristics can influence treatment practices and outcomes [@bmjmedicine_observational_study]. For instance, a study conducted in a tertiary care center may not reflect the experiences of patients in rural or under-resourced settings [@bmjmedicine_observational_study].
 
@@ -1516,7 +1516,7 @@ Addressing these limitations, future research should aim to incorporate more div
 
 ### Survey design and sampling techniques
 
-The 2023 Natality Dataset [@rawdata] provides detailed records of maternal and neonatal health outcomes across diverse populations in the United States. This obervational dataset aggregates data from hospital records, birth certificates, and surveys completed by healthcare providers [@natality2023]. Its comprehensive scope includes variables like maternal age, gestational age, socio-economic status, and the application of specific labor-related treatments [@cdc_facility_worksheet_2016].
+The 2023 Natality Dataset [@rawdata] provides detailed records of maternal and neonatal health outcomes across diverse populations in the United States. This observational dataset aggregates data from hospital records, birth certificates, and surveys completed by healthcare providers [@natality2023]. Its comprehensive scope includes variables like maternal age, gestational age, socio-economic status, and the application of specific labor-related treatments [@cdc_facility_worksheet_2016].
 
 The natality data involves addressing potential biases inherent in observational datasets. For example, selection bias may arise if certain populations, such as undocumented individuals or those from rural areas, are underrepresented in the data [@tellingstories]. Additionally, measurement errors, such as inconsistencies in self-reported variables like smoking status or prenatal care visits, can affect data reliability [@healthknowledge2024]. To mitigate these challenges, researchers employ weighting techniques to align samples with population distributions and utilize statistical models like propensity score matching to adjust for confounding factors [@Stuart2021].
 
@@ -1643,7 +1643,7 @@ plot(bayesian_model, "rhat")
 
 #### API execution details
 
-The 'Infant Health Prediction API' provides predictions for infant health status based on maternal and delivery-related factors. By accepting structured datasets in CSV format, it offers researchers a powerful tool to generate real-time predictions using advanced maching learning models.
+The 'Infant Health Prediction API' provides predictions for infant health status based on maternal and delivery-related factors. By accepting structured datasets in CSV format, it offers researchers a powerful tool to generate real-time predictions using advanced matching learning models.
 
 - Endpoint URL: [http://127.0.0.1:3505/predict_csv_local](http://127.0.0.1:3505/predict_csv_local)
 
