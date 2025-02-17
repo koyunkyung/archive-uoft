@@ -1,0 +1,647 @@
+LLM: ChatGPT-4.
+Date: 19 October 2024
+
+
+User
+show me the plot with the x-axis having dates and points indicating different candidate names(Harris: blue, Donald: red), and the y-axis showing the pct. reflect actual predictions of newspaper articles to show the simulated results. please provide me with the R codes for this simulation and plotting.
+
+ChatGPT
+Here is an example of how you can simulate election polling data for two candidates, Kamala Harris and Donald Trump, and then plot the results with points in different colors (blue for Harris and red for Trump) in R. This simulation reflects polling percentages over time based on hypothetical newspaper predictions.
+```{r}
+# Load necessary libraries
+library(ggplot2)
+library(dplyr)
+
+# Set random seed for reproducibility
+set.seed(123)
+
+# Simulate dates leading up to the election
+dates <- seq(as.Date("2024-09-01"), as.Date("2024-11-01"), by = "days")
+
+# Simulate polling percentages for Kamala Harris and Donald Trump
+pct_harris <- jitter(55 - 0.05 * seq_along(dates) + rnorm(length(dates), mean = 0, sd = 2), amount = 2)
+pct_trump <- jitter(45 + 0.05 * seq_along(dates) + rnorm(length(dates), mean = 0, sd = 2), amount = 2)
+
+# Create a data frame
+poll_data <- data.frame(
+  date = rep(dates, 2),
+  candidate = rep(c("Harris", "Trump"), each = length(dates)),
+  pct = c(pct_harris, pct_trump)
+)
+
+# Plot the simulated polling data
+ggplot(poll_data, aes(x = date, y = pct, color = candidate)) +
+  geom_point() +
+  geom_line() +
+  scale_color_manual(values = c("Harris" = "blue", "Trump" = "red")) +
+  labs(title = "Simulated Polling Data for US 2024 Election",
+       x = "Date",
+       y = "Polling Percentage (%)",
+       color = "Candidate") +
+  theme_minimal() +
+  theme(legend.position = "bottom")
+```
+Key points in the code:
+Date Simulation: A sequence of dates is generated from September 1, 2024, to November 1, 2024, leading up to the election.
+Polling Percentages: pct_harris and pct_trump simulate polling trends with slight random variations, showing that Harris starts with a slight lead that declines over time, while Trump gains support.
+Plotting: ggplot2 is used to plot the data, with points and lines representing the polling trends, and different colors used for each candidate.
+This code produces a plot with the x-axis showing dates, the y-axis showing polling percentages, and different points and lines for each candidate (Harris in blue, Trump in red). The polling trends reflect the expected movement based on common polling behaviors seen in elections.
+
+
+User
+I want the sim_harris_data to have the variable of "national" which is a binary variable that shows 1 if the state variable is NA or 0 if not
+
+ChatGPT
+```{r}
+# Add 'national' binary variable
+sim_poll_data <- sim_poll_data %>%
+  mutate(national = if_else(is.na(state), 1, 0))  # 1 if state is NA, 0 otherwise
+```
+
+
+User
+I want to filter only the pollsters that have more than 50 polls. please write the relevant codes for me
+
+ChatGPT
+```{r}
+group_by(pollster) |>
+  filter(n() > 50) |> # Filter for pollsters with more than 50 polls
+  ungroup() # Ungroup after filtering
+```  
+
+
+User
+I want to make the states with less than 60 polls to all be treated as "other" for the states variable. please write the relevant codes for me
+
+ChatGPT
+```{r}
+ group_by(state) |>
+  mutate(
+    state_count = n()  # Count the number of polls per state
+  ) |>
+  ungroup() |>
+  mutate(
+    state = if_else(state_count < 60, "Other", state)  # Assign "Other" for states with fewer than 60 polls
+  ) |>
+  select(-state_count)  # Remove the state_count column if not needed anymore
+```  
+
+LLM: ChatGPT-4.
+Date: 21 October 2024
+
+User
+I want to show the summary statistics in a table/graph format of the 'pct' variables. write the relevant codes for me. 
+
+ChatGPT
+Here's the relevant R code to calculate and display summary statistics for the pct variable in both table and graph formats:
+Summary Statistics Table
+```{r}
+# Load necessary libraries
+library(dplyr)
+library(knitr)
+library(kableExtra)
+# Calculate summary statistics for the 'pct' variable
+summary_stats <- just_harris_high_quality %>%
+  summarize(
+    mean = mean(pct, na.rm = TRUE),
+    median = median(pct, na.rm = TRUE),
+    min = min(pct, na.rm = TRUE),
+    max = max(pct, na.rm = TRUE),
+    sd = sd(pct, na.rm = TRUE),
+    n = n()
+  )
+# Display the summary statistics in a nicely formatted table
+summary_stats %>%
+  kable() %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed"), full_width = F)
+```  
+Graph: Distribution of the pct Variable
+```{r}
+# Load necessary libraries
+library(ggplot2)
+# Plot the distribution of 'pct' using a histogram
+ggplot(just_harris_high_quality, aes(x = pct)) +
+  geom_histogram(binwidth = 5, fill = "blue", alpha = 0.7, color = "black") +
+  theme_minimal() +
+  labs(title = "Distribution of Support for Kamala Harris (pct)",
+       x = "Percentage Support (pct)",
+       y = "Count")
+```
+The first part creates a table with summary statistics of the pct variable (mean, median, min, max, standard deviation, and count).
+The second part visualizes the distribution of the pct variable using a histogram.
+
+LLM: ChatGPT-4.
+Date: 21 October 2024
+
+User
+why does predicting electoral outcomes matter?
+
+ChatGPT
+Predicting electoral outcomes matters because it helps stakeholders—such as political campaigns, policymakers, and the media—strategically allocate resources, understand public sentiment, and prepare for potential shifts in governance. Moreover, these predictions can influence financial markets, international relations, and policy decisions, as the outcome of U.S. elections has far-reaching implications beyond national borders, affecting global economies and diplomatic strategies.
+
+User
+how can I show 5 images with first and last in its original format, but the 3 images in the middle to show up arranged by column width 1/3 each?
+
+ChatGPT
+To display five images where the first and last images appear in their original format, and the middle three are arranged in a row with equal widths (1/3 each), you can use a combination of HTML and CSS in your Quarto document. Here's how to do it:
+
+Quarto/Markdown with HTML and CSS:
+html
+<!-- First Image (original format) -->
+<img src="path/to/image1.png" alt="Image 1">
+
+<!-- Middle Images (1/3 width each) -->
+<div style="display: flex; justify-content: space-around;">
+  <img src="path/to/image2.png" alt="Image 2" style="width: 33%;">
+  <img src="path/to/image3.png" alt="Image 3" style="width: 33%;">
+  <img src="path/to/image4.png" alt="Image 4" style="width: 33%;">
+</div>
+
+<!-- Last Image (original format) -->
+<img src="path/to/image5.png" alt="Image 5">
+Explanation:
+First and Last Image: These are displayed in their original size.
+Middle Images: These are wrapped in a <div> with display: flex and each has a width: 33% to ensure they are equally distributed across the width of the container.
+This will ensure the middle three images are arranged in a row, each taking up 1/3 of the available space, while the first and last images retain their original formatting.
+
+Let me know if you need further adjustments!
+
+
+LLM: ChatGPT-4.
+Date: 24 October 2024
+
+User
+Predictor variable: end_date, pollster, state, poll score
+I am going to analyze the trends of proportion of support for candidates in the 2024 US presidential election. Among those predictor variables that I have mentioned above, tell me if there are any meaningful correlations or relationships I can find out between any of those variables
+
+ChatGPT
+To analyze the trends of candidate support in the 2024 U.S. presidential election, let's break down potential relationships between your predictor variables (end_date, pollster, state, poll score) and explore some meaningful correlations:
+
+1. End Date (Time) and Poll Score (Support for Candidates)
+Trend over time: Poll scores for candidates often change over time due to various events, debates, or breaking news. You can explore how the support for a particular candidate has fluctuated from the beginning to the end of your dataset. A time series analysis or a simple line plot can help reveal these trends.
+Seasonality: There might be seasonal effects, such as support rising during specific months, election cycles, or after important events (e.g., party conventions). Identifying this through a rolling average can provide deeper insights.
+Event correlation: Major political events or news coverage may correlate with sudden changes in support. Using event markers in your time trend can show this relationship.
+2. Pollster and Poll Score
+Pollster bias: Different polling organizations can exhibit systematic biases based on their methodology. For example, certain pollsters might consistently favor one candidate over another. Analyzing the poll scores per pollster will help detect this bias. You can calculate and compare average support across pollsters for a candidate to see if there are significant discrepancies.
+Pollster methodology: Each pollster might use different methods (phone, online, mixed modes) and sampling techniques. These methodological differences could correlate with the support levels captured by the pollster.
+3. State and Poll Score
+Geographical differences: Support for candidates typically varies by state. You can explore how different states lean toward particular candidates, identifying battleground states versus safe states.
+Regional clustering: Some regions (e.g., the Midwest, the South) tend to have more similar political views. Grouping states by region and comparing support trends may highlight regional trends.
+State-specific events: Certain state-level events, such as local elections or policies, might influence polling results for presidential candidates in that state.
+4. Interactions Between Predictors
+End Date and State: Support in certain states could change more rapidly as the election date approaches. For example, trends in battleground states are often more volatile compared to stronghold states.
+Pollster and State: Some pollsters may focus their efforts on certain states, either due to resources or strategic choices. The variation in state polling could be related to which pollsters are conducting surveys there.
+Pollster and End Date: Some pollsters may conduct polls only at specific intervals or closer to key events, which could introduce a temporal bias in their polling results.
+Analytical Techniques:
+Correlation matrix: A good start would be to create a correlation matrix for your numerical variables (poll score, time as a continuous variable) and assess any linear relationships.
+Regression Analysis: You can run a multiple regression model with the poll score as the dependent variable and the remaining predictors (end_date, pollster, state) as independent variables. This will help you quantify the impact of each predictor on the poll score.
+Time-series analysis: If you want to focus on temporal trends, consider using time-series analysis, such as ARIMA models, to forecast future support levels.
+ANOVA: To compare means of poll scores across different categories (pollster, state), you can use an ANOVA test to see if there are statistically significant differences.
+By exploring these relationships, you can derive insights into how different factors influence polling support for candidates, whether certain pollsters or states show trends that deviate from the overall national picture, and how support fluctuates over time.
+
+User
+I want to visualize whether there was a concentration of polls in specific states over time. Recommend me with appropriate graphical methods and relevant codes.
+
+ChatGPT
+To visualize whether there was a concentration of polls in specific states over time, you can use the following graphical methods that are well-suited to showing both temporal and geographic patterns of polling activity:
+
+1. Heatmap (State vs. Time)
+Description: A heatmap can show how polling activity (number of polls) changes over time for each state. Each cell of the heatmap represents a specific time period and state, with the color intensity indicating the number of polls reported in that state during that time.
+Why it's useful: This method makes it easy to spot states that have more concentrated polling during certain time periods, as well as periods of low polling activity.
+R Code for Heatmap:
+r
+Copy code
+library(ggplot2)
+library(dplyr)
+
+# Aggregate the number of polls by state and by week (or month)
+poll_time_state <- harris_data %>%
+  mutate(week = format(as.Date(end_date), "%Y-%U")) %>%  # Group by week of the year
+  group_by(state, week) %>%
+  summarise(total_polls = n())
+
+# Plot a heatmap of polling activity by state and week
+ggplot(poll_time_state, aes(x = week, y = state, fill = total_polls)) +
+  geom_tile(color = "white") +
+  scale_fill_gradient(low = "lightblue", high = "darkblue", na.value = "grey90") +
+  labs(title = "Polling Concentration Over Time by State",
+       x = "Week",
+       y = "State",
+       fill = "Total Polls") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+2. Line Plot with Faceting (States Over Time)
+Description: A line plot for each state showing the number of polls over time. You can use faceting (i.e., separate panels for each state) to show how the concentration of polling in each state changes over time.
+Why it's useful: It shows time trends in polling activity for each state and allows you to compare how different states have varying levels of focus at different points in time.
+R Code for Faceted Line Plot:
+r
+Copy code
+# Aggregate the number of polls by state and by week (or month)
+poll_time_state <- harris_data %>%
+  mutate(week = format(as.Date(end_date), "%Y-%U")) %>%  # Group by week of the year
+  group_by(state, week) %>%
+  summarise(total_polls = n())
+
+# Faceted line plot to show polling trends by state over time
+ggplot(poll_time_state, aes(x = week, y = total_polls, group = state)) +
+  geom_line(color = "blue") +
+  facet_wrap(~ state, scales = "free_y") +  # Facet by state
+  labs(title = "Polling Activity Over Time by State",
+       x = "Week",
+       y = "Total Polls") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+3. Animated Map (State-wise Polls Over Time)
+Description: You can create an animated map that shows the number of polls reported in each state over time. This would allow you to observe how polling activity concentrates in different states as the election date approaches.
+Why it's useful: It visually shows changes in polling focus across the U.S. as time progresses, highlighting any temporal shifts in concentration.
+R Code for Animated Map:
+You can use the gganimate package for this. Here's an example:
+
+r
+Copy code
+library(ggplot2)
+library(dplyr)
+library(usmap)
+library(gganimate)
+
+# Aggregate the number of polls by state and by month
+poll_time_state <- harris_data %>%
+  mutate(month = format(as.Date(end_date), "%Y-%m")) %>%  # Group by month
+  group_by(state, month) %>%
+  summarise(total_polls = n())
+
+# Create the base plot
+p <- plot_usmap(data = poll_time_state, values = "total_polls", regions = "states") +
+  scale_fill_viridis(option = "C", direction = -1, na.value = "grey90") +
+  labs(title = "Polling Activity by State: {closest_state}",
+       fill = "Total Polls",
+       subtitle = "Month: {closest_state}") +
+  theme_void()
+
+# Animate the map over time (monthly polling)
+anim <- p + transition_states(month, transition_length = 2, state_length = 1) +
+  enter_fade() + exit_fade()
+
+# Save the animation
+animate(anim, fps = 5, duration = 20, width = 800, height = 600)
+4. Bubble Plot on a Map (Geospatial Representation Over Time)
+Description: A bubble plot on a U.S. map with bubble sizes corresponding to the number of polls in each state at different points in time.
+Why it's useful: This method combines geographic location with the intensity of polling, showing both spatial and temporal trends on a map.
+R Code for Bubble Plot:
+r
+Copy code
+library(usmap)
+library(ggplot2)
+library(dplyr)
+
+# Aggregate data by state and by week
+poll_time_state <- harris_data %>%
+  mutate(week = format(as.Date(end_date), "%Y-%U")) %>%
+  group_by(state, week) %>%
+  summarise(total_polls = n())
+
+# Merge with US map data
+state_map <- us_map("states")
+map_data <- left_join(state_map, poll_time_state, by = c("abbr" = "state"))
+
+# Plot bubble map
+ggplot(map_data, aes(x = long, y = lat, size = total_polls, group = group)) +
+  geom_polygon(color = "white", fill = "grey90") +
+  geom_point(aes(color = total_polls), alpha = 0.7) +
+  scale_color_viridis() +
+  labs(title = "Poll Concentration by State Over Time",
+       size = "Total Polls",
+       color = "Polls",
+       subtitle = "Week: {week}") +
+  theme_minimal() +
+  coord_fixed(1.3)
+Summary of Methods:
+Heatmap: Great for showing the intensity of polling activity across states and over time.
+Faceted Line Plot: Allows detailed time trends for each state, useful for comparing between states.
+Animated Map: Effective for showing the evolution of polling focus over time across different states.
+Bubble Plot on a Map: Combines geographic and temporal data, with bubble sizes indicating the level of polling activity in each state.
+Choose the method that best suits your data and what you aim to highlight in terms of polling concentration over time in specific states.
+
+LLM: ChatGPT-4.
+Date: 25 October 2024
+
+User
+What can I interpret from the heatmap "Polling Concentration Over Time by State"? please be specific, logical, and concise.
+
+ChatGPT
+This heatmap, titled "Polling Concentration Over Time by State," illustrates the number of polls conducted in different states across weeks. Darker shades indicate higher polling activity.
+Key interpretations:
+Concentration of Polling: States like Pennsylvania, Ohio, and Nevada show significantly higher polling in specific weeks (e.g., week 2024-37 and 2024-38), suggesting these are key battlegrounds.
+Polling Fluctuation: Polling intensity varies by week, with some states seeing concentrated activity during certain periods, while others have more sporadic polling.
+States of Interest: Battleground states such as Pennsylvania, Ohio, Florida, and Wisconsin receive notable polling attention, while states like New Mexico and Montana see less focus.
+Time-Specific Focus: Peaks in polling (e.g., week 2024-38) may coincide with major political events, debates, or media focus.
+This heatmap highlights where and when polling efforts are concentrated, potentially indicating states that could heavily influence election outcomes.
+
+User
+What can I interpret from the heatmap "Polling Concentration Over Time by Pollster"? please be specific, logical, and concise.
+
+ChatGPT
+This heatmap, titled "Polling Concentration Over Time by Pollster," visualizes the number of polls conducted by different pollsters across various weeks. The color intensity represents the number of polls, with darker shades indicating higher poll counts.
+Key interpretations:
+Siena/NYT Polling Peaks: Siena/NYT shows concentrated polling efforts in week 2024-37 and week 2024-38, with a notable spike in polling activity, suggesting they are highly active in these periods, possibly around key election events or battleground states.
+Quinnipiac and Marist: Both pollsters show sporadic activity, with Quinnipiac conducting polls around week 2024-32 and Marist being relatively inactive compared to others. Their polling efforts are less frequent and less concentrated.
+Emerson’s Consistency: Emerson conducted polls consistently across several weeks, particularly from week 2024-29 to 2024-32, indicating steady involvement throughout this period. Their polling activity decreases after week 2024-32 but remains present.
+Beacon/Shaw and AtlasIntel: Beacon/Shaw and AtlasIntel have very limited polling activity, with Beacon/Shaw showing activity only in weeks 2024-29 and 2024-37, and AtlasIntel having a spike in week 2024-41. This suggests these pollsters are less involved in the overall polling efforts compared to others.
+In summary, this heatmap reveals the timing and intensity of polling efforts by different pollsters, with Siena/NYT and Emerson being more active overall, while others show more sporadic or minimal involvement.
+
+
+LLM: ChatGPT-4.
+Date: 29 October 2024
+
+User
+Please provide me with concise, logical, sensible result interpretation of the table of prediction models. I want it to be within one paragraph.
+
+ChatGPT
+The model comparison tables provide insights into the predictive performance of linear and Bayesian models, accounting for pollster and state effects. In the linear models, the inclusion of pollster effects (second column) improves model fit, as indicated by higher R² and lower WAIC and RMSE values, suggesting that pollster-specific variations contribute to explaining Harris' polling trends. In the Bayesian models, adding state-level effects (last column) substantially enhances model performance, reflected in a significant increase in Log-Likelihood and a lower ELPD and WAIC, indicating that state-specific influences are critical in accurately predicting polling outcomes. Overall, incorporating both pollster and state effects yields the most robust predictive model, highlighting the importance of addressing both factors in electoral predictions.
+
+
+
+LLM: ChatGPT-4.
+Date: 1 November 2024
+
+
+User
+Provide me with codes that could prevent the figures or tables from filling out of the page, which would eventually be presented in a pdf format. Note that I am using a Quarto document in RStudio.
+
+ChatGPT
+In Quarto, the tbl-align: center option will apply to both HTML and PDF formats, but the tbl-width: fit-content option is not fully supported in PDF outputs. Here’s what happens:
+tbl-align: center: This works for PDF formats and will align the table to the center of the page.
+tbl-width: fit-content: While this works well in HTML for dynamically fitting the table to its content, it doesn’t work in the same way for PDF outputs due to the fixed layout of PDF documents. PDF outputs don’t handle automatic width adjustments based on content as effectively, so you might need to manually specify a percentage width to ensure it fits the page.
+For PDF formatting, you can try using tbl-width: 80% (or another percentage value) to make the table fit within the page margins without overflowing:
+markdown
+Copy code
+```{r}
+#| tbl-align: center
+#| tbl-width: 80% # Manually set width for PDF to prevent overflow
+knitr::kable(your_data_frame)
+This approach should keep your tables centered and scaled to fit well on the page in both PDF and HTML formats.
+
+
+User
+I want to be more specific on how I would use the 100000 budget for the idealized methodology. Based on the content that I have already written, provide me with concrete ways to use this budget. Please be concise and logical.
+
+ChatGPT
+Idealized Methodology with Detailed Budget Allocation
+With a $100,000 budget for forecasting the 2024 U.S. presidential election, the proposed methodology balances broad demographic representation and budget efficiency, focusing on battleground states to maximize the impact of each dollar spent. Below is a detailed breakdown of the budget allocation across various components of the polling methodology.
+Sample Selection and Data Collection by State ($70,000):
+A stratified random sampling approach will be used to capture key demographic factors such as age, gender, race, and education. We will focus on 10 battleground states (e.g., Florida, Pennsylvania, Michigan, Wisconsin, Arizona), each receiving a budget of $7,000.
+For each state:
+Telephone and Online Surveys ($5,000 per state): This amount covers survey administration costs, split between telephone interviews and online polls to ensure coverage across different age and technology-use demographics.
+Field Staff and Data Entry ($2,000 per state): This includes hiring and training local field staff for telephone outreach and conducting data entry to maintain data quality and consistency.
+This targeted investment allows for a sample size of around 500 respondents per state, which balances cost constraints with the need for statistically significant insights in these critical regions.
+Questionnaire Design and Testing ($15,000):
+Crafting high-quality survey questions requires thorough cognitive testing and iterative feedback loops.
+Initial Drafting and Cognitive Testing ($5,000): Initial drafting and expert review to ensure questions are clear and unbiased, covering key policy areas that may influence voter sentiment.
+Iterative Testing and Refinement ($7,000): Conducting pre-tests and pilot studies to refine wording, adjust for potential biases, and test question flow.
+Final Review and Translation ($3,000): Ensuring clarity and accessibility of questions for diverse demographic groups, including translating questions if necessary for non-English-speaking respondents.
+Data Processing and Weighting ($10,000):
+To reduce sampling errors and correct for any demographic imbalances, a robust weighting method will be applied:
+Post-Stratification Weighting ($5,000): This process ensures that the sample accurately represents the U.S. voting population by adjusting for variables such as age, gender, race, and education.
+Data Cleaning and Quality Assurance ($5,000): Investment in thorough data cleaning and consistency checks to prevent bias from erroneous entries or duplicates.
+Modeling and Analysis ($5,000):
+A Bayesian hierarchical model will be employed to account for state and pollster-specific variations, allowing the model to adapt dynamically to new data and external events.
+Model Setup and Calibration ($3,000): This includes setting up the model, selecting prior distributions, and calibrating it with historical data.
+Cross-Validation and Testing ($2,000): Out-of-sample testing and cross-validation ensure the model remains robust and provides reliable predictions under various electoral scenarios.
+In total, the budget is allocated as follows:
+Sample Selection and Data Collection by State: $70,000
+Questionnaire Design and Testing: $15,000
+Data Processing and Weighting: $10,000
+Modeling and Analysis: $5,000
+This distribution ensures that most of the budget is directed toward collecting high-quality data from the most electorally significant states, while also investing in comprehensive survey design, weighting, and robust modeling. By concentrating resources on both data collection and methodological rigor, this idealized methodology provides a robust framework for generating accurate and context-sensitive electoral predictions.
+
+
+LLM: ChatGPT-4.
+Date: 3 November 2024
+
+
+User
+I want to add some graphs of the model estimates for both the linear and Bayesian models. provide me with appropriate R codes to do this. I want to make the graph clear and also aesthetic.
+
+ChatGPT
+Here are some R code snippets to create aesthetic, clear graphs of model estimates for both the linear and Bayesian models. These plots use ggplot2 to ensure readability and a clean visual presentation.
+1. Linear Model Estimates Plot
+This code visualizes the support percentages for Harris over time by pollster, highlighting the linear models' fitted values.
+r
+Copy code
+# Load necessary libraries
+library(ggplot2)
+library(dplyr)
+library(broom)
+
+# Extract estimates from linear models
+linear_estimates <- bind_rows(
+  augment(model_date) %>% mutate(Model = "Date Only"),
+  augment(model_date_pollster) %>% mutate(Model = "Date + Pollster")
+)
+# Plot linear model estimates
+ggplot(linear_estimates, aes(x = .fitted, y = .resid, color = Model)) +
+  geom_point(alpha = 0.6) +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(
+    title = "Residuals vs Fitted Values for Linear Models",
+    x = "Fitted Values",
+    y = "Residuals",
+    color = "Model"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "top")
+2. Bayesian Model Estimates Plot
+This code visualizes the estimates from the Bayesian models. It plots support percentages over time for different states and pollsters.
+r
+Copy code
+# Assuming bayesian_model_1 and bayesian_model_2 contain posterior draws
+library(ggdist)
+library(tidybayes)
+
+# Extract posterior samples
+bayesian_estimates <- bind_rows(
+  as_draws_df(bayesian_model_1) %>% mutate(Model = "Pollster Only"),
+  as_draws_df(bayesian_model_2) %>% mutate(Model = "Pollster + State")
+)
+# Plot Bayesian model estimates with credible intervals
+ggplot(bayesian_estimates, aes(x = Model, y = .value, color = Model)) +
+  stat_pointinterval(aes(y = .value), .width = 0.95, point_interval = "median_qi") +
+  labs(
+    title = "Model Estimates with 95% Credible Intervals",
+    x = "Model",
+    y = "Support Percentage",
+    color = "Model"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "top")
+3. Time Series Plot of Model Predictions
+This time series plot shows the fitted values of both the linear and Bayesian models over time.
+r
+Copy code
+# Create a combined dataset for predictions over time
+predictions_over_time <- bind_rows(
+  data.frame(Date = linear_estimates$.fitted, Value = linear_estimates$.resid, Model = linear_estimates$Model),
+  data.frame(Date = bayesian_estimates$.value, Value = bayesian_estimates$.value, Model = bayesian_estimates$Model)
+)
+# Plot predictions over time
+ggplot(predictions_over_time, aes(x = Date, y = Value, color = Model)) +
+  geom_line() +
+  geom_point(alpha = 0.6) +
+  labs(
+    title = "Model Predictions Over Time",
+    x = "Date",
+    y = "Support Percentage",
+    color = "Model"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "top")
+These visualizations provide a clear comparison of model performances and insights into their estimates across different variables and over time.
+
+
+User
+how can I add the graph of model estimates? write the appropriate R codes for me.
+The following is how the model looks like.
+#### Read data ####
+harris_data <- read_csv("data/02-analysis_data/harris_elections_data.csv")
+### Model data ####
+# Model 1: pct as a function of date
+model_date <- stan_glm(
+  formula = pct ~ end_date,
+  data = harris_data,
+  family = gaussian(),
+  prior = normal(location = 0, scale = 2.5, autoscale = TRUE),
+  prior_intercept = normal(location = 0, scale = 2.5, autoscale = TRUE),
+  prior_aux = exponential(rate = 1, autoscale = TRUE),
+  seed = 853
+)
+# Model 2: pct as a function of date and pollster
+model_date_pollster <- stan_glm(
+  formula = pct ~ end_date + pollster,
+  data = harris_data,
+  family = gaussian(),
+  prior = normal(location = 0, scale = 2.5, autoscale = TRUE),
+  prior_intercept = normal(location = 0, scale = 2.5, autoscale = TRUE),
+  prior_aux = exponential(rate = 1, autoscale = TRUE),
+  seed = 853
+)
+# Bayesian Model 1: random intercept for pollster
+# Change 'pollster' and 'state' to factor variables
+harris_data <- harris_data |>
+  mutate(
+    pollster = factor(pollster),
+    state = factor(state)
+  )
+# Specify priors
+priors <- normal(0, 2.5, autoscale = TRUE)
+model_formula_1 <- cbind(num_harris, sample_size - num_harris) ~ (1 | pollster)
+bayesian_model_1 <- stan_glmer(
+  formula = model_formula_1,
+  data = harris_data,
+  family = binomial(link = "logit"),
+  prior = priors,
+  prior_intercept = priors,
+  seed = 123,
+  cores = 4,
+  adapt_delta = 0.95
+)
+# Bayesian Model 2: random intercepts for pollster and state
+model_formula_2 <- cbind(num_harris, sample_size - num_harris) ~ (1 | pollster) + (1 | state)
+bayesian_model_2 <- stan_glmer(
+  formula = model_formula_2,
+  data = harris_data,
+  family = binomial(link = "logit"),
+  prior = priors,
+  prior_intercept = priors,
+  seed = 123,
+  cores = 4,
+  adapt_delta = 0.95
+)
+#### Save model ####
+saveRDS(
+  model_date,
+  file = "models/model_date.rds"
+)
+saveRDS(
+  model_date_pollster,
+  file = "models/model_date_pollster.rds"
+)
+saveRDS(
+  bayesian_model_1,
+  file = "models/bayesian_model_1.rds"
+)
+saveRDS(
+  bayesian_model_2,
+  file = "models/bayesian_model_2.rds"
+)
+
+ChatGPT
+To add graphs of the model estimates, you can use ggplot2 to visualize the predicted values against the actual data. Here’s how you could do it for each model.
+Step 1: Extract Predictions
+To plot the model estimates, you first need to generate predictions from the models using posterior_predict (for Bayesian models) or predict (for non-Bayesian models). Then, add the predictions to the original data.
+Step 2: Plot Predictions
+Use ggplot2 to create plots comparing predicted values against observed values. Here’s how you could do it for each model.
+Code
+r
+Copy code
+# Load required libraries
+library(ggplot2)
+# Generate predictions and plot for Model 1 (pct ~ end_date)
+harris_data$pred_date <- predict(model_date, newdata = harris_data)
+ggplot(harris_data, aes(x = end_date, y = pct)) +
+  geom_point(color = "blue", alpha = 0.6) +
+  geom_line(aes(y = pred_date), color = "red", linetype = "dashed") +
+  labs(
+    title = "Model 1: Predicted Percentage of Supportive Polls by Date",
+    x = "End Date",
+    y = "Percentage of Supportive Polls"
+  ) +
+  theme_minimal()
+# Generate predictions and plot for Model 2 (pct ~ end_date + pollster)
+harris_data$pred_date_pollster <- predict(model_date_pollster, newdata = harris_data)
+ggplot(harris_data, aes(x = end_date, y = pct, color = pollster)) +
+  geom_point(alpha = 0.6) +
+  geom_line(aes(y = pred_date_pollster), linetype = "dashed") +
+  labs(
+    title = "Model 2: Predicted Percentage of Supportive Polls by Date and Pollster",
+    x = "End Date",
+    y = "Percentage of Supportive Polls"
+  ) +
+  theme_minimal()
+# Generate predictions for Bayesian Model 1 and plot (random intercept for pollster)
+harris_data$bayesian_pred_1 <- posterior_predict(bayesian_model_1, newdata = harris_data) |> apply(2, mean)
+ggplot(harris_data, aes(x = end_date, y = num_harris / sample_size)) +
+  geom_point(color = "blue", alpha = 0.6) +
+  geom_line(aes(y = bayesian_pred_1 / sample_size), color = "red", linetype = "dashed") +
+  labs(
+    title = "Bayesian Model 1: Predicted Percentage of Supportive Polls with Random Intercept for Pollster",
+    x = "End Date",
+    y = "Percentage of Supportive Polls"
+  ) +
+  theme_minimal()
+# Generate predictions for Bayesian Model 2 and plot (random intercepts for pollster and state)
+harris_data$bayesian_pred_2 <- posterior_predict(bayesian_model_2, newdata = harris_data) |> apply(2, mean)
+ggplot(harris_data, aes(x = end_date, y = num_harris / sample_size)) +
+  geom_point(color = "blue", alpha = 0.6) +
+  geom_line(aes(y = bayesian_pred_2 / sample_size), color = "red", linetype = "dashed") +
+  labs(
+    title = "Bayesian Model 2: Predicted Percentage of Supportive Polls with Random Intercepts for Pollster and State",
+    x = "End Date",
+    y = "Percentage of Supportive Polls"
+  ) +
+  theme_minimal()
+Explanation
+geom_point: Plots the actual data points.
+geom_line: Plots the predicted values. Dashed lines represent the model’s predicted trend.
+posterior_predict and predict: Generates predicted values based on each model.
+This code will create four plots, one for each model, showing how the predictions align with the actual data.
+
+
+
+
+
+
+
+
+
+
+
