@@ -1,0 +1,1741 @@
+---
+title: "The Effects of Labor-Associated Drug Interventions on Neonatal Health Outcomes: A Predictive Analysis of Apgar5 Scores"
+subtitle: "Steroids enhance neonatal health, while antibiotics show limited effectiveness"
+author: 
+  - Yunkyung Ko
+thanks: "Code and data are available at: [https://github.com/koyunkyung/infant_health](https://github.com/koyunkyung/infant_health)."
+date: today
+date-format: long
+abstract: "How maternal and neonatal drug interventions during labor shape the health status of a newborn remains a key question in perinatal care. With the 2023 Natality Data for the United States, the relationship between six labor-related treatments and Apgar5 scores, a standard measure of neonatal health, was examined. Using a Random Forest model for prediction and a Bayesian Linear Model for inference, we identified usage of steroids and chorioamnionitis as the most impactful, while antibiotics dosage showed minimal influence. The analysis shows disparities in treatment efficacy, and further suggests the need for optimized corticosteroid formulations or targeted antibiotic protocols."
+format: pdf
+number-sections: true
+bibliography: references.bib
+toc: true
+toc-title: "Table of Contents"
+toc-depth: 2
+toc-location: left
+---
+
+```{r}
+#| include: false
+#| warning: false
+#| message: false
+
+library(tidyverse)
+library(data.table)
+library(arrow)
+library(scales)
+library(dplyr)
+library(knitr)
+
+raw_data <- fread("../data/01-raw_data/infant_data.csv" , showProgress = FALSE)
+analysis_data <- read_csv("../data/02-analysis_data/infant_health.csv")
+balanced_data <- read_csv("../data/02-analysis_data/infant_balanced.csv")
+
+```
+
+
+# Introduction {#sec-introduction}
+
+Labor and birth is a time of excitement and anticipation, along with uncertainty and anxiety [@canada2023maternity]. This emotional complexity is often heightened by decisions surrounding medical interventions that directly impact maternal and newborn health [@reproductive2019labor]. Women frequently report anxiety in medication use especially during labor, driven by concerns about potential side effects [@reproductive2019labor] and insufficient information [@canada2023maternity]. To address these concerns, this paper analyzes the 2023 Natality Data for the United States [@rawdata], specifically evaluating the relationship between six labor-related treatments and neonatal health outcomes, as measured by the Apgar5 score [@natality2023]. 
+
+The estimand is the average treatment effect (ATE) of six labor-associated interventions on neonatal health outcomes, quantified by Apgar5 scores [@rawdata]. Specifically, we aim to estimate how the administration of each treatment changes the Apgar score compared to scenarios where the treatment is not applied [@tellingstories]. By applying predictive modeling through a Random Forest model and inferential analysis through a Bayesian linear model, we assess not only the magnitude of these effects[@geeksforgeeks_random_forest] but also the underlying uncertainties[@strimmerlab_priors].
+
+The analysis shows that prenatal exposure to steroids significantly improve Apgar scores (@tbl-rfsummary1). Conversely, antibiotics dosage doesn't show as much contribution to the score distribution (@tbl-rfsummary1) and rather raises concerns about potential risks, including microbiota disruption [@narrow_spectrum_antibiotics]. The paper therefore proposes significant disparities in the consistent application and effectiveness of these treatments (@fig-rfsumbar). 
+
+This study has its significance in that it states the need to improve health outcomes for mothers and their newborns. As recognized by the World Health Organization, a healthy start in life has significant repercussions for a person's health and well-being during infancy, childhood, and adulthood [@who_maternal_health]. Ensuring quality care in maternal and newborn health is integral to the right to health, equity, and the preservation of dignity for women and their babies [@who_maternal_health].
+
+The remainder of this paper is structured as follows: @sec-data describes the dataset and methodology and @sec-model exhibits the use of predictive and inferential models. @sec-results presents the results of the analysis, detailing the observed relationships between treatments and neonatal health outcomes. @sec-discussion discusses the implications of these findings, focusing on healthcare policy and clinical practice improvements. Finally, @sec-weakeness concludes with a discussion of the study's limitations and potential areas for future research. @sec-appendix provides additional data details and model diagnostics.
+
+
+# Data {#sec-data}
+
+## Overview
+
+We use the the statistical programming language R [@citeR] to analyze the relationship between maternal drug treatments and neonatal health outcomes in the '2023 Natality Data for the United States' [@rawdata]. Provided by NBER and sourced from the National Center for Health Statistics, this dataset contains 3,605,081 live birth statistics across the U.S., including demographic details, health metrics, and geographical breakdowns by state and country [@natality2023]. To represent treatments directly affecting the infant, variables under the category of 'Characteristics of Labor and Delivery' were selected, which capture medical interventions administered to the mother or infant during the critical period of childbirth [@cdc_facility_worksheet_2016]. Six different types of treatments are under this category, which are labor induction, augmentation, the use of steroids, antibiotics, chorioamnionitis, and anesthesia [@natality2023]. For the representation of infant health outcomes, the 'APGAR5' variable was selected, which shows the 5-minute Apgar score, a widely recognized indicator of an infant's immediate health status post-delivery [@medicalnewstoday_apgar_scores]. 
+
+To ensure a balanced distribution of observations across all Apgar5 score groups, we applied stratified random sampling and designated the sample size per group as 2,000. In addition, for data quality, we standardized the treatment measuring variables, containing respondents' answers of "Yes", "No", or "Unknown", into binary numerical variables. Then, the variables were converted into factors to prepare the data for predictive modeling[@analyticsvidhya2015], and split into training and testing sets to support machine learning workflows[@brownlee2019].
+
+In performing the analysis, we utilized several R packages. `tidyverse` [@tidyverse] was used for data manipulation, and `ggplot2` [@ggplot2] was used for visualizing results in graphical methods. `randomForest` [@randomForest] and `caret` [@caret] were used for Random Forest modeling while `rstanarm` [@rstanarm] was used for Bayesian linear modeling in the process of generating predictions.
+
+
+## Measurement
+	
+The data transforms the phenomenon of infant health status into data, defining quantifiable factors that can capture the complex impacts of maternal and neonatal pharmacological interventions [@rawdata]. The transformation is achieved through the collection of information on various treatments and conditions experienced during labor and delivery, such as steroid use, chorioamnionitis, antibiotics, and anesthesia, among others [@natality2023]. These variables, which were recorded through surveys or medical records, uses checkboxes or scales that allow for quantification [@cdc_facility_worksheet_2016]. Errors such as inconsistencies in how data is recorded can arise during this kind of measurement process [@tellingstories]. For instance, subjective interpretations of checkbox responses or variability in medical record documentation can lead to measurement error [@healthknowledge2024]. These errors may result from differences in definitions of treatments across facilities or the accuracy of self-reported information in surveys [@healthknowledge2024].
+
+The 5-minute Apgar score itself, is also a simplified numerical representation of an infant's health, which may overlook the complexities of their condition. While useful for rapid clinical decision-making, the Apgar score may fail to capture nuanced aspects of an infant's condition, such as underlying metabolic imbalances, subtle neurological issues, or long-term impact of perinatal complications [@aap2006].
+
+By structuring these variables into categorical or numerical forms, the data can be analyzed and used to model the relationship between treatments and the Apgar5 score. Specifically, drug usage during labor and delivery was encoded as binary variables (@sec-predictor). However, this has a limitation that it disregards the quantitative intensity, dosage, or frequency of drug administration, leading to incomplete modeling of the treatment's impact [@geeksforgeeks_feature_encoding]. This simplification may also amplify noise in the data by grouping dissimilar observations into the same category, reducing the model's ability to detect subtle relationships [@geeksforgeeks_feature_encoding]. 
+
+More detailed information of data measurement including the survey and sampling methods are shown in @sec-datadetails. 
+
+## Outcome variables
+
+### Apgar Score: a measure the infant's chance of surviving the first year of life
+
+The Apgar score is a measure of the need for resuscitation [@natality2023] to the infant, which is "the act of bringing someone back to life or waking them" [@cambridgeResuscitation]. It is a test given to newborns soon after birth (5 minutes) to check 'Appearance(skin color)', 'Pulse(heart rate)', 'Grimace response(reflexes)', 'Activity(muscle tone)', 'Respiration(breathing rate and effort)' [@kidsHealthApgar]. Each is rated on a scale of 0 to 2, with 2 being the best score [@kidsHealthApgar]. Apgar scores range from 0 to 10, with a score of 7 or higher indicating that the neonate is in good to excellent physical condition [@natality2023].
+
+@fig-apgar1 shows that many infants in the raw dataset achieve a high Apgar5 score, clustering around 9 and 10. Very few observations exist for lower scores, reflecting rare instances of significant distress at birth. Even after filtering the dataset by selecting the relevant variables for analysis and removing the NA values, @fig-apgar2 shows that the observations are overly clustered around high Apgar5 scores.
+
+
+```{r}
+#| label: fig-apgar1
+#| fig-cap: "The distribution of Apgar5 scores across the entire observation in the original dataset (**Note:** Unknown or unreported observations were excluded so that the distribution could be clearly visualized)"
+#| echo: false
+#| warning: false
+#| message: false
+
+# Remove rows where 'apgar5' equals 99
+filtered_data <- raw_data %>%
+  filter(apgar5 != 99)
+
+# Histogram for 'apgar5'
+filtered_data |>
+  ggplot(aes(x = apgar5)) +
+  geom_histogram(aes(y = after_stat(count)), 
+    binwidth = 1, 
+    color = "grey", 
+    fill = "skyblue", 
+    alpha = 0.7) + 
+  
+  # Add labels
+  labs(x = "APGAR5 Score",
+       y = "Observation Count") +
+  
+  # Format y-axis numbers with commas
+  scale_y_continuous(labels = comma) +
+  
+  # Apply a clean theme
+  theme_minimal()
+  
+
+```
+
+
+```{r}
+#| label: fig-apgar2
+#| fig-cap: "The distribution of Apgar5 scores across the filtered observation in analysis dataset"
+#| echo: false
+#| warning: false
+#| message: false
+
+
+# Histogram for 'apgar5'
+analysis_data |>
+  ggplot(aes(x = apgar5)) +
+  geom_histogram(aes(y = after_stat(count)), 
+    binwidth = 1, 
+    color = "grey", 
+    fill = "skyblue", 
+    alpha = 0.7) + 
+  # Add labels
+  labs(x = "APGAR5 Score",
+       y = "Observation Count") +
+  # Format y-axis numbers with commas
+  scale_y_continuous(labels = comma) +
+  # Apply a clean theme
+  theme_minimal()
+  
+
+```
+
+Therefore, to ensure a balanced analysis [@brownlee2020], the data was refined to achieve a more even distribution of observations across APGAR5 scores. Based on the lowest observation count of 2,065 in the original distribution, the number of observations for each APGAR5 score was set to 2,000 as shown in @fig-apgar3. Random sampling was used for respective score groups to ensure a fair distribution across all score levels [@brownlee2020].
+
+```{r}
+#| label: fig-apgar3
+#| fig-cap: "The distribution of Apgar5 scores across the filtered observation in analysis dataset"
+#| echo: false
+#| warning: false
+#| message: false
+
+# Generate a table for APGAR5 score distribution
+apgar_table <- balanced_data %>%
+  group_by(apgar5) %>%  # Group by APGAR5 score
+  summarise(
+    Count = n()  # Count of observations
+  ) %>%
+  arrange(apgar5)  # Ensure rows are ordered by APGAR5 score
+
+# Transpose the table for horizontal display
+apgar_table_transposed <- t(as.matrix(apgar_table$Count))  # Transpose only the counts
+colnames(apgar_table_transposed) <- apgar_table$apgar5  # Set APGAR5 scores as column names
+rownames(apgar_table_transposed) <- "Count"  # Set the row name
+
+# Convert to a data frame for display
+apgar_table_transposed_df <- as.data.frame(apgar_table_transposed)
+
+# Display the transposed table using kable
+knitr::kable(
+  apgar_table_transposed_df)
+
+
+```
+
+\newpage
+
+## Predictor variables {#sec-predictor}
+
+All the predictor variables used in the analysis are classified under the same category, which is the 'Characteristics of labor and delivery' [@natality2023]. This item, which contains 6 separate checkboxes that the respondent can choose from, allows for the reporting of more than one characteristic and includes a choice of "None of the above" [@cdcFacilityGuide].  
+
+### Number of Treatments Used During Delivery and Labor
+
+@fig-numtreat shows that many observations involve 0 to 2 treatments during labor and delivery, with a steep decline in counts for 3 or more treatments. Most births reported in this dataset occur with minimal medical intervention, and higher number of treatments are relatively rare. 
+
+```{r}
+#| label: fig-numtreat
+#| fig-cap: "The distribution of observations across different number of treatments used during delivery and labor"
+#| echo: false
+#| warning: false
+#| message: false
+
+
+anal_data <- balanced_data %>%
+  mutate(
+    drug_count = rowSums(select(., c(indc, augmt, ster, antb, chor, anes)) == 1, na.rm = TRUE)
+  )
+
+# Calculate observation counts for each drug_count
+drug_count_summary <- anal_data %>%
+  group_by(drug_count) %>%
+  summarise(observation_count = n())  # Count observations for each drug_count
+
+# Plot the counts with all x-axis values displayed
+ggplot(drug_count_summary, aes(x = drug_count, y = observation_count)) +
+  geom_bar(stat = "identity", fill = "darkgreen",alpha = 0.5, color = "grey") +  # Bar plot
+  geom_text(aes(label = comma(observation_count)), vjust = -0.5, size = 3, color = "black") +  # Add counts above bars
+  labs(
+    x = "Number of Treatments Used During Labor and Delivery",
+    y = "Observation Count"
+  ) +
+  scale_y_continuous(labels = comma) +  # Format numbers on the y-axis
+  scale_x_continuous(breaks = seq(min(drug_count_summary$drug_count), max(drug_count_summary$drug_count), by = 1)) +  # Ensure all x-axis values are shown
+  theme_minimal() +
+  theme(
+    axis.text = element_text(size = 10),
+    axis.title = element_text(size = 10)
+  )
+
+
+```
+
+\newpage
+
+### Type of Treatments Used During Delivery and Labor
+
+@fig-typetreat shows that the distribution of treatment types varies significantly, with anesthesia being the most recorded intervention, while chorioamnionitis is rare. Treatments like anesthesia and antibiotics, with higher observation counts, may have a greater impact on the observed outcomes, whereas less frequent interventions, such as steroids or chorioamnionitis, may require careful consideration to avoid biases due to smaller sample sizes [@selectstatistics2024].
+
+```{r}
+#| label: fig-typetreat
+#| fig-cap: The distribution of observations across different type of treatments used during delivery and labor
+#| echo: false
+#| warning: false
+#| message: false
+
+# Define custom labels and order for Treatment_Type
+custom_labels <- c(
+  "indc" = "Induction",
+  "augmt" = "Augmentation",
+  "ster" = "Steroids",
+  "antb" = "Antibiotics",
+  "chor" = "Chorioamnionitis",
+  "anes" = "Anesthesia"
+)
+# Reshape data to long format for treatment types
+treatment_summary <- balanced_data %>%
+  select(indc, augmt, ster, antb, chor, anes) %>%  # Select treatment columns
+  pivot_longer(
+    cols = everything(),  # Reshape all columns to long format
+    names_to = "Treatment_Type",  # Column for treatment type
+    values_to = "Value"  # Column for values (0 or 1)
+  ) %>%
+  filter(Value == 1) %>%  # Keep rows where treatment is used
+  group_by(Treatment_Type) %>%
+  summarise(Count = n(), .groups = "drop") %>%  # Count observations for each treatment type
+  mutate(
+    Treatment_Type = factor(Treatment_Type, levels = names(custom_labels), labels = custom_labels)  # Apply custom labels and order
+  )
+
+# Plot the distribution of observations for each treatment
+ggplot(treatment_summary, aes(x = Count, y = Treatment_Type, fill = Treatment_Type)) +
+  geom_bar(stat = "identity", fill = "darkgreen", alpha = 0.5, color = "grey") +  # Bar plot
+  geom_text(aes(label = comma(Count)), vjust = -0.5, size = 3, color = "black") +  # Add counts above bars
+  labs(
+    x = "Observation Count",
+    y = "Treatment Type"
+  ) +
+  scale_x_continuous(labels = comma) +  # Format x-axis labels with commas
+  theme_minimal() +
+  theme(
+    axis.text = element_text(size = 10),
+    axis.title = element_text(size = 10),
+    legend.position = "none"  # Remove legend for cleaner look
+  )
+```
+
+\newpage
+
+### Induction of labor
+
+@fig-indc-1 shows that in the raw data, the "No" category dominates with over 2.4 million observations, while the "Yes" category trails with around 1.2 million. After filtering and refining the dataset, @fig-indc-2 shows that the gap between the "Yes" and "No" category becomes narrow, with the "No" category with 15,752 and "Yes" category with 6,248. This kind of balancing process is expected to allow for a more robust evaluation of how labor induction might influence Apgar scores, reducing the risk of the prediction model underestimating or overestimating treatment effects [@isi2024].
+
+```{r}
+#| label: fig-indc
+#| fig-cap: The distribution of observations based on whether the infant received induction of labor or not
+#| fig-subcap: ["raw data", "analysis data"]
+#| echo: false
+#| warning: false
+#| message: false
+#| layout-ncol: 2
+#| fig-width: 5
+#| fig-height: 4
+
+
+# Prepare the data
+ld_indl_summary1 <- raw_data %>%
+  group_by(ld_indl) %>%
+  summarise(Count = n(), .groups = "drop") %>%
+  mutate(
+    ld_indl = ifelse(ld_indl == "Y", "Yes", ifelse(ld_indl == "N", "No", "Unknown")),  # Label groups
+    ld_indl = factor(ld_indl, levels = c("Yes", "No", "Unknown"))  # Specify factor levels for order
+  )
+
+# Plot the bar graph
+ggplot(ld_indl_summary1, aes(x = ld_indl, y = Count)) +
+  geom_bar(stat = "identity", fill = "#a9dfbf", color = "grey") +  # Bar plot
+  geom_text(aes(label = comma(Count)), vjust = -0.5, size = 3, color = "black") +  # Add counts above bars
+  labs(
+    x = "Induction of Labor",
+    y = "Observation Count"
+  ) +
+  scale_y_continuous(limits = c(0, max(ld_indl_summary1$Count) + 1000), expand = c(0, 0)) +
+  scale_y_continuous(labels = comma) +  # Format y-axis labels with commas
+  theme_minimal() +
+  theme(
+    axis.text = element_text(size = 10),
+    axis.title = element_text(size = 10)
+  )
+
+# Prepare the data
+ld_indl_summary2 <- balanced_data %>%
+  group_by(indc) %>%
+  summarise(Count = n(), .groups = "drop") %>%
+  mutate(
+    ld_indl = ifelse(indc == 1, "Yes", ifelse(indc == 0 , "No", "Unknown")),  # Label groups
+    ld_indl = factor(ld_indl, levels = c("Yes", "No", "Unknown"))  # Specify factor levels for order
+  )
+
+# Plot the bar graph
+ggplot(ld_indl_summary2, aes(x = ld_indl, y = Count)) +
+  geom_bar(stat = "identity", fill = "#a9dfbf", color = "grey") +  # Bar plot
+  geom_text(aes(label = comma(Count)), vjust = -0.5, size = 3, color = "black") +  # Add counts above bars
+  labs(
+    x = "Induction of Labor",
+    y = "Observation Count"
+  ) +
+  scale_y_continuous(limits = c(0, max(ld_indl_summary2$Count) + 1000), expand = c(0, 0)) +
+  scale_y_continuous(labels = comma) +  # Format y-axis labels with commas
+  theme_minimal() +
+  theme(
+    axis.text = element_text(size = 10),
+    axis.title = element_text(size = 10)
+  )
+
+
+```
+
+\newpage
+
+### Augmentation of labor
+
+@fig-augmt-1 shows that in the raw data, the "No" category overwhelmingly dominates with 2,850,569 observations compared to 752,302 in the "Yes" category. @fig-augmt-2 narrow the gap with the "No" category reduced to 18,589 and "Yes" category adjusted to 3,411.
+
+```{r}
+#| label: fig-augmt
+#| fig-cap: The distribution of observations based on whether the infant received augmentation of labor or not
+#| fig-subcap: ["raw data", "analysis data"]
+#| layout-ncol: 2
+#| echo: false
+#| warning: false
+#| message: false
+#| fig-width: 5
+#| fig-height: 4
+
+# Prepare the data
+ld_augm_summary1 <- raw_data %>%
+  group_by(ld_augm) %>%
+  summarise(Count = n(), .groups = "drop") %>%
+  mutate(
+    ld_augm = ifelse(ld_augm == "Y", "Yes", ifelse(ld_augm == "N", "No", "Unknown")),  # Label groups
+    ld_augm = factor(ld_augm, levels = c("Yes", "No", "Unknown"))  # Specify factor levels for order
+  )
+
+# Plot the bar graph
+ggplot(ld_augm_summary1, aes(x = ld_augm, y = Count)) +
+  geom_bar(stat = "identity", fill = "#a9dfbf", color = "grey") +  # Bar plot
+  geom_text(aes(label = comma(Count)), vjust = -0.5, size = 3, color = "black") +  # Add counts above bars
+  labs(
+    x = "Augmentation of Labor",
+    y = "Observation Count"
+  ) +
+  scale_y_continuous(limits = c(0, max(ld_augm_summary1$Count) + 1000), expand = c(0, 0)) +
+  scale_y_continuous(labels = comma) +  # Format y-axis labels with commas
+  theme_minimal() +
+  theme(
+    axis.text = element_text(size = 10),
+    axis.title = element_text(size = 10)
+  )
+
+# Prepare the data
+ld_augm_summary2 <- balanced_data %>%
+  group_by(augmt) %>%
+  summarise(Count = n(), .groups = "drop") %>%
+  mutate(
+    ld_augm = ifelse(augmt == 1, "Yes", ifelse(augmt == 0 , "No", "Unknown")),  # Label groups
+    ld_augm = factor(ld_augm, levels = c("Yes", "No", "Unknown"))  # Specify factor levels for order
+  )
+
+# Plot the bar graph
+ggplot(ld_augm_summary2, aes(x = ld_augm, y = Count)) +
+  geom_bar(stat = "identity", fill = "#a9dfbf", color = "grey") +  # Bar plot
+  geom_text(aes(label = comma(Count)), vjust = -0.5, size = 3, color = "black") +  # Add counts above bars
+  labs(
+    x = "Augmentation of Labor",
+    y = "Observation Count"
+  ) +
+  scale_y_continuous(limits = c(0, max(ld_augm_summary2$Count) + 1000), expand = c(0, 0)) +
+  scale_y_continuous(labels = comma) +  # Format y-axis labels with commas
+  theme_minimal() +
+  theme(
+    axis.text = element_text(size = 10),
+    axis.title = element_text(size = 10)
+  )
+
+
+
+```
+
+\newpage
+
+### Steroids (glucocorticoids) for fetal lung maturation received by the mother before delivery
+
+@fig-ster-1 shows that in the raw data, the "No" category heavily dominates with 3,464,273 observations compared to 138,598 in the "Yes" category, indicating severe imbalance. @fig-ster-2 shows that the gap narrows after filtering and refining the dataset, with the "No" category to 19,662 and the "Yes" category to 2,338.
+
+```{r}
+#| label: fig-ster
+#| fig-cap: The distribution of observations based on whether the infant received steroid treatments or not
+#| fig-subcap: ["raw data", "analysis data"]
+#| layout-ncol: 2
+#| echo: false
+#| warning: false
+#| message: false
+#| fig-width: 5
+#| fig-height: 4
+
+# Prepare the data
+ld_ster_summary1 <- raw_data %>%
+  group_by(ld_ster) %>%
+  summarise(Count = n(), .groups = "drop") %>%
+  mutate(
+    ld_ster = ifelse(ld_ster == "Y", "Yes", ifelse(ld_ster == "N", "No", "Unknown")),  # Label groups
+    ld_ster = factor(ld_ster, levels = c("Yes", "No", "Unknown"))  # Specify factor levels for order
+  )
+
+# Plot the bar graph
+ggplot(ld_ster_summary1, aes(x = ld_ster, y = Count)) +
+  geom_bar(stat = "identity", fill = "#a9dfbf", color = "grey") +  # Bar plot
+  geom_text(aes(label = comma(Count)), vjust = -0.5, size = 3, color = "black") +  # Add counts above bars
+  labs(
+    x = "Steroids Usage",
+    y = "Observation Count"
+  ) +
+  scale_y_continuous(limits = c(0, max(ld_ster_summary1$Count) + 1000), expand = c(0, 0)) +
+  scale_y_continuous(labels = comma) +  # Format y-axis labels with commas
+  theme_minimal() +
+  theme(
+    axis.text = element_text(size = 10),
+    axis.title = element_text(size = 10)
+  )
+
+# Prepare the data
+ld_ster_summary2 <- balanced_data %>%
+  group_by(ster) %>%
+  summarise(Count = n(), .groups = "drop") %>%
+  mutate(
+    ld_ster = ifelse(ster == 1, "Yes", ifelse(ster == 0 , "No", "Unknown")),  # Label groups
+    ld_ster = factor(ld_ster, levels = c("Yes", "No", "Unknown"))  # Specify factor levels for order
+  )
+
+# Plot the bar graph
+ggplot(ld_ster_summary2, aes(x = ld_ster, y = Count)) +
+  geom_bar(stat = "identity", fill = "#a9dfbf", color = "grey") +  # Bar plot
+  geom_text(aes(label = comma(Count)), vjust = -0.5, size = 3, color = "black") +  # Add counts above bars
+  labs(
+    x = "Steroids Usage",
+    y = "Observation Count"
+  ) +
+  scale_y_continuous(limits = c(0, max(ld_ster_summary2$Count) + 1000), expand = c(0, 0)) +
+  scale_y_continuous(labels = comma) +  # Format y-axis labels with commas
+  theme_minimal() +
+  theme(
+    axis.text = element_text(size = 10),
+    axis.title = element_text(size = 10)
+  )
+
+
+```
+
+\newpage
+
+### Antibiotics received by the mother during delivery
+
+@fig-antb-1 shows that in the raw data, the "No" category dominates with 2,701,457 observations, while the "Yes" category has significantly fewer at 901,414. After balancing, @fig-antb-2 shows that the "No" category is reduced to 15,828 and the "Yes" category is adjusted to 6,172, narrowing the gap.
+
+```{r}
+#| label: fig-antb
+#| fig-cap: The distribution of observations based on whether the infant received antibiotic treatments or not
+#| fig-subcap: ["raw data", "analysis data"]
+#| layout-ncol: 2
+#| echo: false
+#| warning: false
+#| message: false
+#| fig-width: 5
+#| fig-height: 4
+
+# Prepare the data
+ld_antb_summary1 <- raw_data %>%
+  group_by(ld_antb) %>%
+  summarise(Count = n(), .groups = "drop") %>%
+  mutate(
+    ld_antb = ifelse(ld_antb == "Y", "Yes", ifelse(ld_antb == "N", "No", "Unknown")),  # Label groups
+    ld_antb = factor(ld_antb, levels = c("Yes", "No", "Unknown"))  # Specify factor levels for order
+  )
+
+# Plot the bar graph
+ggplot(ld_antb_summary1, aes(x = ld_antb, y = Count)) +
+  geom_bar(stat = "identity", fill = "#a9dfbf", color = "grey") +  # Bar plot
+  geom_text(aes(label = comma(Count)), vjust = -0.5, size = 3, color = "black") +  # Add counts above bars
+  labs(
+    x = "Antibiotics Usage",
+    y = "Observation Count"
+  ) +
+  scale_y_continuous(limits = c(0, max(ld_antb_summary1$Count) + 1000), expand = c(0, 0)) +
+  scale_y_continuous(labels = comma) +  # Format y-axis labels with commas
+  theme_minimal() +
+  theme(
+    axis.text = element_text(size = 10),
+    axis.title = element_text(size = 10)
+  )
+
+# Prepare the data
+ld_antb_summary2 <- balanced_data %>%
+  group_by(antb) %>%
+  summarise(Count = n(), .groups = "drop") %>%
+  mutate(
+    ld_antb = ifelse(antb == 1, "Yes", ifelse(antb == 0 , "No", "Unknown")),  # Label groups
+    ld_antb = factor(ld_antb, levels = c("Yes", "No", "Unknown"))  # Specify factor levels for order
+  )
+
+# Plot the bar graph
+ggplot(ld_antb_summary2, aes(x = ld_antb, y = Count)) +
+  geom_bar(stat = "identity", fill = "#a9dfbf", color = "grey") +  # Bar plot
+  geom_text(aes(label = comma(Count)), vjust = -0.5, size = 3, color = "black") +  # Add counts above bars
+  labs(
+    x = "Antibiotics Usage",
+    y = "Observation Count"
+  ) +
+  scale_y_continuous(limits = c(0, max(ld_antb_summary2$Count) + 1000), expand = c(0, 0)) +
+  scale_y_continuous(labels = comma) +  # Format y-axis labels with commas
+  theme_minimal() +
+  theme(
+    axis.text = element_text(size = 10),
+    axis.title = element_text(size = 10)
+  )
+
+
+
+```
+
+\newpage
+
+### Clinical chorioamnionitis diagnosed during labor or maternal temperature over 38 degrees Celcius (100.4 degrees Fahrenheit)
+
+@fig-chor-1 shows that the "No" category dominates with 3,539,254 observations, compared to 63,617 in the "Yes" category. @fig-chor-2 shows that the extreme disparity between the two categories is addressed after balancing, with the "No" category having 21,213 and the "Yes" category having 787.
+
+```{r}
+#| label: fig-chor
+#| fig-cap: The distribution of observations based on whether the infant received chorioamnionitis treatments or not
+#| fig-subcap: ["raw data", "analysis data"]
+#| layout-ncol: 2
+#| echo: false
+#| warning: false
+#| message: false
+#| fig-width: 5
+#| fig-height: 4
+
+# Prepare the data
+ld_chor_summary1 <- raw_data %>%
+  group_by(ld_chor) %>%
+  summarise(Count = n(), .groups = "drop") %>%
+  mutate(
+    ld_chor = ifelse(ld_chor == "Y", "Yes", ifelse(ld_chor == "N", "No", "Unknown")),  # Label groups
+    ld_chor = factor(ld_chor, levels = c("Yes", "No", "Unknown"))  # Specify factor levels for order
+  )
+
+# Plot the bar graph
+ggplot(ld_chor_summary1, aes(x = ld_chor, y = Count)) +
+  geom_bar(stat = "identity", fill = "#a9dfbf", color = "grey") +  # Bar plot
+  geom_text(aes(label = comma(Count)), vjust = -0.5, size = 3, color = "black") +  # Add counts above bars
+  labs(
+    x = "Chorioamnionitis Usage",
+    y = "Observation Count"
+  ) +
+  scale_y_continuous(limits = c(0, max(ld_chor_summary1$Count) + 1000), expand = c(0, 0)) +
+  scale_y_continuous(labels = comma) +  # Format y-axis labels with commas
+  theme_minimal() +
+  theme(
+    axis.text = element_text(size = 10),
+    axis.title = element_text(size = 10)
+  )
+
+# Prepare the data
+ld_chor_summary2 <- balanced_data %>%
+  group_by(chor) %>%
+  summarise(Count = n(), .groups = "drop") %>%
+  mutate(
+    ld_chor = ifelse(chor == 1, "Yes", ifelse(chor == 0 , "No", "Unknown")),  # Label groups
+    ld_chor = factor(ld_chor, levels = c("Yes", "No", "Unknown"))  # Specify factor levels for order
+  )
+
+# Plot the bar graph
+ggplot(ld_chor_summary2, aes(x = ld_chor, y = Count)) +
+  geom_bar(stat = "identity", fill = "#a9dfbf", color = "grey") +  # Bar plot
+  geom_text(aes(label = comma(Count)), vjust = -0.5, size = 3, color = "black") +  # Add counts above bars
+  labs(
+    x = "Chorioamnionitis Usage",
+    y = "Observation Count"
+  ) +
+  scale_y_continuous(limits = c(0, max(ld_chor_summary2$Count) + 1000), expand = c(0, 0)) +
+  scale_y_continuous(labels = comma) +  # Format y-axis labels with commas
+  theme_minimal() +
+  theme(
+    axis.text = element_text(size = 10),
+    axis.title = element_text(size = 10)
+  )
+
+
+```
+
+\newpage
+
+### Epidural or spinal anesthesia during labor
+
+@fig-anes-1 shows that in the raw data, the "Yes" category dominates with 2,810,461 observations, while the "No" category has 792,410. The initial overrepresentation of the "Yes" category is addressed through the balancing process, with @fig-anes-2 showing the "Yes" category of 15,387 and the "No" category of 6,613.
+
+```{r}
+#| label: fig-anes
+#| fig-cap: The distribution of observations based on whether the infant received anesthesia treatments or not
+#| fig-subcap: ["raw data", "analysis data"]
+#| layout-ncol: 2
+#| echo: false
+#| warning: false
+#| message: false
+#| fig-width: 5
+#| fig-height: 4
+
+# Prepare the data
+ld_anes_summary1 <- raw_data %>%
+  group_by(ld_anes) %>%
+  summarise(Count = n(), .groups = "drop") %>%
+  mutate(
+    ld_anes = ifelse(ld_anes == "Y", "Yes", ifelse(ld_anes == "N", "No", "Unknown")),  # Label groups
+    ld_anes = factor(ld_anes, levels = c("Yes", "No", "Unknown"))  # Specify factor levels for order
+  )
+
+# Plot the bar graph
+ggplot(ld_anes_summary1, aes(x = ld_anes, y = Count)) +
+  geom_bar(stat = "identity", fill = "#a9dfbf", color = "grey") +  # Bar plot
+  geom_text(aes(label = comma(Count)), vjust = -0.5, size = 3, color = "black") +  # Add counts above bars
+  labs(
+    x = "Anesthesia Usage",
+    y = "Observation Count"
+  ) +
+  scale_y_continuous(limits = c(0, max(ld_anes_summary1$Count) + 1000), expand = c(0, 0)) +
+  scale_y_continuous(labels = comma) +  # Format y-axis labels with commas
+  theme_minimal() +
+  theme(
+    axis.text = element_text(size = 10),
+    axis.title = element_text(size = 10)
+  )
+
+# Prepare the data
+ld_anes_summary2 <- balanced_data %>%
+  group_by(anes) %>%
+  summarise(Count = n(), .groups = "drop") %>%
+  mutate(
+    ld_anes = ifelse(anes == 1, "Yes", ifelse(anes == 0 , "No", "Unknown")),  # Label groups
+    ld_anes = factor(ld_anes, levels = c("Yes", "No", "Unknown"))  # Specify factor levels for order
+  )
+
+# Plot the bar graph
+ggplot(ld_anes_summary2, aes(x = ld_anes, y = Count)) +
+  geom_bar(stat = "identity", fill = "#a9dfbf", color = "grey") +  # Bar plot
+  geom_text(aes(label = comma(Count)), vjust = -0.5, size = 3, color = "black") +  # Add counts above bars
+  labs(
+    x = "Anesthesia Usage",
+    y = "Observation Count"
+  ) +
+  scale_y_continuous(limits = c(0, max(ld_anes_summary2$Count) + 1000), expand = c(0, 0)) +
+  scale_y_continuous(labels = comma) +  # Format y-axis labels with commas
+  theme_minimal() +
+  theme(
+    axis.text = element_text(size = 10),
+    axis.title = element_text(size = 10)
+  )
+
+
+```
+
+\newpage
+
+## Correlation between predictor variables
+
+### Induction of Labor and Augmentation of Labor
+
+@fig-corr1 shows that most observations fall into the category where neither induction nor augmentation is performed, indicating these interventions are less commonly used together. Moreover, smaller proportions are observed in combinations where one or both interventions are present, suggesting a potential correlation where the likelihood of augmentation increases when induction is performed [@friendly1992]. 
+
+```{r}
+#| label: fig-corr1
+#| fig-cap: The correlation between induction and augmentation of labor (**Note:** the shading intensity (from light green to dark green) represents the standardized residuals of the chi-squared test for the contingency table.)
+#| echo: false
+#| warning: false
+#| message: false
+
+# Load necessary library
+library(vcd)
+
+# Create a contingency table for "Induction of Labor" and "Augmentation of Labor"
+contingency_table <- xtabs(~ indc + augmt, data = balanced_data)
+
+# Perform chi-squared test to get expected frequencies
+chi_test <- chisq.test(contingency_table)
+expected <- chi_test$expected  # Expected frequencies
+residuals <- (contingency_table - expected) / sqrt(expected)  # Compute residuals
+
+# Define a custom shading function manually
+custom_shading <- function(residuals) {
+  breaks <- c(-Inf, -2, 0, 2, Inf)  # Breaks for shading categories
+  colors <- c("#E8F5E9", "#C8E6C9", "#A5D6A7", "#388E3C")  # Light to dark green
+  as.character(cut(residuals, breaks = breaks, labels = colors, include.lowest = TRUE))
+}
+
+# Assign shading to each cell in the contingency table
+color_map <- matrix(custom_shading(as.vector(residuals)), 
+                    nrow = nrow(contingency_table), 
+                    ncol = ncol(contingency_table))
+
+# Create the mosaic plot with custom colors
+mosaic(
+  contingency_table,
+  gp = gpar(fill = color_map),  # Apply the color map
+  labeling_args = list(
+    set_varnames = c(indc = "Induction of Labor", augmt = "Augmentation of Labor")  # Custom axis labels
+  ))
+
+```
+
+\newpage
+
+### Usage of Steroids and Antibiotics
+
+In @fig-corr2, most cases fall into the "neither used" category (Steroids:0, Antibiotics:0), shown by the large, darkly shaded area. This means that it is very common for neither treatment to be used together during labor [@friendly1992]. On the other hand, the smaller, lighter areas where either or both treatments are used show that these combinations happen much less often than expected [@friendly1992]. This suggests that steroids and antibiotics are usually not given together, and their usage might depend on specific and separate medical needs rather than being commonly paired treatments.
+
+```{r}
+#| label: fig-corr2
+#| fig-cap: The correlation between usage of steroids and antibiotics (**Note:** the shading intensity (from light green to dark green) represents the standardized residuals of the chi-squared test for the contingency table.)
+#| echo: false
+#| warning: false
+#| message: false
+
+
+# Load necessary library
+library(vcd)
+
+# Create a contingency table for "Induction of Labor" and "Augmentation of Labor"
+contingency_table <- xtabs(~ ster + antb, data = balanced_data)
+
+# Perform chi-squared test to get expected frequencies
+chi_test <- chisq.test(contingency_table)
+expected <- chi_test$expected  # Expected frequencies
+residuals <- (contingency_table - expected) / sqrt(expected)  # Compute residuals
+
+# Define a custom shading function manually
+custom_shading <- function(residuals) {
+  breaks <- c(-Inf, -2, 0, 2, Inf)  # Breaks for shading categories
+  colors <- c("#E8F5E9", "#C8E6C9", "#A5D6A7", "#388E3C")  # Light to dark green
+  as.character(cut(residuals, breaks = breaks, labels = colors, include.lowest = TRUE))
+}
+
+# Assign shading to each cell in the contingency table
+color_map <- matrix(custom_shading(as.vector(residuals)), 
+                    nrow = nrow(contingency_table), 
+                    ncol = ncol(contingency_table))
+
+# Create the mosaic plot with custom colors
+mosaic(
+  contingency_table,
+  gp = gpar(fill = color_map),  # Apply the color map
+  labeling_args = list(
+    set_varnames = c(ster = "Steroids", antb = "Antibiotics")  # Custom axis labels
+  ))
+
+```
+
+\newpage
+
+### Usage of Chorioamnionitis and Antibiotics
+
+In @fig-corr3, the large, darkly shaded area for "Chorioamnionitis:0" and "Antibiotics:0" shows that cases where neither condition is present are more common than expected [@friendly1992]. Conversely, the smaller and lighter areas, especially for "Chorioamnionitis:1" and "Antibiotics:1", suggest that when chorioamnionitis occurs, antibiotics are often used. The pattern reflects a likely positive correlation [@friendly1992] between chorioamnionitis and antibiotics usage.
+
+```{r}
+#| label: fig-corr3
+#| fig-cap: The correlation between usage of chorioamnionitis and antibiotics (**Note:** the shading intensity (from light green to dark green) represents the standardized residuals of the chi-squared test for the contingency table.)
+#| echo: false
+#| warning: false
+#| message: false
+
+# Load necessary library
+library(vcd)
+
+# Create a contingency table for "Induction of Labor" and "Augmentation of Labor"
+contingency_table <- xtabs(~ chor + antb, data = balanced_data)
+
+# Perform chi-squared test to get expected frequencies
+chi_test <- chisq.test(contingency_table)
+expected <- chi_test$expected  # Expected frequencies
+residuals <- (contingency_table - expected) / sqrt(expected)  # Compute residuals
+
+# Define a custom shading function manually
+custom_shading <- function(residuals) {
+  breaks <- c(-Inf, -2, 0, 2, Inf)  # Breaks for shading categories
+  colors <- c("#E8F5E9", "#C8E6C9", "#A5D6A7", "#388E3C")  # Light to dark green
+  as.character(cut(residuals, breaks = breaks, labels = colors, include.lowest = TRUE))
+}
+
+# Assign shading to each cell in the contingency table
+color_map <- matrix(custom_shading(as.vector(residuals)), 
+                    nrow = nrow(contingency_table), 
+                    ncol = ncol(contingency_table))
+
+# Create the mosaic plot with custom colors
+mosaic(
+  contingency_table,
+  gp = gpar(fill = color_map),  # Apply the color map
+  labeling_args = list(
+    set_varnames = c(chor = "Chorioamnionitis", antb = "Antibiotics")  # Custom axis labels
+  ))
+
+```
+
+\newpage
+
+# Model {#sec-model}
+
+The modeling strategy in this study serves two primary goals: identifying significant predictors of neonatal health outcomes and quantifying the effects of labor-related medical interventions on these outcomes, measured by the 5-minute Apgar score. This dual approach employs a Random Forest model for prediction and a Bayesian Linear Model for inference. Details of the model implementation and diagnostics are provided in [Appendix -@sec-model-details].
+
+
+## Model Specification
+
+Define $y_i$ as the 5-minute Apgar score for the $i$th infant, a standard measure of neonatal health. Let the binary variables $\text{indc}_i$, $\text{augmt}_i$, $\text{ster}_i$, $\text{antb}_i$, $\text{chor}_i$, and $\text{anes}_i$ represent the use of induction, augmentation, steroids, antibiotics, chorioamnionitis, and anesthesia, respectively, during labor and delivery.
+
+### Random Forest Model
+
+The Random Forest model is a non-parametric method that predicts $y_i$ using a collection of decision trees [@mlnuggets2024]. The predicted 5-minute Apgar score is modeled as:
+
+$\hat{y}_i = \text{RandomForest}(X)$
+
+where $X$ represents the set of predictors: $(\text{indc}_i, \text{augmt}_i, \text{ster}_i, \text{antb}_i, \text{chor}_i, \text{anes}_i)$.
+
+Hyperparameters were selected via grid search:
+
+- $mtry$: Number of variables randomly sampled at each split (values: 2, 3, 4).
+- $ntree$: Number of trees in the forest, fixed at 500 for computational efficiency and robust performance.
+  
+Inherent assumptions to this model are the following [@appliedai_random_forest]:
+
+- Independence of Observations: Observations in the dataset are assumed to be independent of each other. 
+- Non-Linear Relationships: Random Forest inherently assumes the presence of non-linear relationships among predictors, making it suitable for complex interactions.
+- Equal Contribution of Predictors: Each predictor is initially treated with equal importance during sampling.
+
+
+The Random Forest model was implemented using the `caret` package [@caret] in R[@citeR]. To minimize overfitting, 10-fold cross-validation was employed.
+
+### Bayesian Linear Model
+
+The Bayesian Linear Model assumes the following relationship for each infant $i$:
+
+$y_i | \mu_i, \sigma \sim \text{Normal}(\mu_i, \sigma)$
+
+where:
+
+$\mu_i = \alpha + \beta_1 \cdot \text{indc}_i + \beta_2 \cdot \text{augmt}_i + \beta_3 \cdot \text{ster}_i + \beta_4 \cdot \text{antb}_i + \beta_5 \cdot \text{chor}_i + \beta_6 \cdot \text{anes}_i$
+
+The priors reflect weakly informative beliefs based on existing literature:
+
+- Intercept: $\alpha \sim \text{Normal}(5, 2)$, aligned with typical Apgar5 scores [@healthline_apgar_score].
+  
+- Coefficients: $\beta_j \sim \text{Normal}(0, 2) \quad \text{for } j = 1, \ldots, 6$, reflecting moderate but uncertain effects.
+  
+- Standard deviation: $\sigma \sim \text{Exponential}(1)$, ensuring positivity and discouraging extreme variability.
+
+Inherent assumptions to this model are the following [@geeksforgeeks_bayesian_regression]:
+
+- Independence of Observations: Each infant's outcome is assumed to be independent of others.
+  
+- Normality of Residuals: The residuals $(y_i - \mu_i)$ are assumed to follow a normal distribution.
+  
+- Homoskedasticity: The variance $(\sigma)$ is assumed to be constant across all levels of predictors.
+  
+- Linear Relationships: The effects of predictors are assumed to be linear, which might oversimplify complex interactions.
+  
+- Priors Representing Beliefs: The priors are assumed to reasonably reflect prior knowledge, ensuring that they do not dominate the posterior estimates.
+  
+The model is implemented using the `stan_glm` function in the `rstanarm` package [@rstanarm]. Markov Chain Monte Carlo (MCMC) sampling was conducted with 4 chains and 2000 iterations per chain. Convergence diagnostics were verified, and posterior predictive checks were conducted to assess model fit, as shown in @sec-model-details.
+
+
+## Model Justification
+
+The Random Forest Model was chosen for its robustness in handling non-linear relationships and complex interactions among predictors [@geeksforgeeks_random_forest], which is essential when analyzing the combined effects of various medical interventions on infant health outcomes. This method also provides interpretable measures of variable importance [@geeksforgeeks_random_forest], aiding in understanding the relative impact of each treatment.
+
+The Bayesian Linear Model was employed to incorporate prior knowledge [@strimmerlab_priors] regarding the expected effects of treatments on the Apgar5 score. Utilizing weakly informative priors, such as Normal distributions centered around zero with a variance of 2, reflects a belief in moderate but uncertain associations between treatments and outcomes [@strimmerlab_priors]. The prior for the intercept (Normal(5, 2)) aligns with the central tendency of Apgar5 scores reported in previous studies [@clevelandclinic_apgar]. An exponential prior for the standard deviation parameter ensures positivity while discouraging extreme variability [@strimmerlab_priors].
+
+By integrating the Random Forest's predictive accuracy [@geeksforgeeks_random_forest] with the Bayesian Linear Model's capacity for inference and uncertainty quantification [@nguyen2018uncertainty], this dual-model approach offers a comprehensive understanding of the factors influencing infant health outcomes. However, generalizability remains a concern for both models, as the results are derived from a specific population in the U.S. and may not extend to broader or differing contexts due to data limitations.
+
+### Alternative Models Considered
+
+#### Logistic Regression
+
+Logistic regression, known for its simplicity and interpretability, is suited for binary outcomes [@aws_logistic_regression]. Its application is limited in this study due to the continuous nature of the Apgar5 score, which cannot be effectively modeled using logistic regression. Additionally, logistic regression struggles to capture non-linear relationships and complex interactions among predictors [@aws_logistic_regression], which are critical features of this dataset. Consequently, it was excluded in favor of models better equipped to handle continuous outcomes and non-linear effects, such as Random Forest and Bayesian Linear Models. 
+
+#### Gradient Boosting Machines (GBM)
+
+Gradient Boosting Machines (GBM) were also considered due to their ability to handle imbalanced datasets through techniques like weighting and boosting [@towardsdatascience_gbm]. However, GBMs are computationally intensive and require careful hyperparameter tuning to avoid overfitting [@towardsdatascience_gbm]. In addition, while GBMs excel at prediction, their variable importance measures are less interpretable compared to Random Forest [@geeksforgeeks_gbm_rf], which aligns better with the study's goal of understanding the relative impact of predictors. Given these considerations, Random Forest was preferred over GBM due to its computational efficiency, robustness in handling complex interactions, and the ease of interpreting variable importance. 
+
+# Results {#sec-results}
+
+## Results from examining the analysis dataset
+
+### Relationship between the number of treatments received during labor/delivery and the mean of Apgar5 scores
+
+@fig-result1 shows that the mean of Apgar5 scores remain relatively stable around 5, across different number of treatments during labor and delivery. The dark blue error bars, which are the variability or uncertainty around the mean scores, show the wide range of outcomes within each category. While a slight decline in mean scores is observed as treatments increase from 0 to 5, the score rebounds at 6 treatments, suggesting no clear linear relationship. This proposes that the number of treatments alone may not significantly affect Apgar5 scores.
+
+```{r}
+#| label: fig-result1
+#| fig-cap: Average Apgar5 scores by the number of treatments received during labor and delivery (**Note:** The dark blue lines represent error bars, indicating the variability or uncertainty around the mean Apgar5 scores for each number of treatments.)
+#| echo: false
+#| warning: false
+#| message: false
+
+anal_data <- balanced_data %>%
+  mutate(
+    drug_count = rowSums(select(., c(indc, augmt, ster, antb, chor, anes)) == 1, na.rm = TRUE)
+  )
+
+summary_data <- anal_data %>%
+  group_by(drug_count) %>%
+  summarise(
+    mean_apgar5 = mean(apgar5),
+    sd_apgar5 = sd(apgar5)
+  )
+
+ggplot(summary_data, aes(x = factor(drug_count), y = mean_apgar5)) +
+  geom_bar(
+    stat = "identity",
+    width = 0.5,  # Adjust width for thinner bars
+    fill = "skyblue",
+    color = "black",
+    alpha = 0.7
+  ) +
+  geom_errorbar(
+    aes(ymin = mean_apgar5 - sd_apgar5, ymax = mean_apgar5 + sd_apgar5),
+    width = 0.2,  # Width of error bars remains the same
+    color = "darkblue"
+  ) +
+  geom_text(
+    aes(label = round(mean_apgar5, 1)),
+    vjust = -0.5,
+    size = 3,
+    color = "black"
+  ) +
+  labs(
+    x = "Number of Treatments During Labor and Delivery",
+    y = "Mean of Apgar5 Score"
+  ) +
+  scale_y_continuous(
+    limits = c(0, max(summary_data$mean_apgar5 + summary_data$sd_apgar5) + 1),
+    breaks = seq(0, 10, by = 1)
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text = element_text(size = 10),
+    axis.title = element_text(size = 10)
+  )
+
+```
+
+\newpage
+
+### Relationship between the type of treatments administered during labor/delivery and the Apgar5 scores
+
+@fig-result2 shows that most treatments during labor and delivery are associated with normal Apgar scores ranging from 7 to 10, as indicated by the darker blue shades in these columns. Treatments such as usage of anesthesia and antibiotics exhibit broader distributions across Apgar scores, suggesting their use in a wide range of delivery conditions. Lower Apgar scores ranging from 0 to 3 are relatively rare, shown by lighter shades across treatments. Moreover, drug usage of chorioamnionitis and steroids show fewer "Yes" responses overall, suggesting their more targeted use. 
+
+```{r}
+#| label: fig-result2
+#| fig-cap: The overall correlation between treatments administered during labor/delivery and Apgar5 scores
+#| echo: false
+#| warning: false
+#| message: false
+
+heatmap_data <- balanced_data %>%
+  pivot_longer(
+    cols = c(indc, augmt, ster, antb, chor, anes), 
+    names_to = "Drug_Usage", 
+    values_to = "Usage"
+  ) %>%
+  filter(Usage == 1) %>%  # Keep rows where drug usage is "Yes" (1)
+  group_by(Drug_Usage, apgar5) %>%
+  summarise(Count = n(), .groups = "drop") %>%
+  pivot_wider(names_from = apgar5, values_from = Count, values_fill = 0)
+
+# Convert the reshaped data back to long format for ggplot
+heatmap_long <- heatmap_data %>%
+  pivot_longer(-Drug_Usage, names_to = "APGAR5", values_to = "Count") %>%
+  mutate(APGAR5 = as.numeric(APGAR5))
+
+# Create heatmap
+# Create a mapping of custom labels for drug usage categories
+custom_labels <- c(
+  indc = "Induction",
+  augmt = "Augmentation",
+  ster = "Steroids",
+  antb = "Antibiotics",
+  chor = "Chorioamnionitis",
+  anes = "Anesthesia"
+)
+ggplot(heatmap_long, aes(x = APGAR5, y = Drug_Usage, fill = Count)) +
+  geom_tile(color = "white") +
+  scale_fill_gradient(
+    low = "skyblue", 
+    high = "blue", 
+    name = "Yes Responses", 
+    guide = guide_colorbar(
+      name = "Yes Responses",
+      barwidth = 1,  # Adjust the width of the legend
+      barheight = 6  # Adjust the height of the legend
+    )
+  ) +
+  scale_x_continuous(breaks = 0:10) +  # Show all integers from 0 to 10
+  scale_y_discrete(labels = custom_labels) +  # Apply custom labels to y-axis (Drug Usage Categories)
+  labs(
+    x = "Five-Minute Apgar Score",
+    y = "Treatments During Labor and Delivery"
+  ) +
+  theme_minimal(base_size = 10) +
+  theme(
+    axis.text.x = element_text(hjust = 1, vjust = 1),  # Angle and align x-axis text
+    axis.text.y = element_text(size = 9),  # Increase y-axis text size
+    legend.text = element_text(size = 7),  # Reduce legend text size
+    legend.title = element_text(size = 7),  # Reduce legend title size
+  )
+
+```
+
+\newpage
+
+@fig-indcscore shows that observation counts increase steadily from scores 0 to 5, remain relatively stable between scores 5 and 9, and then drop sharply at score 10. This pattern suggests that most infants who experienced induction during labor tend to achieve mid-to-high Apgar5 scores, reflecting generally stable and favorable health outcomes. 
+
+```{r}
+#| label: fig-indcscore
+#| fig-cap: Apgar5 score distribution for infants who received induction of labor
+#| echo: false
+#| warning: false
+#| message: false
+
+# Filter data for Induction of Labor (indc == 1)
+indc_data <- balanced_data %>% filter(indc == 1)
+
+# Compute the counts for each APGAR5 score
+indc_data_summary <- indc_data %>%
+  group_by(apgar5) %>%
+  summarise(Count = n(), .groups = "drop")
+
+# Plot the bar chart with a trendline
+ggplot(indc_data_summary, aes(x = apgar5, y = Count)) +
+  geom_col(color = "black", fill = "skyblue", alpha = 0.7) +  # Bar chart
+  geom_line(aes(y = Count), color = "red", size = 1.2) +       # Add trendline
+  geom_point(color = "red", size = 3) +                        # Highlight points
+  labs(
+    x = "Five-Minute Apgar Score",
+    y = "Observation Count"
+  ) +
+  theme_minimal() +
+  scale_x_continuous(breaks = 0:10) +
+  scale_y_continuous(limits = c(0, max(indc_data_summary$Count) + 100), expand = c(0, 0)) +
+  theme(
+    axis.text.x = element_text(hjust = 1, vjust = 1),
+    axis.text.y = element_text(size = 10)
+  )
+
+```
+
+\newpage
+
+@fig-augmtscore shows that observation counts are lower at extreme scores of 0 and 10, steadily increase from scores 1 to 5, plateau between 5 and 8, and peak at score 9 before sharply declining at score 10. This pattern suggests that augmentation of labor is associated with mid-to-high Apgar5 scores, reflecting favorable infant health outcomes in most cases, while fewer cases exhibit very low or extremely high scores.
+
+```{r}
+#| label: fig-augmtscore
+#| fig-cap: Apgar5 score distribution for infants who received augmentation of labor
+#| echo: false
+#| warning: false
+#| message: false
+
+# Filter data for Augmentation of Labor (augmt == 1)
+augmt_data <- balanced_data %>% filter(augmt == 1)
+
+# Compute the counts for each APGAR5 score
+augmt_data_summary <- augmt_data %>%
+  group_by(apgar5) %>%
+  summarise(Count = n(), .groups = "drop")
+
+# Plot the bar chart with a trendline
+ggplot(augmt_data_summary, aes(x = apgar5, y = Count)) +
+  geom_col(color = "black", fill = "skyblue", alpha = 0.7) +  # Bar chart
+  geom_line(aes(y = Count), color = "red", size = 1.2) +       # Add trendline
+  geom_point(color = "red", size = 3) +                        # Highlight points
+  labs(
+    x = "Five-Minute Apgar Score",
+    y = "Observation Count"
+  ) +
+  theme_minimal() +
+  scale_x_continuous(breaks = 0:10) +
+  scale_y_continuous(limits = c(0, max(augmt_data_summary$Count) + 100), expand = c(0, 0)) +
+  theme(
+    axis.text.x = element_text(hjust = 1, vjust = 1),
+    axis.text.y = element_text(size = 10)
+  )
+
+```
+
+\newpage
+
+@fig-sterscore shows that observation counts are relatively low at extreme scores of 0 and 10, increase steadily from scores 0 to 4, and peak at score 4 before gradually declining through scores 5 to 10. This pattern proposes that usage of steroids for fetal lung maturation received by the mother before delivery is associated with a concentration of Apgar5 scores in the mid-range, reflecting moderate infant health outcomes in most cases.
+
+```{r}
+#| label: fig-sterscore
+#| fig-cap: Apgar5 score distribution for infants who received steroids dosage
+#| echo: false
+#| warning: false
+#| message: false
+
+# Filter data for Steroids (ster == 1)
+ster_data <- balanced_data %>% filter(ster == 1)
+
+# Compute the counts for each APGAR5 score
+ster_data_summary <- ster_data %>%
+  group_by(apgar5) %>%
+  summarise(Count = n(), .groups = "drop")
+
+# Plot the bar chart with a trendline
+ggplot(ster_data_summary, aes(x = apgar5, y = Count)) +
+  geom_col(color = "black", fill = "skyblue", alpha = 0.7) +  # Bar chart
+  geom_line(aes(y = Count), color = "red", size = 1.2) +       # Add trendline
+  geom_point(color = "red", size = 3) +                        # Highlight points
+  labs(
+    x = "Five-Minute Apgar Score",
+    y = "Observation Count"
+  ) +
+  theme_minimal() +
+  scale_x_continuous(breaks = 0:10) +
+  scale_y_continuous(limits = c(0, max(ster_data_summary$Count) + 100), expand = c(0, 0)) +
+  theme(
+    axis.text.x = element_text(hjust = 1, vjust = 1),
+    axis.text.y = element_text(size = 10)
+  )
+
+```
+
+\newpage
+
+@fig-antbscore shows that observation counts rise gradually from scores 0 to 2, and maintain a steady plateau between scores 4 and 7, before declining through scores 8 to 10. This pattern suggests that infants exposed to antibiotics received by the mother during delivery tend to achieve moderate Apgar5 scores, with fewer observations at both low and high extremes.
+
+```{r}
+#| label: fig-antbscore
+#| fig-cap: Apgar5 score distribution for infants who received antibiotics dosage
+#| echo: false
+#| warning: false
+#| message: false
+
+# Filter data for Antibiotics (antb == 1)
+antb_data <- balanced_data %>% filter(antb == 1)
+
+# Compute the counts for each APGAR5 score
+antb_data_summary <- antb_data %>%
+  group_by(apgar5) %>%
+  summarise(Count = n(), .groups = "drop") %>%
+  arrange(apgar5)  # Ensure data is sorted by APGAR5
+
+
+# Plot the bar chart with a trendline
+ggplot(antb_data_summary, aes(x = apgar5, y = Count)) +
+  geom_col(color = "black", fill = "skyblue", alpha = 0.7) +  # Bar chart
+  geom_line(aes(y = Count), color = "red", size = 1.2) +       # Add trendline
+  geom_point(color = "red", size = 3) +                        # Highlight points
+  labs(
+    x = "Five-Minute Apgar Score",
+    y = "Observation Count"
+  ) +
+  theme_minimal() +
+  scale_x_continuous(breaks = 0:10) +
+  scale_y_continuous(limits = c(0, max(antb_data_summary$Count) + 100), expand = c(0, 0)) +
+  theme(
+    axis.text.x = element_text(hjust = 1, vjust = 1),
+    axis.text.y = element_text(size = 10)
+  )
+
+
+
+```
+
+\newpage
+
+@fig-chorscore shows that the observation count peaks sharply at a score of 1, then stabilizes between scores 2 and 5, followed by a gradual decline from scores 6 through 10. This distribution suggests that infants that were diagnosed clinical chorioamnionitis during labor or maternal temperature over 38 degrees Celcius tend to achieve lower-to-mid range Apgar5 scores.
+
+```{r}
+#| label: fig-chorscore
+#| fig-cap: Apgar5 score distribution for infants who received chorioamnionitis dosage
+#| echo: false
+#| warning: false
+#| message: false
+
+# Filter data for Chorioamnionitis (chor == 1)
+chor_data <- balanced_data %>% filter(chor == 1)
+
+# Compute the counts for each APGAR5 score
+chor_data_summary <- chor_data %>%
+  group_by(apgar5) %>%
+  summarise(Count = n(), .groups = "drop") %>%
+  arrange(apgar5)  # Ensure data is sorted by APGAR5
+
+
+# Plot the bar chart with a trendline
+ggplot(chor_data_summary, aes(x = apgar5, y = Count)) +
+  geom_col(color = "black", fill = "skyblue", alpha = 0.7) +  # Bar chart
+  geom_line(aes(y = Count), color = "red", size = 1.2) +       # Add trendline
+  geom_point(color = "red", size = 3) +                        # Highlight points
+  labs(
+    x = "Five-Minute Apgar Score",
+    y = "Observation Count"
+  ) +
+  theme_minimal() +
+  scale_x_continuous(breaks = 0:10) +
+  scale_y_continuous(limits = c(0, max(chor_data_summary$Count) + 50), expand = c(0, 0)) +
+  theme(
+    axis.text.x = element_text(hjust = 1, vjust = 1),
+    axis.text.y = element_text(size = 10)
+  )
+
+
+
+```
+
+\newpage
+
+@fig-anesscore shows that observation counts steadily increase from scores 0 to 5. Beyond score 5, the counts plateau, maintaining a relatively stable distribution across scores 6 to 9, followed by a sharp decline at score 10. This suggests the widespread distribution of higher Apgar scores when epidural or spinal anesthesia is used during labor.
+
+```{r}
+#| label: fig-anesscore
+#| fig-cap: Apgar5 score distribution for infants who received anesthesia dosage
+#| echo: false
+#| warning: false
+#| message: false
+
+# Filter data for Anesthesia (anes == 1)
+anes_data <- balanced_data %>% filter(anes == 1)
+
+# Compute the counts for each APGAR5 score
+anes_data_summary <- anes_data %>%
+  group_by(apgar5) %>%
+  summarise(Count = n(), .groups = "drop") %>%
+  arrange(apgar5)  # Ensure data is sorted by APGAR5
+
+
+# Plot the bar chart with a trendline
+ggplot(anes_data_summary, aes(x = apgar5, y = Count)) +
+  geom_col(color = "black", fill = "skyblue", alpha = 0.7) +  # Bar chart
+  geom_line(aes(y = Count), color = "red", size = 1.2) +       # Add trendline
+  geom_point(color = "red", size = 3) +                        # Highlight points
+  labs(
+    x = "Five-Minute Apgar Score",
+    y = "Observation Count"
+  ) +
+  theme_minimal() +
+  scale_x_continuous(breaks = 0:10) +
+  scale_y_continuous(limits = c(0, max(anes_data_summary$Count) + 200), expand = c(0, 0)) +
+  theme(
+    axis.text.x = element_text(hjust = 1, vjust = 1),
+    axis.text.y = element_text(size = 10)
+  )
+
+
+```
+
+\newpage
+
+## Results from the prediction model
+
+```{r}
+#| echo: false
+#| eval: true
+#| warning: false
+#| message: false
+
+library(randomForest)
+library(caret)
+library(rstanarm)
+
+rf_model <-
+  readRDS(file = here::here("models/random_forest.rds"))
+
+bayesian_model <-
+  readRDS(file = here::here("models/bayesian_lm.rds"))
+```
+
+### Random Forest Model Results {#sec-randfor-result}
+
+@tbl-rfsummary1 and @fig-rfsumbar shows that usage of steroids (45.76%) is the most influential factor among the treatments during labor and delivery when predicting Apgar5 scores. It is followed by usage of chorioamnionitis (22.44%) and anesthesia (13.99%), which also contributes substantially. Meanwhile, the exposure to antibiotics (0.00%) shows no measurable impact and suggests its irrelevance to the model's predictions. 
+
+```{r}
+#| echo: false
+#| eval: true
+#| label: tbl-rfsummary1
+#| tbl-cap: Variable importance of treatments during labor and delivery on infant health, based on Random Forest model
+#| warning: false
+
+# Load necessary libraries
+library(tidyverse)
+library(caret)
+library(knitr)
+library(kableExtra)
+
+# Custom labels for the variables
+custom_labels <- c(
+  "indc" = "Induction of Labor",
+  "augmt" = "Augmentation of Labor",
+  "ster" = "Steroids",
+  "antb" = "Antibiotics",
+  "chor" = "Chorioamnionitis",
+  "anes" = "Anesthesia"
+)
+
+# Extract variable importance using caret
+importance_data <- varImp(rf_model, scale = TRUE)
+
+# Convert varImp.train object to a data frame
+importance_table <- as.data.frame(importance_data$importance)
+
+# Add variable names as a new column
+importance_table$Variable <- rownames(importance_table)
+
+# Transform the data frame
+importance_table <- importance_table %>%
+  mutate(
+    `Treatment Type` = recode(Variable, !!!custom_labels),  # Correctly map to custom labels
+    `Variable Importance` = Overall / sum(Overall) * 100  # Convert to percentages
+  ) %>%
+  select(`Treatment Type`, `Variable Importance`) %>%  # Select relevant columns
+  mutate(`Variable Importance` = round(`Variable Importance`, 2)) %>%  # Round to 2 decimal places
+  arrange(match(`Treatment Type`, c("Induction of Labor", "Augmentation of Labor", 
+                                    "Steroids", "Antibiotics", 
+                                    "Chorioamnionitis", "Anesthesia")))  # Ensure correct order
+
+# Display the importance table using kableExtra
+importance_table %>%
+  kable(
+    col.names = c("Treatment Type", "Variable Importance (%)")) %>%
+  kable_styling(full_width = FALSE, position = "center")
+
+
+```
+
+
+```{r}
+#| echo: false
+#| eval: true
+#| label: fig-rfsumbar
+#| fig-cap: Variable importance of treatments during labor and delivery on infant health, expressed in horizontal bar plots
+#| warning: false
+
+# Load necessary library
+library(ggplot2)
+
+# Reorder the levels of 'Treatment Type' to match the custom labels
+importance_table <- importance_table %>%
+  mutate(`Treatment Type` = factor(
+    `Treatment Type`,
+    levels = c("Induction of Labor", "Augmentation of Labor", "Steroids", "Antibiotics", "Chorioamnionitis", "Anesthesia")
+  ))
+
+# Create the horizontal bar plot with the specified order
+ggplot(importance_table, aes(x = `Variable Importance`, y = `Treatment Type`)) +
+  geom_bar(stat = "identity", fill = "#DDA0DD", color = "grey") +
+  labs(
+    x = "Variable Importance (%)",
+    y = "Treatment Type"
+  ) +
+  theme_minimal() +
+  theme(
+    axis.title.x = element_text(size = 10),
+    axis.title.y = element_text(size = 10),
+    axis.text.x = element_text(size = 9),
+    axis.text.y = element_text(size = 9)
+  )
+
+
+```
+
+\newpage
+
+@tbl-rfsummary2 shows the Random Forest model, despite incorporating hyperparameter tuning, demonstrated suboptimal performance. Specifically, the Root Mean Squared Error (RMSE) of 3.12 and Mean Absolute Error (MAE) of 2.69 suggest that the model's predictions deviate significantly from the observed values on average [@vitalflux_metrics]. Furthermore, the R-squared and Adjusted R-squared values of 0.02 suggest the model captures only 2% of the variance in the target variable [@vitalflux_metrics]. These results propose that further refinement is necessary, potentially through reevaluating feature engineering, exploring additional hyperparameter configurations, or considering alternative modeling approaches better suited for the data [@AnalyticsVidhyaFeatureEngineering2021].
+
+```{r}
+#| echo: false
+#| eval: true
+#| label: tbl-rfsummary2
+#| tbl-cap: Model accuracy metrics for Random Forest Model
+#| warning: false
+#| message: false
+
+
+# Load necessary libraries
+library(tidyverse)
+library(caret)
+library(knitr)
+library(kableExtra)
+
+# Predict on test data
+train_data <- read_csv("../data/02-analysis_data/train_test_data/train_data.csv")
+test_data <- read_csv("../data/02-analysis_data/train_test_data/test_data.csv")
+predictions <- predict(rf_model, newdata = test_data)
+
+# Calculate performance metrics
+actual <- test_data$apgar5
+rmse <- sqrt(mean((predictions - actual)^2))  # RMSE
+mae <- mean(abs(predictions - actual))       # MAE
+rss <- sum((predictions - actual)^2)         # Residual Sum of Squares
+tss <- sum((actual - mean(actual))^2)        # Total Sum of Squares
+r_squared <- 1 - (rss / tss)                 # R-Squared
+adjusted_r_squared <- 1 - ((1 - r_squared) * ((nrow(test_data) - 1) / (nrow(test_data) - length(rf_model$importance) - 1)))
+
+# Create a summary table
+accuracy_table <- tibble(
+  Metric = c("RMSE", "MAE", "R-Squared", "Adjusted R-Squared"),
+  Value = c(round(rmse, 2), round(mae, 2), round(r_squared, 2), round(adjusted_r_squared, 2))
+)
+
+# Display the table
+accuracy_table %>%
+  kable(
+    col.names = c("Metric", "Value")
+  ) %>%
+  kable_styling(full_width = FALSE, position = "center")
+
+```
+
+
+### Bayesian Linear Model Results
+
+Our results from the Bayesian Linear Model are summarized in @tbl-modelresults.
+
+```{r}
+#| echo: false
+#| eval: true
+#| label: tbl-modelresults
+#| tbl-cap: Summary of a bayesian linear model quantifying the effects of medical interventions during labor and delivery on infant health outcomes
+#| warning: false
+
+modelsummary::modelsummary(
+  list(
+    "Bayesian Linear Model" = bayesian_model
+  ),
+  statistic = "mad",
+  fmt = 2
+)
+```
+
+
+# Discussion {#sec-discussion}
+
+## Optimization of antenatal corticosteroid formulations {#sec-first-point}
+
+@sec-randfor-result reveals that maternal and neonatal treatments during labor, such as steroids and antibiotics, have differential impacts on infant health outcomes. Usage of steroids, which showed positive correlations with the Apgar5 score in @fig-sterscore, was affirmed their critical role in improving neonatal survival, especially in extremely preterm infants [@nih_prenatal_steroid_treatment]. In particular, antenatal corticosteroids stand out as the core intervention for preterm births under the gestation period of 22 weeks, significantly reducing complications like respiratory distress syndrome by accelerating fetal lung development [@nih_prenatal_steroid_treatment]. 
+
+In accordance with these analyses results, pharmaceutical companies can focus on optimizing steroid formulations for safer and more effective administration during earlier gestations [@nih_prenatal_steroid_treatment]. Current formulations of antenatal corticosteroids, like betamethasone, have shown strong efficacy in improving neonatal outcomes but may carry risks when administered too early or in repeated doses [@nichd_prenatal_steroid_treatment]. Hence, adjusting dosages or delivery mechanisms could enhance safety while preserving their life-saving benefits for preterm infants. For instance, this could involve sustained-release versions or targeted delivery systems to minimize potential side effects on both the mother and fetus [@nichd_prenatal_steroid_treatment].
+
+
+## Targeted antibiotics and enforcement of evidence-based protocols {#sec-second-point}
+
+Contrary to the influence of antibiotics dosage, the use of antibiotics appears less impactful as shown in @fig-rfsumbar. While crucial for preventing infections, their overuse or inappropriate administration may disrupt the delicate balance of neonatal microbiota and contribute to antibiotic resistance [@nih_prenatal_steroid_treatment]. To address this, pharmaceutical innovations could focus on creating narrower-spectrum antibiotics that are highly effective against labor-associated infections while preserving beneficial bacteria [@narrow_spectrum_antibiotics]. In addition, exploring probiotics or adjunct therapies to counteract microbiota disruption could further improve outcomes for newborns exposed to antibiotics [@cdhf_probiotics_infants]. These actions align with the broader goal of a precision medicine approach, tailoring treatments to minimize risks while maximizing benefits for both mothers and infants [@nih_prenatal_steroid_treatment].
+
+Policymakers and healthcare providers must also take active roles in this regard. Enforcing evidence-based protocols for these treatments is crucial to ensure their judicious application [@acog_clinical_guidelines]. Guidelines should outline clear indications for use, supported by comprehensive training for obstetric care providers to minimize variability in practice [@who_operational_guidance]. By prioritizing the safe and effective administration of treatments [@who_operational_guidance], stakeholders can achieve better neonatal outcomes and address the risks associated with inappropriate interventions.
+
+## Disparities in treatment efficacy influenced by contextual factors {#sec-third-point}
+
+The variability in treatment efficacy as observed in @fig-result2 and @fig-rfsumbar furthermore suggests the significant influence of contextual factors such as healthcare access, infrastructure, and socio-economic disparities [@who_contextual_factors]. For instance, in low-resource settings, the availability of prenatal steroids may be limited, leading to suboptimal outcomes for preterm infants [@who_contextual_factors]. Additionally, disparities in healthcare provider expertise and institutional protocols can amplify these variations, making it difficult to ensure consistent care across different regions or populations [@ajog_healthcare_disparities].
+
+Governments and healthcare organizations have an essential role to play in mitigating these disparities. For example, investments in prenatal care infrastructure, ensuring the availability of essential medications and training obstetric care providers, would be recommended [@who_contextual_factors]. Mobile health initiatives and telemedicine could also play a transformative role in reaching underserved populations, ensuring that even remote areas benefit from timely interventions [@ajog_healthcare_disparities].
+
+Moreover, pharmaceutical companies can contribute by designing drugs that are accessible and effective in diverse healthcare settings [@ajog_healthcare_disparities]. For instance, creating heat-stables formulations or medications with extended shelf lives can help ensure their utility in regions with limited resources [@ajog_healthcare_disparities]. Collaboration with local healthcare systems to distribute these innovations is equally important [@who_contextual_factors]. Addressing the structural and systematic factors that impact treatment efficacy can enhance the accessibility and consistency of labor-related medical interventions.
+
+## Limitations of the study and directions for future research {#sec-weakeness}
+
+To accurately contextualize the findings of this analysis, several limitations must be acknowledged. First, the observational nature of the study may introduce confounding variables that were not accounted for, potentially biasing the results [@biostatistics_confounding]. Unlike randomized controlled trials (RCTs), observational studies lack random assignment, making it challenging to establish causality [@pmc5073487]. Confounding factors, such as socioeconomic status, pre-existing health conditions, or access to healthcare, could influence both the treatment received and the neonatal outcomes, thereby skewing the correlations observed [@biostatistics_confounding]. 
+
+Second, the study's findings may have limited applicability to the broader maternal population if the sample is not representative [@tellingstories]. Factors such as geographic location, healthcare facility type, and demographic characteristics can influence treatment practices and outcomes [@bmjmedicine_observational_study]. For instance, a study conducted in a tertiary care center may not reflect the experiences of patients in rural or under-resourced settings [@bmjmedicine_observational_study].
+
+Third, inconsistencies in data collection methods, such as subjective interpretations of medical records or variability in documentation practices across facilities, can lead to measurement errors [@healthknowledge2024]. These discrepancies may affect the accuracy of recorded treatments and outcomes, introducing bias and affecting the reliability of the conclusions drawn [@cambridge_observational_studies]. Standardized data collection protocols might be essential to minimize such errors [@cambridge_observational_studies].
+
+Addressing these limitations, future research should aim to incorporate more diverse populations to enhance external validity [@scribbr_external_validity]. Conducting randomized controlled trials, where feasible, would provide more definitive evidence regarding the efficacy of specific treatments during labor [@pmc5073487]. Moreover, integrating pharmacokinetic and pharmacodynamic analyses, which helps complete a picture of how drugs are processed in the body, could offer deeper insights into how much of the drug reaches the baby and how quickly it is absorbed [@pmc5446801]. Efforts by pharmaceutical companies and policymakers could play a pivotal role in advancing the research agenda by supporting studies that explore the safety and effectiveness of treatments for pregnant populations [@bmj_clinical_trials_pregnancy]. These investments would not only address a critical area of unmet medical need but also uphold an ethical commitment to improving the health and well-being of mothers and their children [@springer_drug_treatments_pregnancy].
+
+
+\newpage
+
+\appendix
+
+# Appendix {#sec-appendix}
+
+## Additional data details {#sec-datadetails}
+
+### Survey design and sampling techniques
+
+The 2023 Natality Dataset [@rawdata] provides detailed records of maternal and neonatal health outcomes across diverse populations in the United States. This observational dataset aggregates data from hospital records, birth certificates, and surveys completed by healthcare providers [@natality2023]. Its comprehensive scope includes variables like maternal age, gestational age, socio-economic status, and the application of specific labor-related treatments [@cdc_facility_worksheet_2016].
+
+The natality data involves addressing potential biases inherent in observational datasets. For example, selection bias may arise if certain populations, such as undocumented individuals or those from rural areas, are underrepresented in the data [@tellingstories]. Additionally, measurement errors, such as inconsistencies in self-reported variables like smoking status or prenatal care visits, can affect data reliability [@healthknowledge2024]. To mitigate these challenges, researchers employ weighting techniques to align samples with population distributions and utilize statistical models like propensity score matching to adjust for confounding factors [@Stuart2021].
+
+Integrating survey methodologies with the 2023 US Natality Data enables researchers to enrich findings by combining administrative records with additional information collected through structured questionnaires [@groves2010total_survey_error]. This hybrid approach allows for the exploration of causal relationships, such as the effects of prenatal care access on birth outcomes. By adhering to rigorous survey design principles, such as pilot testing and the Total Survey Error framework, and employing robust sampling strategies, researchers can ensure their findings are both internally valid and generalizable [@groves2010total_survey_error]. These methods ultimately enhance the utility of natality data for informing public health policies and interventions aimed at improving maternal and child health outcomes.
+
+
+### Observational data considerations
+
+Observational data serve as the main database in biomedical research, particularly when randomized controlled trials (RCTs) are impractical due to ethical or logistical constraints [@healthknowledge2024]. These datasets, often derived from electronic health records, patient surveys, or longitudinal studies [@healthknowledge2024], provide valuable insights into real-world healthcare outcomes. However, their inherent limitations necessitate careful consideration to ensure robust and credible findings. Among the key challenges are confounding variables, selection bias, and measurement errors [@tellingstories]. For instance, in analyzing the effects of prenatal steroids on neonatal outcomes, unmeasured factors such as maternal health or socioeconomic status can introduce confounding [@natality2023]. Advanced statistical techniques like propensity score matching or instrumental variables are essential to isolate causal effects from observational data [@Olier2023ObservationalData].
+
+Another critical issue is selection bias, where certain subgroups (e.g., uninsured individuals or marginalized populations) may be systematically underrepresented in the dataset, thus limiting the generalizability of findings [@tellingstories]. Addressing this requires techniques such as weighting adjustments or sensitivity analyses and, where possible, integration with survey data to fill informational gaps. Additionally, measurement errors and missing data—common in healthcare records—can distort results [@healthknowledge2024]. Strategies such as multiple imputation and rigorous data cleaning are indispensable for mitigating these challenges [@healthknowledge2024]. Coupled with robust ethical safeguards, including informed consent and adherence to privacy standards, these measures ensure that observational studies maintain both scientific and ethical rigor [@healthknowledge2024].
+
+Causal inference remains a central challenge in using observational data, as the same individual cannot simultaneously experience treatment and non-treatment conditions [@tellingstories]. To approximate counterfactuals, researchers often rely on the Neyman-Rubin potential outcomes framework or marginal structural models [@Groves2010]. Complementing this with simulation studies can test the robustness of findings under varying assumptions. By adhering to established frameworks like the Total Survey Error Model and integrating observational datasets with structured surveys, researchers can produce more reliable and actionable insights [@CausalConversations2024]. This approach not only strengthens the internal and external validity [@tellingstories] of the results but also highlights the potential of observational data to inform equitable and effective healthcare interventions.
+
+### Idealized data collection framework
+
+In order to better answer the research question of how medical interventions during labor affect neonatal health, the data collection approach would integrate detailed clinical records, structured surveys, and longitudinal tracking. Assuming a total budget of $1M, resources would be allocated to maximize data quality and ensure robust causal inference.
+
+Clinical records would require $300,000 to include precise details on medical interventions, such as dosage, timing, and indications for treatment, enabling a detailed analysis of dose-response relationships and temporal effects [@FrontiersPharmacology2020]. This allocation would cover the development of standardized electronic medical records, data cleaning processes, and staff training to ensure consistent and accurate data entry [@ashtoncollegeEMR].
+
+Longitudinal tracking, supported by a $200,000 allocation, would extend beyond immediate neonatal outcomes to monitor developmental milestones, maternal recovery, and long-term child health [@MCHData2009]. These funds would be utilized for setting up robust follow-up systems, providing incentives to maintain participant engagement, and integrating longitudinal data with clinical records for comprehensive analysis.
+
+In addition, structured surveys, allocated $250,000, would gather information on maternal perceptions, socio-economic status, and access to prenatal care. These surveys would be carefully designed with pilot testing and adherence to the Total Survey Error framework to mitigate biases and cognitive burden [@groves2010total_survey_error], ensuring clarity and representativeness across diverse demographic and geographic groups [@chetty2023annual].
+
+$150,000 would be dedicated to advanced analytical techniques, including statistical adjustments like propensity score matching and weighting, to address selection biases and confounding variables inherent in observational data [@pmc5378668]. Frameworks such as the Neyman-Rubin potential outcomes model would further support robust causal inference, even in the absence of randomized controlled trials [@causalconversations2024]. 
+
+The remaining $100,000 would ensure ethical compliance through informed consent processes, data anonymization, and administrative oversight [@tellingstories]. By integrating diverse data sources, employing advanced statistical methods, and maintaining rigorous ethical standards, this approach not only addresses existing limitations in natality data but also generates actionable insights to inform clinical practices and public health policies aimed at improving maternal and neonatal health outcomes [@do2020quality].
+
+
+## Model details {#sec-model-details}
+
+### Posterior predictive check
+
+In @fig-ppcheckandposteriorvsprior-1 we implement a posterior predictive check, with the dark line representing the observed data distribution and the lighter lines indicating the posterior predictive distribution. This shows the notable deviation between `y` and `y_rep`, particularly the oscillations in the observed data. It suggests that the model may not fully capture the underlying structure of the observed data and proposes the need for model refinement, such as including additional predictors or modifying priors [@tellingstories].
+
+@fig-ppcheckandposteriorvsprior-2 compares the prior and posterior distributions of the model parameters. Significant shifts, such as for 'Steroids' and 'Chorioamnionitis' suggest these variables have strong impacts on the outcome, while minimal shifts for 'Antibiotics' indicate limited evidence of their effect. We can also note that the credible intervals underscore uncertainty.
+
+\newpage
+
+```{r}
+#| eval: true
+#| echo: false
+#| message: false
+#| warning: false
+#| label: fig-ppcheckandposteriorvsprior
+#| layout-ncol: 2
+#| fig-cap: "Examining how the model fits, and is affected by, the data"
+#| fig-subcap: ["Posterior prediction check", "Comparing the posterior with the prior"]
+
+pp_check(bayesian_model) +
+  theme_classic() +
+  theme(legend.position = "bottom")
+
+# Create a named vector for the full variable names
+variable_names <- c(
+  "ster" = "Steroids",
+  "sigma" = "Residual Std.",
+  "indc" = "Induction of Labor",
+  "chor" = "Chorioamnionitis",
+  "augmt" = "Augmentation of Labor",
+  "antb" = "Antibiotics",
+  "anes" = "Anesthesia",
+  "(Intercept)" = "(Intercept)"
+)
+
+# Update the plot with the full variable names
+posterior_vs_prior(bayesian_model) +
+  theme_minimal() +
+  scale_color_manual(
+    values = RColorBrewer::brewer.pal(length(variable_names), "Set1"),  # Use the same color palette
+    labels = variable_names  # Apply full names to the legend
+  ) +
+  theme(legend.position = "bottom") +
+  coord_flip() +
+  scale_x_discrete(labels = variable_names)  # Apply the full names to y-axis
+
+```
+
+### Diagnostics
+
+@fig-stanareyouokay-1, which is a trace plot, shows stable and consistent fluctuations around a central value across iterations for all four chains. This suggests that the Bayesian model's Markov Chain Monte Carlo (MCMC) sampling has converged appropriately, ensuring that the posterior distributions are valid for interpretation.
+
+@fig-stanareyouokay-2, which is a Rhat plot, shows that all Rhat values are very close to 1 and none exceed the threshold of 1.05, indicating that the chains have converged well. This suggests that the Markov Chain Monte Carlo (MCMC) sampling has achieved stability and the posterior distributions can be reliably interpreted.
+
+```{r}
+#| echo: false
+#| eval: true
+#| message: false
+#| warning: false
+#| label: fig-stanareyouokay
+#| fig-cap: "Checking the convergence of the MCMC algorithm"
+#| fig-subcap: ["Trace plot", "Rhat plot"]
+#| layout-ncol: 2
+
+# Create a named vector for full variable names
+variable_names <- c(
+  "(Intercept)" = "(Intercept)",
+  "indc" = "Induction of Labor",
+  "augmt" = "Augmentation of Labor",
+  "ster" = "Steroids",
+  "antb" = "Antibiotics",
+  "chor" = "Chorioamnionitis",
+  "anes" = "Anesthesia",
+  "sigma" = "Residual Std."
+)
+
+# Extract and relabel trace plots
+bayesplot::mcmc_trace(
+  as.array(bayesian_model),  # Convert model to array for trace plotting
+  pars = names(variable_names),  # Use variable names
+  facet_args = list(labeller = ggplot2::labeller(.rows = variable_names))  # Apply custom labels
+) +
+  theme_minimal() +
+  theme(legend.position = "bottom")
+
+
+
+plot(bayesian_model, "rhat")
+```
+
+\newpage
+
+### Model API Predictions
+
+#### API execution details
+
+The 'Infant Health Prediction API' provides predictions for infant health status based on maternal and delivery-related factors. By accepting structured datasets in CSV format, it offers researchers a powerful tool to generate real-time predictions using advanced matching learning models.
+
+- Endpoint URL: [http://127.0.0.1:3505/predict_csv_local](http://127.0.0.1:3505/predict_csv_local)
+
+- Description: This endpoint processes a local CSV file containing test data and provides predictions from both the Random Forest and Bayesian Linear models.
+
+  - Random Forest Model: 
+  
+    Handles complex interactions between variables to generate robust predictions.
+    
+  - Bayesian Linear Model:
+  
+    Offers interpretable results with uncertainty quantification.
+
+
+#### Input requirements
+
+- The input file must be a CSV containing only numeric columns.
+
+- Required features include drug usage indicators and delivery-related factors.
+
+- Missing or non-numeric data will result in validation errors.
+
+#### Output requirements
+
+The API returns predictions in JSON format. Each entry corresponds to a row in the input dataset, with predictions for models:
+
+    "Random_Forest_Predictions": 5.0648,
+    
+    "Bayesian_Linear_Model_Predictions": 5.1659
+    
+
+The CURL command used to trigger the API:
+
+```bash
+
+curl -X POST 'http://127.0.0.1:3505/predict_csv_local' -H 'accept: */*' -d ''
+
+```
+
+\newpage
+
+### Shiny web applications for visualizing and analyzing predictions
+
+The 'Infant Health Prediction App' is a Shiny web application that enables users to:
+- Upload a dataset containing infant-related data in CSV format.
+- Run predictions for infant health status using both a Random Forest model and a Bayesian Linear model.
+- View prediction results in an interactive table.
+- Explore visualizations of the predictions through histograms.
+
+#### Features
+- Data Upload and Preview: Users can upload datasets and preview them in an interactive table.
+- Model Predictions: Predictions from both models are displayed in a table for easy comparison.
+- Visualizations: Histograms provide insights into the distribution of predictions from each model.
+
+#### How to Run the App
+To launch the app locally, use the following R command:
+
+```r
+
+library(shiny)
+runApp("../scripts/07-shiny_app.R")
+
+```
+
+\newpage
+
+#### App Interface
+Below is the interface of the Infant Health Prediction App:
+
+![App Interface](../models/results/interface_screenshot.png)
+
+\newpage
+
+#### Prediction Table
+The predictions are displayed in an interactive table:
+
+![Prediction Table from the Shiny Web Application](../models/results/prediction_table_screenshot.png)
+
+\newpage
+
+#### Visualizations
+The histograms show the distribution of model predictions:
+
+![Random Forest Histogram from the Shiny Web Application](../models/results/random_forest_histogram.png)
+
+![Bayesian Linear Model Histogram from the Shiny Web Application](../models/results/bayesian_linear_histogram.png)
+
+
+
+\newpage
+
+
+# References
+
+
