@@ -1,0 +1,123 @@
+---
+title: "Coldplay vs Radiohead Danceability over Time"
+subtitle: "Coldplay reamins more danceable over the years"
+author: 
+  - Chenika Bukes
+  - Khushaal Nandwani
+  - Yunkyung Ko
+thanks: "Code and data are available at: https://github.com/chenikabukes/RadioheadColdplay"
+date: today
+date-format: long
+abstract: "This study explores the danceability of Coldplay and Radiohead over time by using data extracted from Spotify’s API. The results show that Coldplay has consistently maintained a higher level of danceability compared to Radiohead. These findings are relevant in understanding the musical evolution of both bands and their appeal to different types of listeners."
+format: pdf
+number-sections: true
+bibliography: references.bib
+---
+
+```{r}
+#| include: false
+#| warning: false
+#| message: false
+
+library(tidyverse)
+
+radiohead <- readRDS("../data/01-raw_data/radiohead.rds")
+coldplay <- readRDS("../data/01-raw_data/coldplay.rds")
+```
+
+
+# Introduction
+The estimand in this paper is the average danceability of tracks by both Coldplay and Radiohead over time. Danceability describes how suitable a track is for dancing based on a combination of tempo, rhythm stability, beat strength, and overall regularity. This paper shows how this metric changes for each band and discusses the implications.
+
+Understanding how danceability evolves over time can provide insight into the bands' stylistic changes and the broader trends in the music industry. All analysis in this paper was completed using R [@citeR]. The remainder of this paper is structured as follows. Section @sec-data describes the data collection and preparation. Section @sec-results presents the findings using the tidyverse package [@tidyverse], and Section @sec-discussion discusses the implications of these results.
+
+# Data {#sec-data}
+
+The data used in this study was retrieved using the Spotify Web API and processed using the R package spotifyr [@Spotify]. The package allows bulk retrieval of an artist’s entire discography along with associated audio features, including danceability, tempo, energy, and others. We accessed both Coldplay's and Radiohead’s discographies and calculated the average danceability of their songs by year of release. The data consists of metadata about each track, including the release year, danceability score, and album information. 
+
+
+# Results {#sec-results}
+
+In @fig-coldplay, we observe Coldplay's tracks exhibit relatively stable danceability over time, with scores ranging between 0.4 and 0.6, with slight increases toward the latest releases. Coldplay’s more consistent and upward trend aligns with their pop-rock style, which tends to favor rhythmically engaging and accessible music, contributing to a higher and more consistent danceability score. Radiohead’s danceability exhibits much more fluctuation, ranging from around 0.2 to 0.6. There is an increase during the early 2000s, but it dips again afterward. The lower and more fluctuating danceability for Radiohead reflects their tendency to diverge from mainstream pop structures.
+
+```{r}
+#| echo: false
+#| eval: true
+#| warning: false
+#| label: fig-coldplay
+#| tbl-cap: "Danceability of Coldplay's and Radiohead's tracks over time"
+#| message: false
+#| fig-cap: "Danceability of Coldplay's and Radiohead's tracks over time"
+
+rbind(coldplay, radiohead) |>
+  select(artist_name, album_release_date, danceability) |>
+  mutate(album_release_date = ymd(album_release_date)) |>
+  ggplot(aes( x = album_release_date, y = danceability, color = artist_name)) +
+  geom_point(alpha = 0.3) +
+  geom_smooth() +
+  theme_minimal() +
+  facet_wrap(facets = vars(artist_name), dir = "v") +
+  labs(
+    x = "Album release date",
+    y = "Danceability",
+    color = "Artist"
+  ) +
+  scale_color_brewer(palette = "Set1") +
+  theme(legend.position = "bottom")
+```
+
+
+# Discussion {#sec-discussion}
+Both bands show some increase in danceability in their later albums, though Coldplay's increase is more pronounced, reflecting their shift towards more pop-centric music.
+
+
+\newpage
+
+# Appendix
+Out of interest we decided to explore the correlation between danceability and tempo. The below results do not show a significant relationship and thus were not included in the main findings. 
+```{R}
+#| echo: false
+#| eval: true
+#| message: false
+#| warning: false
+#| label: fig-corrplot_r
+#| fig-cap: "Danceability vs Tempo for Radiohead Tracks"
+#| fig-width: 2.5
+#| fig-height: 2
+ 
+library(ggplot2)
+library(dplyr)
+radiohead <- readRDS("../data/01-raw_data/radiohead.rds")
+ 
+#### Radiohead
+ggplot(radiohead, aes(x = tempo, y = danceability)) +
+  geom_point(color = "blue", alpha = 0.6) +
+  geom_smooth(method = "lm", color = "red", se = FALSE) +
+  labs(x = "Tempo (BPM)",
+       y = "Danceability") +
+theme_minimal()
+ 
+#| echo: false
+#| eval: true
+#| message: false
+#| warning: false
+#| label: fig-corrplot_c
+#| fig-cap: "Danceability vs Tempo for Coldplay Tracks"
+#| fig-width: 2.5
+#| fig-height: 2
+
+library(ggplot2)
+library(dplyr)
+coldplay <- readRDS("../data/01-raw_data/coldplay.rds")
+ 
+#### Coldplay
+ggplot(coldplay, aes(x = tempo, y = danceability)) +
+  geom_point(color = "green", alpha = 0.6) +
+  geom_smooth(method = "lm", color = "red", se = FALSE) +
+  labs(x = "Tempo (BPM)",
+       y = "Danceability") +
+  theme_minimal()
+```
+\newpage 
+\newpage
+# References
