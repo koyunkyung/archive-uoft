@@ -1,0 +1,434 @@
+---
+title: "How Toronto Should Manage the Crisis in the Air"
+subtitle: "Analysis of Disease Outbreak Patterns Based on Its Type and Settings"
+author: 
+  - Yunkyung Ko
+thanks: "Code and data are available at: https://github.com/koyunkyung/toronto_outbreaks"
+date: today
+date-format: long
+abstract: "Toronto is currently at the crisis of being swallowed up by the cost of dealing with pertussis, an infectious respiratory disease. This paper analyzes disease outbreak data in Toronto healthcare institutions to apprehend its trend and come up with countermeasures. The analysis indicates that respiratory illnesses and long term care home institutions need intensive management strategies. Furthermore, the paper discusses necessary action plans for both the policymakers and healthcare authorities of Toronto."
+format: pdf
+number-sections: true
+bibliography: references.bib
+toc: true
+toc-title: "Table of Contents"
+toc-depth: 2
+toc-location: left
+---
+
+
+```{r}
+#| include: false
+#| warning: false
+#| message: false
+
+library(tidyverse)
+library(opendatatoronto)
+library(ggplot2)
+library(dplyr)
+library(readr)
+library(lubridate)
+library(modelsummary)
+library(knitr)
+library(kableExtra)
+
+raw_data <- read_csv(here::here("data/raw_data/raw_data.csv"))
+data <- read_csv(here::here("data/analysis_data/analysis_data.csv"))
+
+```
+
+
+# Introduction
+
+
+As of September 9 2024, 1,016 infections of pertussis, a contagious respiratory disease also known as whopping cough, were reported in Ontario [@nowtoronto_whooping_cough]. In all of Toronto, the figure is more than triple the five-year, pre-pandemic average of 31 cases for the same period [@publichealth_ontario].
+
+
+Unexpected disease outbreaks significantly disrupt society by inducing widespread fear, anxiety, and economic losses [@frontiers_outbreaks]. Especially in Canada, where people continue to face some of the longest medical wait times for treatment in the developed world [@torontosun_wait_times], costs are likely to increase exponentially in an instant. Before Toronto overspends the cost of medical care, this paper is intending to analyze the trends of outbreaks reported in Toronto healthcare institutions. The analysis focuses on figuring out how the frequency trends of outbreak differ by its type and occurrence settings.
+
+
+The paper starts with showing the overall pattern of outbreak occurrence frequency over the time period of 2016 to 2024. Then, it sorts the outbreaks into two different types, respiratory and enteric, to reiterate the analysis of outbreak frequency patterns. Diving deeper into the analysis, outbreak settings would also come into consideration. Finally, discussions about how specific healthcare institutions should reallocate their resources for particular outbreak types would proceed.
+
+
+
+# Data
+
+## Data Overview
+
+
+'Outbreaks in Toronto Healthcare Institutions' dataset [@toronto_outbreaks_dataset], obtained from City of Toronto Open Data Portal, was used for the trend analysis of outbreak occurrence. Published by Toronto Public Health under the requirement to monitor symptoms of infections, this dataset contains reports of suspected and confirmed outbreaks of gastroenteric (e.g., nausea, vomiting, diarrhea, fever) and respiratory (e.g., cough, runny nose, sore throat, fever) illness. An outbreak is defined as a localized increase in the rate of infection or illness, above that which is expected. Please note that this dataset was last updated on September 24, 2024, and contains only the information up to then.
+
+
+In this paper, R for statistical computing [@R] was used to handle data. In particular, packages like `tidyverse` [@tidyverse], `ggplot2` [@ggplot2], `dplyr` [@dplyr], `readr` [@readr], `lubridate` [@lubridate] were utilized to analyze data from the City of Toronto [@opendatatoronto]. Data from year 2016 to 2024 were combined, resulting in 5253 observations in the dataset. The selected variables for analysis are the following: 'outbreak_setting', 'type_of_outbreak', 'date_outbreak_began'. The main criteria considered was whether the information could be helpful for Toronto healthcare institutions to devise preemptive measures for outbreak occurrences. More specifically, the reason for selecting 'date_outbreak_began' is because it is considered more important to accurately determine the onset time of disease to immediately prevent the surge of infected population. In order to use long-term data, which is more effective in capturing the complexity and stochastic nature of disease outbreaks [@bmj_outbreak_prediction], the 'year' information was extracted as the variable for analysis. @tbl-part_of_dataset shows an extract of the dataset and @tbl-summary_stats communicates the summary statistics of the analysis data. For more detailed information about the dataset and each variable, refer to Appendix \ref{sec:appendix}.
+
+
+```{r}
+#| label: tbl-part_of_dataset
+#| tbl-cap: A dataset of outbreak occurrence in Toronto healthcare institutions
+#| echo: false
+#| tbl.pos: 'H'
+
+data |>
+  slice(1:10) |>
+  kable(
+    col.names = c("Outbreak Setting", "Type of Outbreak", "Date Outbreak Began", "Year"),
+    align = 'c'
+  ) |>
+  kable_styling(latex_options = "H")
+
+```
+
+\
+
+```{r}
+#| label: tbl-summary_stats
+#| tbl-cap: Descriptive statistics for toronto healthcare dataset
+#| echo: false
+#| tbl.pos: 'H'
+
+datasummary_balance(
+  formula = ~type_of_outbreak,
+  data = data |>
+    filter(type_of_outbreak %in% c("Respiratory", "Enteric", "Other")),
+  dinm = FALSE,
+  notes = "Data Source: Toronto Public Health"
+) |>
+  kable_styling(latex_options = c("scale_down", "H")) 
+```
+
+
+
+
+\newpage
+
+## Results
+
+What is of our primary interest is the occurrence patterns of outbreaks in Toronto. First, we are going to analyze it from a timely perspective. Through @fig-outbreak, which shows the number of outbreak reports by year, we can see the distribution of occurrence frequency over time. The number of outbreaks has increased sharply as of 2022, and since then, the number has been relatively high until recently. 
+
+```{r}
+#| label: fig-outbreak
+#| fig-cap: Total Outbreaks Count in Toronto Healthcare Institutions
+#| echo: false
+#| fig.pos: 'H'
+
+data |>
+  ggplot(mapping = aes(x = year)) +
+  geom_bar() +
+  theme_minimal() +
+  labs(x = "Date", y = "Number of Outbreaks",
+       title = "Total Outbreaks Count Per Year") +
+  scale_x_continuous(breaks = seq(min(data$year), max(data$year), by = 1)) 
+
+```
+
+
+For detailed analysis, the outbreak was largely divided into respiratory and enteric as separated by Toronto public health, and the trend of occurrence over time was re-analyzed. @fig-outbreaks_count_by_types shows that the number of respiratory outbreak cases is always relatively high, and the increase rate is also greater. In particular, a significant rise in the number of respiratory outbreaks is seen in year 2022, which is expected to have contributed substantially to the surge in the total number of outbreak cases. Furthermore, it can be seen that the large increase in the respiratory outbreak does not show an easily decreasing trend.
+
+
+```{r}
+#| label: fig-outbreaks_count_by_types
+#| fig-cap: Outbreaks Count in Toronto Healthcare Institutions, by Types of Outbreak
+#| echo: false
+#| warning: false
+#| message: false
+#| fig.pos: 'H'
+
+# Summarizing the data to get the number of outbreaks per month and type of outbreak
+annual_data <- data %>%
+  group_by(year, type_of_outbreak) %>%
+  summarise(outbreak_count = n()) %>%
+  ungroup()
+
+# Convert the year column to a factor with levels in chronological order
+annual_data$year <- factor(annual_data$year, levels = unique(annual_data$year))
+
+# Create the line plot
+ggplot(annual_data, aes(x = year, y = outbreak_count, group = type_of_outbreak, color = type_of_outbreak)) +
+  geom_line(size = 1) +
+  geom_point(size = 2) +
+  scale_color_manual(values = c("Respiratory" = "red", "Enteric" = "blue", "Other" = "black")) +
+  labs(title = "Outbreaks Count Per Year, by Type",
+       x = "Date", y = "Number of Outbreaks", color = "Type of Outbreak") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +  # Rotate the x-axis labels
+  scale_x_discrete(drop = FALSE) # Ensure all years are shown on the x-axis
+
+```
+
+
+Next, we are going to look at the outbreak occurrence trends from a spatial perspective. @fig-setting shows the occurrence locations of all outbreak reports from 2016 to September 2024 in relative percentages. What accounted for the highest percentage with a noticeable difference compared to the others was LCTH, which stands for Long-Term Care Home, a residential facility providing 24-hour care and support for individuals with complex medical needs, typically the elderly or those with chronic conditions (@ontario_ltc). 
+
+
+```{r}
+#| label: fig-setting
+#| fig-cap: Outbreaks Count by Outbreak Settings
+#| echo: false
+#| fig.pos: 'H'
+
+outbreak_counts <- data %>%
+  count(outbreak_setting) %>%
+  mutate(percentage = n / sum(n) * 100)
+
+ggplot(outbreak_counts, aes(x = "", y = n, fill = outbreak_setting)) +
+  geom_bar(stat = "identity", width = 1) +
+  coord_polar("y", start = 0) + 
+  theme_minimal() +
+  scale_fill_manual(values = c("LTCH" = "#B4E1FF", 
+                               "Retirement Home" = "#B3FFC6", 
+                               "Hospital-Chronic Care" = "#BA55D3", 
+                               "Hospital-Acute Care" = "#DDA0DD",
+                               "Hospital-Psychiatric" = "grey",
+                               "Shelter" = "brown",
+                               "Transitional Care" = "black")) +
+  geom_text(aes(label = ifelse(percentage > 2, paste0(round(percentage, 1), "%"), "")),
+            position = position_stack(vjust = 0.5),
+            size = 3) +  # Adjust the size of the label text
+  labs(x = NULL, y = NULL, fill = "Outbreak Setting", 
+       title = "Outbreaks Count by Setting") +
+  theme(axis.text.x = element_blank(),  
+        axis.ticks = element_blank(),  
+        panel.grid = element_blank(),
+        legend.text = element_text(size = 8),  # Make legend text smaller
+        legend.title = element_text(size = 10) # Optionally make the legend title smaller
+  )  
+```
+
+
+Finally, to determine whether there is a relationship between the outbreak occurrence pattern over time and the place of occurrence, the data were re-expressed in the following graph. 
+
+```{r}
+#| label: fig-respiratory_outbreaks_count_by_settings
+#| fig-cap: Respiratory Outbreaks Count, by Outbreak Settings
+#| echo: false
+#| warning: false
+#| message: false
+#| fig.pos: 'H'
+
+# Filter for 'Respiratory' outbreaks
+respiratory_data <- data %>%
+  filter(type_of_outbreak == "Respiratory")
+
+# Aggregate data by year and outbreak setting
+annual_counts <- respiratory_data %>%
+  group_by(year, outbreak_setting) %>%
+  summarise(outbreak_count = n(), .groups = 'drop') %>%
+  group_by(year) %>%
+  mutate(proportion = outbreak_count / sum(outbreak_count) * 100)  # Normalize by year
+
+# Create a stacked bar plot
+ggplot(annual_counts, aes(x = year, y = outbreak_count, fill = outbreak_setting)) +
+  geom_col(position = "stack") +  # Stack bars based on outbreak settings
+  geom_text(aes(label = ifelse(proportion > 5, paste0(round(proportion, 1), "%"), "")), 
+            position = position_stack(vjust = 0.5), 
+            size = 2) +  # Add percentage labels with smaller font size
+  scale_fill_manual(values = c("LTCH" = "#B4E1FF", 
+                               "Retirement Home" = "#B3FFC6", 
+                               "Hospital-Chronic Care" = "#BA55D3", 
+                               "Hospital-Acute Care" = "#DDA0DD",
+                               "Hospital-Psychiatric" = "grey",
+                               "Shelter" = "brown",
+                               "Transitional Care" = "black")) +
+  labs(title = "Annual Respiratory Outbreaks Count by Setting",
+       x = "Date",
+       y = "Number of Outbreaks",
+       fill = "Outbreak Setting") +
+  theme_minimal() +
+  scale_x_continuous(breaks = seq(min(data$year), max(data$year), by = 1)) + 
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))  # Rotate the x-axis labels
+```
+
+@fig-respiratory_outbreaks_count_by_settings shows that the rate of respiratory outbreak occurrence according to its setting remains relatively similar. Something that stands out even if it's a little bit is that with the surge in respiratory outbreak in 2022, the outbreak rate of LTCH did not increase proportionally. Rather the outbreak rate in other places, such as hospitals in the chronic care sector and retirement home, showed an increasing trend. In addition, it can be predicted that in 2024, the rate of LTCH respiratory outbreak occurrence will be significantly higher than the previous three years.
+
+
+```{r}
+#| label: fig-enteric_outbreaks_count_by_settings
+#| fig-cap: Enteric Outbreaks Count, by Outbreak Settings
+#| echo: false
+#| warning: false
+#| message: false
+#| fig.pos: 'H'
+
+# Filter for 'Enteric' outbreaks
+enteric_data <- data %>%
+  filter(type_of_outbreak == "Enteric")
+
+# Aggregate data by year and outbreak setting
+annual_counts <- enteric_data %>%
+  group_by(year, outbreak_setting) %>%
+  summarise(outbreak_count = n(), .groups = 'drop') %>%
+  group_by(year) %>%
+  mutate(proportion = outbreak_count / sum(outbreak_count) * 100)  # Normalize by year
+
+# Create a stacked bar plot
+ggplot(annual_counts, aes(x = year, y = outbreak_count, fill = outbreak_setting)) +
+  geom_col(position = "stack") +  # Stack bars based on outbreak settings
+  geom_text(aes(label = ifelse(proportion > 5, paste0(round(proportion, 1), "%"), "")), 
+            position = position_stack(vjust = 0.5), 
+            size = 2) +  # Add percentage labels with smaller font size
+  scale_fill_manual(values = c("LTCH" = "#B4E1FF", 
+                               "Retirement Home" = "#B3FFC6", 
+                               "Hospital-Chronic Care" = "#BA55D3", 
+                               "Hospital-Acute Care" = "#DDA0DD",
+                               "Hospital-Psychiatric" = "grey",
+                               "Shelter" = "brown",
+                               "Transitional Care" = "black")) +
+  labs(title = "Annual Enteric Outbreaks Count by Setting",
+       x = "Date",
+       y = "Number of Outbreaks",
+       fill = "Outbreak Setting") +
+  theme_minimal() +
+  scale_x_continuous(breaks = seq(min(data$year), max(data$year), by = 1)) + 
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))  # Rotate the x-axis labels
+  
+```
+
+On the other hand, @fig-enteric_outbreaks_count_by_settings shows that regarding enteric outbreaks, occurrence rate in hospitals rather decreased in recent years. In addition, in 2021 and 2022, when the number of enteric outbreak cases was markedly low, it can be seen that there were outbreak reports only in LTCH and retirement home.
+
+
+
+
+
+
+
+
+
+
+
+
+# Discussion
+
+Under the purpose of predicting the possibility of a disease outbreak more accurately and specifically, an outbreak pattern analysis was conducted based on the reports of Toronto healthcare institutions. The following items will discuss how the above analysis results can be applied and practically used in the real world.
+
+## Policy Measures to be Established by Toronto to Prevent and Cope with Disease Outbreaks 
+
+The timely outbreak trend analysis in Toronto healthcare institutions (@fig-outbreak) implies that the number of outbreaks has surged as of the time of certain incidents in 2022. The factors that might have substantially influenced this kind of pattern are the emergence of new COVID-19 variants and relaxed public health measures [@cihi_impact_covid19_2022]. At this point of time period, Toronto eased certain pandemic-related restrictions, such as the removal of mandatory masking for visitors and caregivers in long-term care homes. This is in line with the results shown in @fig-outbreaks_count_by_types in that it explains the increase in the incidence of respiratory diseases.
+
+In the current situation, we are dealing with the crisis of pertussis infections, which is a typical respiratory disease. As we can see from @fig-respiratory_outbreaks_count_by_settings, a surge in respiratory outbreak occurrence affects every settings of public healthcare institutions. Accordingly, the first step to address this might be to strengthen vaccination campaigns. Pertussis outbreaks are preventable through proper vaccination coverage, and expanding booster doses to not only children but also adults and healthcare workers could substantially reduce the spread of disease [@canada_pertussis_2024]. Also, since lack of PPE in Canada's public healthcare settings has been a key issue in exacerbating the spread of infections [@cfp_ltc_2020], the government should ensure adequate healthcare capacity by increasing funding and staffing, especially in LTCHs and hospitals.
+
+As @fig-outbreaks_count_by_types and @fig-enteric_outbreaks_count_by_settings implies, enteric outbreak occurrence rates are relatively low in the present time period. Therefore, it would be more efficient to focus on securing sufficient resources for preventing respiratory diesases rather than enteric. In addition, during periods when the incidence of enteric outbreak is low, the disease appears intensively only in LTCH and retirement homes. It would be a good idea to concentrate resources dealing with enteric diseases on those sites to achieve effective medical resource allocation. 
+
+## Countermeasures in LTCH for Mitigating Outbreak Occurrences
+
+The spatial outbreak trend analysis (@fig-setting) implies that LTCH is where most of the outbreaks in Toronto take place. Considering the nature of long-term care homes, where some of the most vulnerable populations reside in a congregate living environment, the analysis above seems to be a natural result. Moreover, there were major challenges in LTCHs due to shortage of personal protective equipment(PPE) and inadequate staffing [@cihi_impact_covid19_2022]. However, rather than calling it inevitable, we should make efforts to reduce the incidence of outbreak at the location, even a little.
+
+One suggestion is to create small, dedicated "cohorts" of staff assigned to specific groups of residents, rather than having staff move freely between floors [@cfp_ltc_2020]. This would minimize staff interaction across larger groups and prevent outbreaks from sweeping through entire homes. Cohorting has already been proven effective in hospital settings, and is expected to also be beneficial in long-term care facilities.
+
+
+## Weaknesses and next steps
+
+The study started with a grand intention of devising specific countermeasures for disease outbreaks by the analysis of outbreak trends sorted into time and place criteria. However, the conclusions derived from data analysis results seem to only put more emphasis on maintaining public health awareness at all times. Contrary to my original intention, it does not provide as much effective guidance for specific healthcare institutions in reallocating their resources. In addition, the dataset that I used had insufficient information for year 2024, since data from October 2024 and after was not possibly obtained. This could have affected the results of trend analysis because all the other data for year 2016 to 2023 had occurrence reports for the whole year.
+
+Further analysis using the seasonal information of this dataset might be intriguing. In particular, respiratory disease occur more severely during the change of seasons. Analyzing quarterly disease outbreak trends is expected to lead conclusions on how different quarterly preparations can be made throughout the year. Additionally, given more time and resources, it will be possible to develop a model for predicting the possibility of future infectious diseases. 
+
+\newpage
+
+\appendix
+
+# Appendix {#sec:appendix}
+
+## Additional data details
+
+### Other Similar Datasets Considered
+
+Another similar dataset that I had put in consideration when starting this research was the 'Monthly Communicable Disease Surveillance Data' [@toronto_communicable_disease_data_2024]. Although this dataset contains observations of countless different types of diseases, it has only two types of variables, the number of cases and occurrence rates. So, it was determined that in-depth research in the field could be difficult by using this dataset.
+
+### Raw Data Variables Overview
+
+A detailed description of each variable in the original dataset is as follows [@toronto_outbreaks_dataset].
+
+_id: Unique row identifier for Open Data database.
+Institution Name: Name of the healthcare institution where the outbreak has been declared.
+Institution Address: Street address of the institution.
+Outbreak Setting: The type of facility, in terms of the type of healthcare provided.
+Type of Outbreak: The mode of transmission classification description of the outbreak.
+Causative Agent-1: The first aetiological agent(s) that have been identified from one or more outbreak-related cases, when an agent is confirmed.
+Causative Agent-2: The second aetiological agent(s) that have been identified from one or more outbreak-related cases, when an agent is confirmed.
+Date Outbreak Began: The date the institution reports the outbreak to TPH.
+Date Declared Over: In general, respiratory and enteric outbreaks are declared over if no new cases have been detected in the facility for a period of time equal to atleast one full incubation period plus one full period of communicability for the particular outbreak organism.
+Active: Institutional outbreaks remain active until they have been declared over and the public health investigation is closed.
+
+@tbl-variable_stats shows the summary statistics for all variables in the raw data.
+
+```{r}
+#| label: tbl-variable_stats
+#| tbl-cap: Raw Data Variables Summary Statistics
+#| echo: false
+#| warning: false
+#| message: false
+#| tbl.pos: 'H'
+
+
+# Function to generate refined summary statistics and display them in a long format
+generate_refined_summary_long_format <- function(data) {
+  
+  # Numeric summary
+  numeric_summary <- data %>%
+    select(where(is.numeric)) %>%
+    summarise(across(everything(),
+                     list(
+                       count = ~sum(!is.na(.)),
+                       mean = ~mean(., na.rm = TRUE),
+                       median = ~median(., na.rm = TRUE),
+                       sd = ~sd(., na.rm = TRUE),
+                       min = ~min(., na.rm = TRUE),
+                       max = ~max(., na.rm = TRUE)
+                     ),
+                     .names = "{.col}_{.fn}")) %>%
+    pivot_longer(cols = everything(),
+                 names_to = c("variable", ".value"),
+                 names_sep = "_")  # Pivot to long format
+  
+  # Categorical summary
+  categorical_summary <- data %>%
+    select(where(is.character)) %>%
+    summarise(across(everything(),
+                     list(
+                       count = ~sum(!is.na(.)),
+                       unique = ~n_distinct(.),
+                       top = ~names(sort(table(.), decreasing = TRUE)[1]),
+                       freq = ~max(table(.), na.rm = TRUE)
+                     ),
+                     .names = "{.col}_{.fn}")) %>%
+    pivot_longer(cols = everything(),
+                 names_to = c("variable", ".value"),
+                 names_sep = "_")  # Pivot to long format
+  
+  # Date summary
+  date_summary <- data %>%
+    select(where(is.Date)) %>%
+    summarise(across(everything(),
+                     list(
+                       count = ~sum(!is.na(.)),
+                       min = ~min(., na.rm = TRUE),
+                       max = ~max(., na.rm = TRUE)
+                     ),
+                     .names = "{.col}_{.fn}")) %>%
+    pivot_longer(cols = everything(),
+                 names_to = c("variable", ".value"),
+                 names_sep = "_")  # Pivot to long format
+
+  # Combine all summaries into one long table
+  combined_summary <- bind_rows(numeric_summary, categorical_summary, date_summary) %>%
+    slice(-c(1:6))  # Remove the first 6 rows
+  
+  # Return the pretty long table
+  combined_summary %>%
+    kable(caption = "Refined Summary Statistics (Long Format)") %>%
+    kable_styling(bootstrap_options = c("striped", "hover", "condensed", "responsive"), 
+                  full_width = F,
+                  font_size = 8)
+}
+
+# Generate the summary statistics table after removing the first 6 rows
+generate_refined_summary_long_format(raw_data) |>
+  kable_styling(latex_options = c("scale_down", "H"), font_size = 8)
+
+
+```
+
+
+\newpage
+
+
+# References
+
