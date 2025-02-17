@@ -1,0 +1,193 @@
+---
+title: "Price Comparison of Common Fruits Across Major Vendors"
+subtitle: "An Analysis Revealing Loblaws as the Highest Priced Vendor Among Apples, Oranges, Mangoes, and Pears"
+author: 
+  - Yunkyung Ko
+  - Yawen Tan
+  - Shanjie Jiao
+  - Xizi Sun
+thanks: "Code and data are available at: [https://github.com/koyunkyung/canadian_grocery](https://github.com/koyunkyung/canadian_grocery)."
+date: today
+date-format: long
+abstract: "This study examines the price differences of four common fruits—apples, oranges, mangoes, and pears—across three major Canadian grocery vendors: Loblaws, NoFrills, and Voila. By analyzing the average prices of these fruits, we aim to identify price patterns and assess which vendor tends to offer higher or lower prices. Our results show that Loblaws generally has the highest prices, while Voila offers the lowest. This suggests variations in pricing strategies tied to each vendor's market positioning. Additionally, the study explores analytical considerations, including the distinction between correlation and causation, the impact of missing data, and sources of potential bias such as selection, measurement, and confounding biases. These factors are critical in understanding the observed pricing differences and ensuring the robustness of the analysis. This research provides insights for consumers making budget-conscious shopping decisions and highlights methodological challenges in analyzing observational data."
+format: pdf
+number-sections: true
+bibliography: references.bib
+---
+
+# Introduction
+
+This study investigates price differences for four common fruits—apples, oranges, mangoes, and pears—across three major vendors: Loblaws, NoFrills, and Voila. By analyzing the average prices for each fruit type at each vendor, we aim to identify price patterns and determine which vendor consistently has the highest prices. This analysis provides insight into each vendor’s pricing strategy and helps consumers make informed decisions based on their preferences and budget. Our findings indicate that Loblaws generally has the highest average prices for these fruits among the vendors studied.
+In this paper, we also address several important analytical considerations to strengthen our findings. First, we examine correlation vs. causation in @sec-discussion1 to clarify that observed price differences among vendors may correlate with various factors, but further analysis would be needed to establish causation. Second, in @sec-discussion2, we discuss the impact of missing data due to the fact that different vendors offer a varying selection of fruit varieties, which affects the completeness of the dataset. Finally, in @sec-discussion3 we identify potential sources of bias—such as selection bias, measurement bias, and confounding factors—that may influence our results and interpretations.
+
+
+# Data {#sec-data}
+
+## Overview
+
+The dataset was analyzed using R [@citeR] and SQL [@sqlite], and use Tidyverse [@citeTidyverse], Knitr [@citeKnitr], ggplot2[@citeGgplot2] and Dplyr [@citeDplyr]. Data are extract from Hammer Dataset [@hammerdataset]. The dataset provides detailed information on the average prices of four types of fruits—apples, mangoes, pears, and oranges—across three vendors: Loblaws, NoFrills, and Voila. It includes columns for the vendor name, the average price, and the fruit type. Each fruit is represented by multiple entries from each vendor, allowing for comprehensive comparisons of price distributions. In addition to the average price, the dataset contains observation counts for each fruit and vendor, which indicate that apples are the most frequently recorded fruit, followed by pears, while mangoes and oranges have fewer observations, possibly reflecting factors like consumer demand or seasonality. Vendor representation is fairly balanced, with Voila having a slight edge in the number of observations compared to Loblaws and NoFrills, supporting reliable comparative analysis. The dataset structure thus enables an analysis of price levels and distributions across different fruits and vendors, with potential insights into market trends and vendor-specific pricing strategies.
+
+```{r}
+#| label: tbl-data
+#| tbl-cap: First 6 entries of Analysis Dataset
+#| echo: false
+#| warning: false
+#| message: false
+
+library(ggplot2)
+apple <- read.csv("../data/analysis_data/avg_price_by_vendor_apple.csv")
+mango <- read.csv("../data/analysis_data/avg_price_by_vendor_mango.csv")
+pear <- read.csv("../data/analysis_data/avg_price_by_vendor_pear.csv")
+orange <- read.csv("../data/analysis_data/avg_price_by_vendor_orange.csv")
+
+vendor_avg_apple <- aggregate(avg_price ~ vendor, data = apple, mean)
+vendor_avg_mango <- aggregate(avg_price ~ vendor, data = mango, mean)
+vendor_avg_pear <- aggregate(avg_price ~ vendor, data = pear, mean)
+vendor_avg_orange <- aggregate(avg_price ~ vendor, data = orange, mean)
+
+vendor_avg_apple$fruit <- "apple"
+vendor_avg_mango$fruit <- "mango"
+vendor_avg_pear$fruit <- "pear"
+vendor_avg_orange$fruit <- "orange"
+
+dataset <- rbind(vendor_avg_apple, vendor_avg_mango, vendor_avg_pear, vendor_avg_orange)
+datao <- rbind(apple, mango, pear, orange)
+
+
+# Create table
+# Round the average price to two decimal places
+dataset$avg_price <- round(dataset$avg_price, 2)
+head_data <- head(dataset,6)
+knitr::kable(head_data, format = "simple", col.names = c('Vendor', 'Average Price', 'Fruit'))
+
+```
+
+## Measurement
+	
+This dataset, while useful for analyzing price distribution, is a constructed representation of purchasing behavior and may not fully capture the complexities of real-world consumer actions. Since the data does not include actual transaction records or contextual factors influencing purchases (such as seasonality, brand loyalty, or regional demand), it may lack critical elements that drive genuine purchasing decisions. Consequently, insights derived from this dataset should be interpreted with caution, acknowledging that it represents an approximation rather than a comprehensive model of consumer behavior.
+
+## Outcome variables
+
+### Price Levels
+
+@fig-price reveals that the majority of products are priced below $10, indicating a concentration of lower-priced items in this dataset. A smaller number of items fall in the higher price ranges, with few products priced above $20, suggesting that high-priced items are outliers rather than the norm. This distribution suggests a market trend towards affordability or a focus on budget-friendly options for the products included in the analysis.
+
+```{r}
+#| label: fig-price
+#| fig-cap: Price level distributions across all observations used in the analysis
+#| echo: false
+#| warning: false
+#| message: false
+
+# Plot the distribution of prices with a histogram
+ggplot(datao, aes(x = avg_price)) +
+  geom_histogram(binwidth = 1, fill = "grey", color = "black") + # Set bin width and colors
+  labs(
+       x = "Average Price",
+       y = "Frequency") +
+  theme_minimal()
+
+
+```
+
+## Predictor variables
+
+### Type of Fruits: The Product that We Specified to Compare the Price Distribution
+
+@fig-fruits shows the frequency of observations for four fruit types: apples, mangoes, oranges, and pears. Apples have the highest count, with around 50 instances, possibly due to popularity or market demand. Pears follow with a moderate count of about 20. Mangoes and oranges have the lowest counts, around 10 each, possibly due to factors like seasonality or regional availability.
+
+```{r}
+#| label: fig-fruits
+#| fig-cap: The distrubution of different categories of fruits used in the analysis
+#| echo: false
+#| warning: false
+#| message: false
+
+# Count the number of observations in each dataset
+counts <- data.frame(
+  fruit = c("apple", "mango", "pear", "orange"),
+  observation_count = c(nrow(apple), nrow(mango), nrow(pear), nrow(orange))
+)
+
+# Plot the observation count for each fruit
+ggplot(counts, aes(x = fruit, y = observation_count)) +
+  geom_bar(stat = "identity", fill = "skyblue") +
+  labs(
+       x = "Fruit Type",
+       y = "Observation Count") +
+  theme_minimal()
+
+
+```
+
+### Type of Vendors
+
+@fig-vendors provides a visualization of the number of observations for each vendor in the dataset, specifically Loblaws, NoFrills, and Voila. The x-axis represents these three vendors, while the y-axis shows the count of observations, likely indicating the number of unique products or price points recorded for each vendor. Each bar is labeled with the exact count: Loblaws has 33 observations, NoFrills has 31, and Voila has the highest at 36. These counts are relatively similar across vendors, suggesting a fairly balanced representation in the data, although Voila has a slight edge in the number of entries. This balanced distribution is beneficial for comparative analysis, as it reduces the risk of one vendor disproportionately influencing results. The slight difference in counts could introduce a minor weight toward Voila in any statistical analysis, but overall, the dataset’s even distribution supports reliable comparisons. Thus, any averages or other metrics calculated by vendor are likely to be comparable across Loblaws, NoFrills, and Voila, minimizing selection bias due to unequal observation counts.
+
+```{r}
+#| label: fig-vendors
+#| fig-cap: The distribution of vendors used in the analysis
+#| echo: false
+#| warning: false
+
+# Plot the distribution of observation count by vendor with adjusted bar width and labels
+ggplot(datao, aes(x = vendor)) +
+  geom_bar(fill = "purple", width = 0.4) + # Narrower bar width
+  geom_text(stat = "count", aes(label = ..count..), vjust = -0.5) + # Add count labels above bars
+  labs(
+       x = "Vendor",
+       y = "Observation Count") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) # Rotate x-axis labels for readability
+```
+
+
+# Results
+
+@fig-results illustrates the average prices of four fruits—apples, mangoes, oranges, and pears—across three different vendors: Loblaws, NoFrills, and Voila. Each fruit is represented by a distinct color, as indicated in the legend: red for apples, green for mangoes, blue for oranges, and purple for pears. The bar plot component of the chart displays the average price of each fruit at the respective vendors. Notably, apples are priced highest at Loblaws and lowest at Voila. Mangoes exhibit minimal price variation across the vendors. Oranges show a significant price difference, being most expensive at Loblaws and least expensive at Voila. Similarly, pears are priced lowest at Voila. Superimposed on the bar plot is a line plot that connects the average prices of each fruit across the vendors, highlighting the price trends. The lines for apples, oranges, and pears demonstrate a downward trend from Loblaws to Voila, indicating decreasing prices. In contrast, the line for mangoes remains relatively flat, suggesting consistent pricing among the vendors. In summary, the chart effectively compares the pricing strategies of different vendors for various fruits, revealing that Voila generally offers lower prices for most fruits, while Loblaws tends to have higher prices. These visual trends provide insights into the pricing correlations among the vendors and set the stage for further analysis of potential causal factors influencing these pricing differences. 
+
+```{r}
+#| label: fig-results
+#| fig-cap: Price distribution of different kinds of fruits(apple, mango, orange, pear) by vendors
+#| echo: false
+#| warning: false
+#| message: false
+
+ggplot(dataset, aes(x = vendor, y = avg_price, fill = fruit, group = fruit)) +
+  geom_bar(stat = "identity", position = "dodge", aes(color = fruit)) +
+  geom_line(aes(color = fruit)) +
+  geom_point(aes(color = fruit)) +
+  facet_wrap(~fruit, scales = "free_y") +
+  labs(x = "Render", y = "Price") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+# Discussion
+
+## Correlation vs. Causation {#sec-discussion1}
+
+When analyzing the pricing of the same fruit in different supermarkets, it is very important to distinguish Correlation and Causation for understanding the root cause of price difference. We have observed that the prices of Loblaws apples, pears, orange and mango are always higher than those of other supermarkets (such as NoFrills and Voila), and the price of each fruit in Voila is always lower than that in other stores, which shows that there is a correlation between supermarket and fruit pricing. This correlation may be related to the market positioning, operating costs and supply chain management of supermarkets. For example, Loblaws is positioned in the high-end market and can provide better products and services to middle-class customers, so its pricing is higher. Voila mainly serves groups with limited budgets, so the price is lower. In addition, factors such as geographical location, rent and employee salary may lead to differences in operating costs, which in turn may affect pricing strategies. For example, Loblaws is located in the city center, the rent is high, and the salary of employees is relatively high because of the high service level. In supply chain management, for example, the procurement channels of different supermarkets and the efficiency of supply chain may lead to cost differences and affect the final selling price. In addition, to determine whether these factors really lead to price differences, further data and analysis are needed, such as market positioning research, cost structure analysis and supply chain evaluation. Through these in-depth analysis, we can understand the causal relationship of price difference more accurately.
+
+## Missing Data {#sec-discussion2}
+
+In this dataset, missing data occurs because different supermarkets offer varying selections of fruit varieties. For example, some supermarkets may carry a wide range of apple varieties, while others only stock a few. As a result, when analyzing data across all supermarkets, information on certain apple varieties may be incomplete, with specific types available only from certain vendors. Similar patterns may apply to other types of fruit, leading to gaps in the dataset. This missing data reflects differences in product offerings across vendors, and it's essential to be aware of and consider this incompleteness when conducting further analysis.
+
+## Sources of Bias {#sec-discussion3}
+In this dataset, we study the price differences and potential changes of 4 fruits between different supermarkets. The price differences are due to the different positioning of each supermarket, Loblaw, NoFrills, and Voila.
+
+### Selection Bias
+As mentioned before, selection bias in this dataset mainly comes from the differences in customer groups of different supermarkets. Each supermarket (such as Loblaws, NoFrills, and Voila) has a different market positioning and customer group. Customers who choose to shop at Loblaws usually prefer high-end goods or organic foods, while NoFrills customers may pay more attention to low prices and discounts. This customer preference leads to bias in the price data, that is, the price differences between different supermarkets not only reflect the market price of the product itself, but also are affected by customer selection behavior. Therefore, Loblaws' higher prices do not necessarily mean that all its fruits are priced higher than other supermarkets, but rather reflect that its customers are willing to pay a premium for higher quality or brand.
+
+### Measurement Bias
+In this dataset, measurement bias may come from the different ways in which supermarkets record or define the average price (avg_price). For example, Loblaws may be promoting a specific brand or organic fruit, making the recorded average price lower than the actual price, while NoFrills may use a specific price for a single batch, ignoring other higher price ranges. These differences in measurement may cause distortions in price data, making our price comparisons between different supermarkets biased.
+
+### Confounding Bias
+In this dataset, confounding bias may come from factors such as fruit type, quality, packaging type, seasonal changes, etc. For example, Loblaws may be more inclined to sell high-quality or organic apples, which are usually priced higher, and this tendency is not shown separately in the data. Therefore, the price difference between supermarkets may not be due to the supermarket itself, but to uncontrolled fruit quality or seasonal factors.
+
+\newpage
+
+
+# References
+
+
